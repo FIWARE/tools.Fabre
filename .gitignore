@@ -1,0 +1,13 @@
+# Gedit backup files.
+*~
+
+# Temporal and destination dir
+dest/*.html
+.tmp/
+site/
+env/
+dist/
+*.egg-info/
+*.pyc
+.coverage
+build/
