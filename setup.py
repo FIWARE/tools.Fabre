@@ -28,7 +28,7 @@ setup(name='fiware_api_blueprint_renderer',
       ],
       entry_points={
         'console_scripts': [
-          'fabre = fiware_api_blueprint_renderer.__init__:main',
+          'fabre = fiware_api_blueprint_renderer.renderer:main',
         ],
         'fiware_api_blueprint_renderer.themes': [
             'default = fiware_api_blueprint_renderer.themes.default_theme'
@@ -47,27 +47,3 @@ setup(name='fiware_api_blueprint_renderer',
       ],
       zip_safe=False)
 
-
-# old_umask=umask(000)
-
-# try:
-# 	mkdir('/etc/fiware_mkdocs_builder/', 0777)
-# except OSError, e:
-#     if e.errno != errno.EEXIST:
-#         raise e
-#     else:
-#         rmtree('/etc/fiware_mkdocs_builder/')
-#         mkdir('/etc/fiware_mkdocs_builder/', 0777)
-#     pass
-
-# try:
-# 	mkdir('/var/tmp/fiware_mkdocs_builder_tmp_build/', 0777)
-# except OSError, e:
-#     if e.errno != errno.EEXIST:
-#         raise e
-#     else:
-#         rmtree('/var/tmp/fiware_mkdocs_builder_tmp_build/')
-#         mkdir('/var/tmp/fiware_mkdocs_builder_tmp_build/', 0777)
-#     pass
-
-# old_umask= umask(old_umask)
