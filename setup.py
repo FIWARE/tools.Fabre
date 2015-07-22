@@ -28,7 +28,7 @@ setup(name='fiware_api_blueprint_renderer',
       ],
       entry_points={
         'console_scripts': [
-          'fabre = fiware_api_blueprint_renderer.renderer:main',
+          'fabre = fiware_api_blueprint_renderer.src.renderer:main',
         ],
         'fiware_api_blueprint_renderer.themes': [
             'default = fiware_api_blueprint_renderer.themes.default_theme'

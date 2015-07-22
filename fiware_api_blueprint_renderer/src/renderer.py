@@ -218,7 +218,7 @@ def main():
         print "Usage: \n\t" + sys.argv[0] + " <api-spec-path> <dst-dir> [clear-temp-dir]"
         sys.exit(-1)
 
-    default_theme = os.path.dirname(__file__)+"/themes/default_theme/api-specification.tpl"
+    default_theme = os.path.dirname(__file__)+"/../themes/default_theme/api-specification.tpl"
 
     create_directory_if_not_exists( sys.argv[2] )
 
