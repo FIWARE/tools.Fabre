@@ -1,11 +1,11 @@
 {% macro rest_packet_body_div_id() %}{{ slug( action.name ) }}_{{ packet_type }}_{{ loop_index }}_body{% endmacro %}
 <div class="rest-packet-div">
-    <div class="container">
+    <div class="row">
         <div class="col-md-10">
             <h5>{{ packet_type }}: {{ rest_packet.name }}</h5>
         </div>
-        <div class="col-md-2">
-            <a href="#{{ rest_packet_body_div_id() }}" class="btn btn-default" data-toggle="collapse">Toggle details</a>
+        <div class="col-md-2 toogle-button">
+            <a href="#{{ rest_packet_body_div_id() }}" class="btn btn-default" data-toggle="collapse">detail</a>
         </div>
     </div>
 

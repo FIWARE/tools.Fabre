@@ -25,3 +25,48 @@
     padding: 5px;
     margin: 5px;
 }
+
+#toc{
+    margin-top: 2em;    
+}
+
+#toc li{
+    list-style-type: none;
+}
+
+#toc a{
+    text-decoration: none;
+}
+
+#toc>ul>li:first-child{
+    font-weight: bold;
+    font-size: 1.2em;  
+}
+#toc>ul>li{
+    font-weight: bold;
+}
+#toc ul{
+    padding-left: 0.5em;
+}
+
+#toc>ul{
+    padding-left: 1em;
+}
+
+/*#toc ul:not(#toc>ul){
+    padding-left: 0.5em;
+}*/
+
+.action-div .toogle-button, .rest-packet-div .toogle-button{
+    text-align: right;
+    font-size: 0.8em;
+}
+
+.action-method{
+    font-size:0.8em;
+}
+
+.action-uri{
+    word-wrap:break-word;
+    word-break: normal; 
+}

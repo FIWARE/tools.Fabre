@@ -1,6 +1,6 @@
-<!-- Action parameters -->     
+<!-- Action response attributes -->     
 {% if parameters|length > 0 %}               
-	<table class="action-parameters-table col-md-12">
+	<table class="action-parameters-table">
 	<caption>Parameters</caption>
 	<tr>
 	    <th class="action-parameters-th">Name</th>

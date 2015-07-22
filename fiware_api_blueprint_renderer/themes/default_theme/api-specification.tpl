@@ -17,17 +17,23 @@
 </head>
 <body>
     <div class="container">
-        <!-- TOC -->
-        {% include "fragments/toc.tpl" %}
+        <div class="row">
+           <!-- TOC -->
+           <div class="col-md-4">
+                {% include "fragments/toc.tpl" %}
+            </div>
 
-        <h1 id="api-name">{{ name }}</h1>
-        <p>{{ description }}</p>
-
-        <!-- API metadata -->
-        {% include "fragments/api_metadata.tpl" %}
-
-        <!-- API blueprint -->
-        {% include "fragments/api_blueprint.tpl" %}
+            <div class="col-md-8">
+               <h1 id="api-name">{{ name }}</h1>
+               <p>{{ description }}</p>
+    
+               <!-- API metadata -->
+               {% include "fragments/api_metadata.tpl" %}
+    
+               <!-- API blueprint -->
+               {% include "fragments/api_blueprint.tpl" %}
+            </div>
+        </div>
     </div>
 </body>
 </html>

@@ -7,7 +7,7 @@
         {% include "fragments/parameters_table.tpl" %}
         <h4>Actions</h4>
             {% for action in resource.actions %}
-                <div id="{{ slug( action.name ) }}" class="container action-div">
+                <div id="{{ slug( action.name ) }}" class="action-div">
                     <div class="row action-div-header">
                         <div class="col-md-1">
                             <div class="action-method">{{ action.method }}</div>
@@ -21,23 +21,20 @@
                             {% endif %}
                             </div>
                         </div>
-                        <div class="col-md-5">
+                        <div class="col-md-4">
                             <em class="action-name">{{ action.name }}</em>
                         </div>
-                        <div class="col-md-1">
-                            <a href="#{{ slug( action.name ) }}_body" class="btn btn-default" data-toggle="collapse">Toggle details</a>
+                        <div class="col-md-2 toogle-button">
+                            <a href="#{{ slug( action.name ) }}_body" class="btn btn-default" data-toggle="collapse">detail</a>
                         </div>
                     </div>
 
                     <div id="{{ slug( action.name ) }}_body" class="collapse action-div-body">
                         <p>{{ action.description }}</p>
-
                         {% set parameters = action.parameters %}
-                        {% include "fragments/parameters_table.tpl" %}
-			
+                        {% include "fragments/parameters_table.tpl" %}			
                         {% set packet_contents = action.content %}
                         {% include "fragments/rest_packet_contents.tpl" %}      
-
                             {% for example in action.examples %}
 	                            {% for request in example.requests %}
                                 {% set rest_packet = request %}
