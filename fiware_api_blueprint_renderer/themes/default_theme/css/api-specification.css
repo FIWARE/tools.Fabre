@@ -1,3 +1,9 @@
+/*overwrite bootstrap container */
+body>.container:first-child
+{
+    margin-left: unset;
+}
+
 .action-parameters-table, .action-parameters-th, .action-parameters-td {
     border-style: solid;
     border-width: 1px;

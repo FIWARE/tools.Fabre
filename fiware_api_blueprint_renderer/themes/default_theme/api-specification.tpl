@@ -19,11 +19,11 @@
     <div class="container">
         <div class="row">
            <!-- TOC -->
-           <div class="col-md-4">
+           <div class="col-md-3">
                 {% include "fragments/toc.tpl" %}
             </div>
 
-            <div class="col-md-8">
+            <div class="col-md-9">
                <h1 id="api-name">{{ name }}</h1>
                <p>{{ description }}</p>
     

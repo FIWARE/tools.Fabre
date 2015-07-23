@@ -1,6 +1,5 @@
 # Fiware api blueprint renderer
 
-
 Tool for parsing a FIWARE specification file and rendering it to a HTML page.
 
 ## Dependencies
