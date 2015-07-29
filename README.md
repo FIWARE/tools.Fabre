@@ -6,6 +6,7 @@ Tool for parsing a FIWARE specification file and rendering it to a HTML page.
 
 * [Python 2](https://www.python.org/)
 * [drafter](https://github.com/apiaryio/drafter)
+* [Pandoc](http://pandoc.org/)
 * [Jinja2](http://jinja.pocoo.org/)
 * [Python Markdown](http://pythonhosted.org/Markdown/)
 
