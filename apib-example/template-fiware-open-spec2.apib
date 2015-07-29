@@ -44,7 +44,12 @@ This section is intended to describe the main concepts, constructs, data structu
 
 ## Introduction
 
-This is the example spec of a FIWARE GE. 
+This is the example spec of a FIWARE GE.
+
+| a1 | b1 | c1 | d1 |
+|----|----|----|----|
+| a2 | b2 | c2 | d2 |
+| a3 | b3 | c3 | d3 |
 
 ## Terminology
 
@@ -60,7 +65,7 @@ This is the example spec of a FIWARE GE.
 ### Question (object)
       + question (string) - Text of the question
       + published_at (string) - An ISO8601 date when the question was published.
-      + url (string) - URL 
+      + url (string, required) - URL 
       + choices (array[Choice]) - An array of Choice objects.
 
 # REST API
@@ -210,10 +215,19 @@ You may create your own question using this action. It takes a JSON
 object containing a question and a collection of answers in the
 form of choices.
 
+
+Example table
+
+| c1   | c2   | c3   | c4   | c5   |
+|------|------|------|------|------|
+| c1f1 | c2f1 | c3f1 | c4f1 | c5f1 |
+| c1f2 | c2f2 | c3f2 | c4f2 | c5f2 |
+| c1f3 | c2f3 | c3f3 | c4f3 | c5f3 |
+
 + Request (application/json)
 
     + Attributes (object)
-      + question (string) - The text of the question
+      + question (string, required) - The text of the question
       + choices (array[string]) - A collection of choices.
     
     + Body

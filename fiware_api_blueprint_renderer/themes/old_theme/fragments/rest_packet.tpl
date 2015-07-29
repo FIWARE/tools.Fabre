@@ -1,20 +1,27 @@
 {% macro rest_packet_body_div_id() %}{{ slug( action.name ) }}_{{ packet_type }}_{{ loop_index }}_body{% endmacro %}
-{% macro rest_packet_mime(headers) -%}
-    {% for header in headers %}
-        {% if 'Content-Type'==header.name %}
-            ({{ header.value }})
-        {% endif %}
-    {% endfor %}
-{%- endmacro %}
-<div class="rest-packet-div">
+<div class="rest-packet-div col-md-12">
+    <div class="row">
+        <div class="col-md-10">
+            <h5>{{ packet_type }} {{ rest_packet.name }}</h5>
+        </div>
+    </div>
 
-            <span class="packetType">{{ packet_type }} {{ rest_packet.name }}</span> {{rest_packet_mime(rest_packet.headers)}}
-  
+    <div class="row">
+        <div class="col-md-12">
             {% set packet_contents = rest_packet.content %}
             {% include "fragments/rest_packet_contents.tpl" %}
+        </div>
+    </div>
 
- 
-            <div id="{{ rest_packet_body_div_id() }}" class=" action-div-body">
+    <div class="row">
+        <div class="col-md-12 toggle-button">
+            <a href="#{{ rest_packet_body_div_id() }}" class="btn btn-default" data-toggle="collapse">Show example</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div id="{{ rest_packet_body_div_id() }}" class="collapse action-div-body">
                 <p>{{ rest_packet.description }}</p>
 
                 {% if rest_packet.headers | length > 0 %}
@@ -37,5 +44,6 @@
                     <pre><code>{{ rest_packet.schema }}</code></pre>
                 {% endif %}
             </div>
-     
+        </div>
+    </div>
 </div>

@@ -24,7 +24,8 @@ setup(name='fiware_api_blueprint_renderer',
       include_package_data=True,
       install_requires=[
         'jinja2>=2.7.3',
-        'markdown>=2.6.2'
+        'markdown>=2.6.2',
+        'pypandoc>=0.9.9'
       ],
       entry_points={
         'console_scripts': [

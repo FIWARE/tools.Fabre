@@ -1,6 +1,5 @@
 # Fiware api blueprint renderer
 
-
 Tool for parsing a FIWARE specification file and rendering it to a HTML page.
 
 ## Dependencies
@@ -22,7 +21,13 @@ make drafter
 sudo make install
 ```
 
-Once installed Drafter, we can download fabre and install it as a PIP package:
+We also need Pandoc for further document analysis:
+
+```
+sudo apt-get install pandoc
+```
+
+Once Pandoc and Drafter are installed, we can download fabre and install it like a PIP package:
 
 ```
 git clone git@github.com:FiwareULPGC/fiware-api-blueprint-renderer.git

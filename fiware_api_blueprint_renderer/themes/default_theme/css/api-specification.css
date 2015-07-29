@@ -1,72 +1,37 @@
-.action-parameters-table, .action-parameters-th, .action-parameters-td {
-    border-style: solid;
-    border-width: 1px;
-    border-color: black;
-    border-collapse: collapse;
+
+
+/* new css */
+body{
+    background-image: url(../img/fiware-logo.png);
 }
 
-.action-parameters-th, .action-parameters-td {
-	padding: 5px;
-}
-
-.action-div {
-    border: 1px solid black;
-    margin-bottom: 5px;
-}
-
-.action-method {
-    border: 1px solid black;
-    background-color: yellow;
-    text-align: center;
-}
-
-.rest-packet-div {
-    border: 1px solid black;
-    padding: 5px;
-    margin: 5px;
-}
-
-#toc{
-    margin-top: 2em;    
-}
-
-#toc li{
-    list-style-type: none;
-}
-
-#toc a{
-    text-decoration: none;
-}
-
-#toc>ul>li:first-child{
+.packetType{
     font-weight: bold;
-    font-size: 1.2em;  
+    font-style: italic;
 }
-#toc>ul>li{
+
+.parameters-title{
     font-weight: bold;
-}
-#toc ul{
-    padding-left: 0.5em;
+    font-size: 1.1em;
 }
 
-#toc>ul{
-    padding-left: 1em;
+.resource{
+    border-left: 5px darkgray solid;
+    margin-top: 5px;
+    padding-left: 5px;
+    background-color: #FBF7F7;
 }
 
-/*#toc ul:not(#toc>ul){
-    padding-left: 0.5em;
-}*/
-
-.action-div .toogle-button, .rest-packet-div .toogle-button{
-    text-align: right;
-    font-size: 0.8em;
+.action{
+    border-left: 1px blue solid;
+    margin-top: 5px;
+    margin-bottom: 25px;
+    padding-left: 5px;
+    padding-bottom: 15px;
+    background-color: #E0DCF3;
 }
 
-.action-method{
-    font-size:0.8em;
-}
-
-.action-uri{
-    word-wrap:break-word;
-    word-break: normal; 
+.action-header{
+    font-size: 1.1em;
+    font-weight: bold;
 }
