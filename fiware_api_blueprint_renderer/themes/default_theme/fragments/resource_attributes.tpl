@@ -4,7 +4,7 @@
     {%- endif %}
 {%- endmacro %}
 {% if packet_contents | length > 0 and packet_contents[0]["typeDefinition"] is defined %}
-    <span class="payload-title">Payload</span>
+    <span class="attributes-title">Attributes</span>
     {% for content in packet_contents %}
         {% if content["typeDefinition"] %}
             {%- if content["typeDefinition"] is defined and displayTypeName( content["typeDefinition"]["typeSpecification"]["name"] ) != "object" and data_structures[ displayTypeName(content["typeDefinition"]["typeSpecification"]["name"])] %}

@@ -42,15 +42,14 @@ In addition, note that a list of currently open discussions is available at
 * https://github.com/telefonicaid/fiware-orion/issues/1034
 * https://github.com/telefonicaid/fiware-orion/issues/1035
 
-This specification is licensed under the [FIWARE Open Specification License](http://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FI-WARE_Open_Specification_Legal_Notice_%28essential_patents_license%29).
+This specification is licensed under the
+[FIWARE Open Specification License]
+(http://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/FI-WARE_Open_Specification_Legal_Notice_%28essential_patents_license%29).
 
-## Copyright
 
-Copyright - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed lacinia, nisl non tristique sollicitudin, nisl lectus finibus erat, a mattis orci turpis non nunc. Maecenas convallis diam odio, vel blandit turpis varius at. Duis hendrerit lectus non viverra vehicula. Nunc eu eros nec nisl facilisis commodo. Nam at dui arcu. Quisque vitae augue metus. Sed quis consequat lacus. Duis sed eros rhoncus, fringilla mauris ut, interdum orci. Cras sodales facilisis luctus. Quisque fringilla tincidunt sapien at iaculis. Phasellus tempus a enim ac volutpat. Ut tincidunt fermentum massa quis sagittis. Ut non scelerisque risus, a dignissim odio.
+## Conformance
 
-## Abstract
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed lacinia, nisl non tristique sollicitudin, nisl lectus finibus erat, a mattis orci turpis non nunc. Maecenas convallis diam odio, vel blandit turpis varius at. Duis hendrerit lectus non viverra vehicula. Nunc eu eros nec nisl facilisis commodo. Nam at dui arcu. Quisque vitae augue metus. Sed quis consequat lacus. Duis sed eros rhoncus, fringilla mauris ut, interdum orci. Cras sodales facilisis luctus. Quisque fringilla tincidunt sapien at iaculis. Phasellus tempus a enim ac volutpat. Ut tincidunt fermentum massa quis sagittis. Ut non scelerisque risus, a dignissim odio.
+All the interfaces described by this specification are mandatory and must be implemented in order to be compliant with. 
 
 # Specification
 
@@ -63,11 +62,6 @@ The FIWARE NGSI (Next Generation Service Interface) API defines:
 * a **context availability interface** for exchanging information on how to obtain context information
 (whether to separate the two interfaces is currently under discussion).
 * a set of typical **roles** played by NGSI-compliant components
-
-
-## Conformance
-
-All the interfaces described by this specification are mandatory and must be implemented in order to be compliant with. 
 
 ## Terminology
 
@@ -416,6 +410,11 @@ Retrieves a list of entities which match criteria defined by the following param
 `geometry` and `coords` attribute (see below for a detailed description of these parameters). A given entity
 have to match all the criteria to be retrieved (i.e. criteria are combined in a logical AND way).
 
++ Response_Codes
+    + 200 OK - Successful operation
+    
++ Response_Codes_Error
+    + 400 BAD REQUEST - If any of the parameters do not conform to the datatypes or syntax. 
 
 + Parameters
     + id: Boe_Idearium (optional, string) - A comma separated list of elements.
@@ -434,7 +433,7 @@ have to match all the criteria to be retrieved (i.e. criteria are combined in a 
      It is composed of a tokens list separated by <code>;</code>. The first token is the shape of the geometry,
     the rest of the tokens (if any) depends on the shape
     
-    + coords (optional, string) - List of coordinates (separated by ```;```) are interpreted depending on the geometry parameter
+    + coords (optional, string) - List of coordinates (separated by <code>;</code>) are interpreted depending on the geometry parameter
     depends on the shape.
     
     + limit: 20 (optional, number) - Limits the number of entities to be retrieved
@@ -446,7 +445,7 @@ have to match all the criteria to be retrieved (i.e. criteria are combined in a 
     
     + options (optional, string) - Options dictionary
       + Members
-          + count - when used, the total number of entities is returned in the response as a HTTP header named .
+          + count - when used, the total number of entities is returned in the response as a HTTP header named <code>X-Total-Count</code>.
           + canonical - when used, the response payload uses the "canonical form". See JSON entity representation format section for details.
 
 + Response 200 (application/json)
@@ -482,6 +481,12 @@ have to match all the criteria to be retrieved (i.e. criteria are combined in a 
 The payload is an object representing the entity to be created. The object follows
 the JSON entity representation format (described in a section above).
 
++ Response_Codes
+    + 201 CREATED - Successful operation uses 201 Created. Reponse includes a `Location` header
+    with the URL of the created entity.
+
++ Response_Codes_Error
+    + 400 BAD REQUEST - If the JSON payload does not conform to the one defined by this operation
 
 + Request (application/json)
 
@@ -519,6 +524,11 @@ than one entity with the same ID (e.g. entities with same ID but different type)
 an error mesage is returned, specifying in the description the URL that could be used to get
 the list of conflicting entities, i.e. all the entities with such an ID.
 
++ Response_Codes
+    + 200 OK - On success
+
++ Response_Codes_Error
+    + 404 NOT FOUND - When the entity is not found
 
 + Parameters
     + attrs (optional, string) - Comma-separated list of attribute names which data will be included in the response.
@@ -554,6 +564,11 @@ whether `append` option is used or not.
   existing in the entity are appended. In addition to that, in the case some of the attributes in the
   payload already exist in the entity, an error if returned.
 
+Response:
+
+* Successful operation uses 204 No Content
+* Errors use a non-200 and (optionally) an error payload. See subsection on Error Responses for more details.
+
 + Parameters
     + options (optional, string) - Operations options
         + Members
@@ -578,6 +593,11 @@ are not allowed.
 The entity attributes are updated with the ones in the payload. In addition to that, if one or more
 attributes in the payload doesn't exist in the entity, an error if returned.
 
+Response:
+
+* Successful operation uses 204 No Content
+* Errors use a non-200 and (optionally) an error payload. See subsection on Error Responses for more details.
+
 + Request (application/json)
 
         {
@@ -596,6 +616,11 @@ are not allowed.
 The attributes previously existing in the entity are removed and replaced by the ones in the
 request.
 
+Response:
+
+* Successful operation uses 204 No Content
+* Errors use a non-200 and (optionally) an error payload. See subsection on Error Responses for more details.
+
 + Request (application/json)
 
         {
@@ -608,6 +633,11 @@ request.
 ### Remove entity atributes [DELETE /v2/entities/{entityId}]
 
 Delete the entity.
+
+Response:
+
+* Successful operation uses 204 No Content
+* Errors use a non-200 and (optionally) an error payload. See subsection on Error Responses for more details.
 
 + Response 204
 
@@ -624,6 +654,10 @@ Delete the entity.
 Returns a JSON object with the attribute data of the attribute. The object follows the JSON representation for attributes
 (described in a section above).
 
+Response:
+
+* Successful operation uses 20O OK.
+* Errors use a non-200 and (optionally) an error payload. See subsection on Error Responses for more details.
 
 + Response 200 (application/json)
 
@@ -637,6 +671,10 @@ The request payload is an object representing the new attributes data. Previous 
 is replaced by the one in the request. The object follows the JSON representation for attributes
 (described in a section above).
 
+Response:
+
+* Successful operation uses 204 No Content
+* Errors use a non-200 and (optionally) an error payload. See subsection on Error Responses for more details.
 
 + Request (application/json)
 
@@ -645,12 +683,16 @@ is replaced by the one in the request. The object follows the JSON representatio
             "unitCode": "CEL"
         }
 
-+ Response 204
++ Response 200
 
 ### Remove a single attribute [DELETE /v2/entities/{entityId}/attrs/{attrName}]
 
 Removes an entity attribute.
 
+Response:
+
+* Successful operation uses 204 No Content
+* Errors use a non-200 and (optionally) an error payload. See subsection on Error Responses for more details.
 
 + Response 204
 
@@ -659,6 +701,11 @@ Removes an entity attribute.
 It returns a JSON object with a `value` propierty with the value of the attribute. The `text` option
 indicates that the attribute value must be provided as plain text (text/plain).
 
+Response:
+
+* Successful operation uses 20O OK.
+* Errors use a non-200 and (optionally) an error payload. See subsection on Error Responses for more details.
+
 + Parameters
     + entityId: Bcn_Welt (required, string) - Entity ID
     + attrName: temperature (required, string) - Attribute to be retrieved.
@@ -666,12 +713,21 @@ indicates that the attribute value must be provided as plain text (text/plain).
         + Members
             + text - indicates that the attribute value must be returned as plain text
 
++ Response 200 (application/json)
+
+        {
+            "value": 21.7
+        }
 
 ### Update attribute value [PUT /v2/entities/{entityId}/attrs/{attrName}/value]
 
 The request payload is the new attribute value. It can be represented as a JSON object (application/json),
 with a `value` property, or as plain text (text/plain).
 
+Response:
+
+* Successful operation uses 204 No Content
+* Errors use a non-200 and (optionally) an error payload. See subsection on Error Responses for more details.
 
 + Request (application/json)
 
@@ -679,7 +735,7 @@ with a `value` property, or as plain text (text/plain).
             "value": 25.0
         }
 
-+ Response 204
++ Response 200
 
 # Group Types
 
@@ -693,6 +749,10 @@ of such type) and `count` (the number of entities belonging to that type).
 
 If `values` option is used, the operation returns a JSON array with the list of entity types names as strings.
 
+Response code:
+
+* Successful operation uses 200 OK
+* Errors use a non-200 and (optionally) an error payload. See subsection on Error Responses for more details.
 
 + Parameters
     + limit: 20  (optional, number)   - Limit the number of types to be retrieved
@@ -749,7 +809,10 @@ If `values` option is used, the operation returns a JSON array with the list of 
 The operation returns a JSON object with information about the type: `attrs` (the union set of attribute names along all
 the entities of such type) and `count` (the number of entities belonging to that type).
 
+Response code:
 
+* Successful operation uses 200 OK
+* Errors use a non-200 and (optionally) an error payload. See subsection on Error Responses for more details.
 
 + Response 200 (application/json)
 
@@ -806,6 +869,10 @@ Notification rules are as follow:
 
 Returns a list of all the subscriptions present in the system
 
+Response:
+
+* Successful operation uses 200 OK
+* Errors use a non-200 and (optionally) an error payload. See subsection on Error Responses for more details.
 
 + Response 200
 
@@ -838,6 +905,8 @@ The subscription is represented by a JSON object as described at the beginning o
 
 Response:
 
+* Successful operation uses 201 Created
+* Errors use a non-200 and (optionally) an error payload. See subsection on Error Responses for more details.
 
 + Request (application/json)
 
@@ -874,6 +943,10 @@ Response:
 
 The response is the subscription represented by a JSON object as described at the beginning of this section.
 
+Response:
+
+* Successful operation uses 200 OK
+* Errors use a non-200 and (optionally) an error payload. See subsection on Error Responses for more details.
 
 + Response 200 (application/json)
 
@@ -900,6 +973,11 @@ The response is the subscription represented by a JSON object as described at th
 
 Only the fields included in the request are updated in the subscription.
 
+Response:
+
+* Successful operation uses 204 No Content
+* Errors use a non-200 and (optionally) an error payload. See subsection on Error Responses for more details.
+
 + Request (application/json)
 
         {
@@ -911,6 +989,11 @@ Only the fields included in the request are updated in the subscription.
 ### Delete subscription [DELETE /v2/subscriptions/{subscriptionId}]
 
 Cancels subscription.
+
+Response:
+
+* Successful operation uses 204 No Content
+* Errors use a non-200 and (optionally) an error payload. See subsection on Error Responses for more details.
 
 + Response 204
 
@@ -938,6 +1021,10 @@ use cases of this functionality is the association of Context Providers.
 
 Lists all the registrations present in the system.
 
+Response:
+
+* Successful operation uses 200 OK
+* Errors use a non-200 and (optionally) an error payload. See subsection on Error Responses for more details.
 
 + Response 200
 
@@ -964,6 +1051,8 @@ The registration is represented by a JSON object as described at the beginning o
 
 Response:
 
+* Successful operation uses 201 Created
+* Errors use a non-200 and (optionally) an error payload. See subsection on Error Responses for more details.
 
 + Request (application/json)
 
@@ -993,6 +1082,10 @@ Response:
 
 The response is the registration represented by a JSON object as described at the beginning of this section.
 
+Response:
+
+* Successful operation uses 200 OK
+* Errors use a non-200 and (optionally) an error payload. See subsection on Error Responses for more details.
 
 + Response 200 (application/json)
 
@@ -1012,6 +1105,10 @@ The response is the registration represented by a JSON object as described at th
 
 Only the fields included in the request are updated in the registration.
 
+Response:
+
+* Successful operation uses 204 No Content
+* Errors use a non-200 and (optionally) an error payload. See subsection on Error Responses for more details.
 
 + Request (application/json)
 
@@ -1025,5 +1122,181 @@ Only the fields included in the request are updated in the registration.
 
 Cancels registration.
 
+Response:
+
+* Successful operation uses 204 No Content
+* Errors use a non-200 and (optionally) an error payload. See subsection on Error Responses for more details.
 
 + Response 204
+
+# Group OMA-NGSI Operations
+
+For the sake of completeness here is an enumeration of the OMA-NGSI (9 & 10) operations. These
+operations will be supported under the 'v2' resource as well.
+
+## queryContext [POST /v2/queryContext]
+
+<table style="width: 100%; margin: 12px 0 0 0;">
+<tr><td colspan="2"><strong>Required Parameters</strong></td></tr>
+<tr><td colspan="2">none</td></tr>
+<tr><td colspan="2"><strong>Optional Parameters</strong></td></tr>
+<tr><td style="padding-right: 40px; width: 140px;">limit</td><td>Limit the number of entities to be retrieved</td></tr>
+<tr><td style="padding-right: 40px; width: 140px;">offset</td><td>Skip a number of records</td></tr>
+<tr><td style="padding-right: 40px; width: 140px;">options</td><td>
+This operation supports two options:
+
+<ul>
+  <li><code>count</code>: when used, the total number of entities is returned in the response as a HTTP header named <code>X-Total-Count</code>.</li>
+  <li><code>canonical</code>: when used, the response payload uses the "canonical form". See JSON entity representation format section
+  for details.</li>
+</td></tr>
+</table>
+
+The response payload is an Array which contains one object per matching entity. Each entity follows
+the JSON entity representation format (described in a section above).
+
+The payload may contain the following elements (all of them optional):
+
+* `entities`: a list of entites to search for. Each entity is represented by a JSON object with the following
+  elements:
+   * `id` or `idPattern` (both cannot be used at the same time): specifies the exact ID (in the case of `id`)
+     or pattern (in the case of `idPattern`) of the entities to search for. If omitted, it means "any entity
+     ID".
+   * `type`: specifies the type of the entities to search for. If omitted, it means "any entity type".
+* `attributes`: a list of attributes names to search for. If omitted, it means "any attribute".
+* `scopes`: a list of scopes to restrict the results of the query. Each scope is represented by a JSON
+   object with a `type` (a JSON string) and `value` (whose type depends on the `type` property). The
+   different available scopes are described elsewhere.
+
+Response code:
+
+* Successful operation uses 200 OK
+* Errors use a non-200 and (optionally) an error payload. See subsection on Error Responses for more details.
+
++ Parameters
+    + limit: 20 (optional, number)
+    + offset: 20 (optional, number)
+
++ Request (application/json)
+
+        {
+            "entities": [
+                {
+                    "idPattern": ".*",
+                    "type": "myFooType"
+                },
+                {
+                    "id": "myBar",
+                    "type": "myBarType"
+                }
+            ],
+            "attributes": [
+                "temperature",
+                "humidity"
+            ],
+            "scopes": [
+                {
+                    "type": "FIWARE::Filter::qString",
+                    "value": "temperature>40;colour=black,red;+status"
+                },
+                {
+                    "type": "FIWARE::Filter::Location",
+                    "value": {
+                        "circle": {
+                            "centerLatitude": "40.418889",
+                            "centerLongitude": "-3.691944",
+                            "radius": "13500"
+                        }
+                    }
+                }
+            ]
+        }
+
++ Response 200 (application/json)
+
+        [
+         {
+            "type": "Room",
+            "id": "DC_S1-D41",
+            "temperature": 35.6
+         },
+         {
+            "type": "Room",
+            "id": "Boe-Idearium",
+            "temperature": 22.5
+         },
+         {
+            "type": "Car",
+            "id": "P-9873-K",
+            "speed": {
+                "value": 100,
+                "type": "number",
+                "accuracy": 2,
+                "timestamp": {
+                    "value": "2015-06-04T07:20:27.378Z",
+                    "type": "date"
+                }
+            }
+         }
+        ]
+
+## updateContext [POST /v2/updateContext]
+
+The payload is an object with two properties:
+
+* `action`, to specify the kind of updateContext action to do (see OMA NGSI specification for the semantics),
+   either UPDATE, APPEND or DELETE
+* `entities`, an array of entities, each one specified using the the JSON entity representation format
+  (described in a section above).
+
+Response:
+
+* Successful operation uses 201 Created.
+* Errors use a non-200 and (optionally) an error payload. See subsection on Error Responses for more details.
+
++ Request (application/json)
+
+        {
+            "action": "APPEND",
+            "entities": [
+                {
+                    "type": "Room",
+                    "id": "Bcn-Welt",
+                    "temperature": 21.7,
+                    "humidity": 60
+                },
+                {
+                    "type": "Room",
+                    "id": "Mad_Aud",
+                    "temperature": 22.9,
+                    "humidity": 85
+                }
+            ]
+        }
+
++ Response 201
+
+    + Headers
+
+            Location: /v2/entities/Bcn-Welt
+
+## subscribeContext [POST /v2/subscribeContext]
+
+## updateContextSubscription [POST /v2/updateContextSubscription]
+
+## unsubscribeContext [POST /v2/unsubscribeContext]
+
+## notifyContext [POST /v2/notifyContext]
+
+## registerContext [POST /v2/registerContext]
+
+## discoverContextAvailability [POST /v2/discoverContextAvailability]
+
+## subscribeContextAvailability [POST /v2/subscribeContextAvailability]
+
+## updateContextAvailabilitySubscription [POST /v2/updateContextAvailabilitySubscription]
+
+## unsubscribeContextAvailability [POST /v2/unsubscribeContextAvailability]
+
+## notifyContextAvailability [POST /v2/notifyContextAvailability]
+

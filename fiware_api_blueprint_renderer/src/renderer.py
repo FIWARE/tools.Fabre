@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from collections import OrderedDict
 import inspect
 import json
 import os
@@ -7,11 +8,13 @@ import re
 import shutil
 from subprocess import call
 import sys
+from pprint import pprint
 
 from jinja2 import Environment, FileSystemLoader
 import markdown
 import pypandoc
-    
+
+import custom_codes_utils
 
 
 def print_api_spec_title_to_extra_file( inputFilePath, extraSectionsFilePath ):
@@ -98,13 +101,17 @@ def create_json_section( sectionMarkdownTitle, sectionBody ):
     section = {}
     section["id"] = get_markdow_title_id( sectionTitle )
     section["name"] = sectionTitle
-    section["body"] = markdown.markdown( sectionBody.decode('utf-8'), extensions=['markdown.extensions.tables'] )
+    section["body"] = markdown.markdown( sectionBody.decode('utf-8'), extensions=['markdown.extensions.tables','markdown.extensions.fenced_code'] )
     section["subsections"] = []
 
     return section
 
 
 def get_subsection_body( fileDescriptor ):
+    """Reads the given file until a Markdown header is found and returns the bytes read
+
+    Arguments:
+    fileDescriptor -- Descriptor of the file being read"""
     body=''
     line = fileDescriptor.readline()
 
@@ -178,6 +185,24 @@ def parse_meta_data( filePath ):
     return metadata
 
 
+def generate_metadata_dictionary( metadataSection ):
+    """Generates a metadata section as a dictionary from a non-dictionary section
+    
+    Arguments:
+    metadataSection -- Source metadata section
+    """
+    metadataSectionDict = {}
+    metadataSectionDict['id'] = metadataSection['id']
+    metadataSectionDict['name'] = metadataSection['name']
+    metadataSectionDict['body'] = metadataSection['body']
+    metadataSectionDict['subsections'] = OrderedDict()
+
+    for subsection in metadataSection['subsections']:
+        metadataSectionDict['subsections'][subsection['name']] = generate_metadata_dictionary(subsection)
+
+    return metadataSectionDict
+
+
 def add_metadata_to_json( metadata, jsonFilePath ):
     """Adds metadata values to a json file
     
@@ -185,7 +210,6 @@ def add_metadata_to_json( metadata, jsonFilePath ):
     metadata -- Metadata values in JSON format
     jsonFilePath -- Path to JSON file
     """
-
     jsonContent = ""
 
     with open( jsonFilePath, 'r' ) as jsonFile:
@@ -193,6 +217,8 @@ def add_metadata_to_json( metadata, jsonFilePath ):
         jsonContent['api_metadata'] = {}
         for metadataKey in metadata:
             jsonContent['api_metadata'][metadataKey] = metadata[metadataKey]
+
+    #jsonContent['api_metadata_dict'] = generate_metadata_dictionary( metadata )
 
     with open( jsonFilePath, 'w' ) as jsonFile:
         json.dump( jsonContent, jsonFile, indent=4 )
@@ -215,18 +241,20 @@ def parser_json_descriptions_markdown( jsonFilePath ):
     with open( jsonFilePath, 'w' ) as jsonFile:
         json.dump( jsonContent, jsonFile, indent=4 )
 
+
 def copy_static_files( templateDirPath, dstDirPath ):
+    """Copies the static files used by the resulting rendered site
+    
+    Arguments:
+    templateDirPath -- path to the template directory
+    dstDirPath -- destination directory
+    """
+    subdirectories = ['/css', '/js', '/img']
 
-
-    if os.path.exists(dstDirPath+"/css"):
-        shutil.rmtree(dstDirPath+"/css")
-    shutil.copytree(templateDirPath+"/css", dstDirPath+"/css")
-
-    if os.path.exists(dstDirPath+"/js"):
-        shutil.rmtree(dstDirPath+"/js")
-    shutil.copytree(templateDirPath+"/js", dstDirPath+"/js")
-
-
+    for subdirectory in subdirectories:
+        if os.path.exists(dstDirPath + subdirectory):
+            shutil.rmtree(dstDirPath + subdirectory)
+        shutil.copytree(templateDirPath + subdirectory, dstDirPath + subdirectory)
 
 
 def render_api_blueprint( templateFilePath, contextFilePath, dstDirPath ):
@@ -270,6 +298,54 @@ def clear_directory( dirPath ):
         except Exception, e:
             print e
 
+
+def add_description_to_json_object_parameter_value( jsonObject, parameterName, valueName, valueDescription ):
+    """"""
+    valueObject = None
+
+    for objectParameter in jsonObject['parameters']:
+        if objectParameter['name'] == parameterName:
+            for parameterValue in objectParameter['values']:
+                if parameterValue['value'] == valueName:
+                    valueObject = parameterValue
+                    
+    if valueObject != None:
+        # TODO: Change this
+        valueObject['description'] = valueDescription
+
+
+def add_description_to_json_parameter_value( jsonFilePath, resourceOrActionMarkdownHeader, parameterName, valueName, valueDescription ):
+    """"""
+    jsonContent = ""
+
+    wantedObject = extract_markdown_header_dict( resourceOrActionMarkdownHeader )
+
+    with open( jsonFilePath, 'r' ) as jsonFile:
+        jsonContent = json.load( jsonFile )
+
+    foundObject = None
+
+    if( 'method' in wantedObject ):
+        for resourceGroup in jsonContent['resourceGroups']:
+            for resource in resourceGroup['resources']:
+                for action in resource['actions']:
+                    if( action['name'] == wantedObject['name'] and action['method'] == wantedObject['method'] and action['attributes']['uriTemplate'] == wantedObject['uriTemplate'] ):
+                        foundObject = action
+                        break
+    else:
+        for resourceGroup in jsonContent['resourceGroups']:
+            for resource in resourceGroup['resources']:
+                if( resource['name'] == wantedObject['name'] and resource['uriTemplate'] == wantedObject['uriTemplate'] ):
+                    foundObject = resource
+                    break
+
+    if( foundObject != None ):
+        add_description_to_json_object_parameter_value( foundObject, parameterName, valueName, valueDescription )
+                
+    with open( jsonFilePath, 'w' ) as jsonFile:
+        json.dump( jsonContent, jsonFile, indent=4 )
+
+
 def parse_property_member_declaration( property_member_declaration_string ):
   """ Utility to parse the declaration of a property member into custom JSON. Based on the MSON specification. """
   
@@ -310,6 +386,7 @@ def parse_property_member_declaration( property_member_declaration_string ):
 
   return property_declaration
 
+
 def parse_defined_data_structures( data ):
   """Retrieves data structures definition from JSON fragment and gives them back as Python dict"""
   data_structure_dict = {}
@@ -340,6 +417,7 @@ def parse_defined_data_structures( data ):
 
   return data_structure_dict
 
+
 def parser_json_data_structures( jsonFilePath ):
     """Retrieves data structures definition from JSON file and writes them in an easier to access format"""
     
@@ -348,10 +426,222 @@ def parser_json_data_structures( jsonFilePath ):
     with open( jsonFilePath, 'r' ) as jsonFile:
         jsonContent = json.load( jsonFile )
 
-    #jsonContent['data_structures'] = parse_defined_data_structures( jsonContent['content'][0] )
+    jsonContent['data_structures'] = parse_defined_data_structures( jsonContent['content'][0] )
     
     with open( jsonFilePath, 'w' ) as jsonFile:
         json.dump( jsonContent, jsonFile, indent=4 )
+
+
+def extract_markdown_header_dict( markdownHeader ):
+    """Returns a dict with the elements of a given Markdown header (for resources or actions)"""
+    markdownHeader = markdownHeader.lstrip( '#' ).strip()
+    
+    p = re.compile("(.*) \[(\w*) (.*)\]")
+    
+    headerDict = {}
+    if p.match( markdownHeader ):
+        headerGroups = p.match( markdownHeader ).groups()
+
+        headerDict['name'] = headerGroups[0]
+        headerDict['method'] = headerGroups[1]
+        headerDict['uriTemplate'] = headerGroups[2]
+    else:
+        p = re.compile("(.*) \[(.*)\]")
+        headerGroups = p.match( markdownHeader ).groups()
+
+        headerDict['name'] = headerGroups[0]
+        headerDict['uriTemplate'] = headerGroups[1]
+        
+    return headerDict
+
+
+def add_custom_code_to_action_or_resource_json( jsonFilePath, actionMarkdownLine, newKey, newValue ):
+    """Finds an action or resource in the JSON file given its Markdown header line and adds a new key value to it"""
+    
+    jsonContent = ""
+
+    wantedObject = extract_markdown_header_dict( actionMarkdownLine )
+
+    with open( jsonFilePath, 'r' ) as jsonFile:
+        jsonContent = json.load( jsonFile )
+
+    foundObject = None
+
+    if( 'method' in wantedObject ):
+        for resourceGroup in jsonContent['resourceGroups']:
+            for resource in resourceGroup['resources']:
+                for action in resource['actions']:
+                    if( action['name'] == wantedObject['name'] and action['method'] == wantedObject['method'] and action['attributes']['uriTemplate'] == wantedObject['uriTemplate'] ):
+                        foundObject = action
+                        break
+    else:
+        for resourceGroup in jsonContent['resourceGroups']:
+            for resource in resourceGroup['resources']:
+                if( resource['name'] == wantedObject['name'] and resource['uriTemplate'] == wantedObject['uriTemplate'] ):
+                    foundObject = resource
+                    break
+
+    if( foundObject != None ):
+        foundObject[newKey] = newValue
+                
+    with open( jsonFilePath, 'w' ) as jsonFile:
+        json.dump( jsonContent, jsonFile, indent=4 )
+
+def add_custom_codes_to_json( jsonFilePath, customCodes ):
+    """Inserts found custom code sections to their parent action"""
+
+    for customCode in customCodes:
+        add_custom_code_to_action_or_resource_json( jsonFilePath, customCode["parent"], 'custom_codes', customCode["custom_codes"] )
+
+def parse_markdown_links( APIBlueprintFilePath ):
+    """Renders the markdown links inside the APIB file"""
+
+    editingFilePath = APIBlueprintFilePath+'.processing_parse_link'
+    
+    shutil.copyfile(APIBlueprintFilePath, APIBlueprintFilePath+'.bak_parse_link')
+
+    regex_string = "\[(?P<linkText>[^\(\)\[\]]*)\]\((?P<linkRef>[^\(\)\[\]]*)\)"
+    inline_code_regex = re.compile(regex_string)
+
+    with open(APIBlueprintFilePath, 'r') as readFile:
+        with open(editingFilePath, 'w') as writeFile:
+            for line in readFile:
+                link_matches = inline_code_regex.findall( line )
+                if link_matches:
+                    for link_match in link_matches:
+                        markdownLink = "["+link_match[0]+"]"+"("+link_match[1]+")"
+                        parsedLink = markdown.markdown( "["+link_match[0]+"]"+"("+link_match[1]+")" ).replace("<p>","").replace("</p>", "")
+                        line = line.replace(markdownLink, parsedLink)
+
+                writeFile.write(line)
+
+    shutil.move(editingFilePath, APIBlueprintFilePath)
+
+def parse_markdown_inline_codes( APIBlueprintFilePath ):
+    """Renders the inline code expressions inside the APIB file"""
+
+    editingFilePath = APIBlueprintFilePath+'.processing_parse_link'
+    
+    shutil.copyfile(APIBlueprintFilePath, APIBlueprintFilePath+'.bak_parse_link')
+
+    regex_string = "(?P<inline_code>`[^`]*`)"
+    inline_code_regex = re.compile(regex_string)
+
+    with open(APIBlueprintFilePath, 'r') as readFile:
+        with open(editingFilePath, 'w') as writeFile:
+            for line in readFile:
+                inline_code_matches = inline_code_regex.findall( line )
+                if inline_code_matches:
+                    for inline_code_match in inline_code_matches:
+                        parsed_inline_code = markdown.markdown( inline_code_match ).replace("<p>","").replace("</p>", "")
+                        line = line.replace(inline_code_match, parsed_inline_code)
+
+                writeFile.write(line)
+
+    shutil.move(editingFilePath, APIBlueprintFilePath)
+
+def find_and_mark_empty_resources( jsonObj ):
+    """Makes title of empty resources None.
+
+    When a resource has only one action and they share names, the APIB declared an action witohut parent resource.
+    """
+
+    for resourceGroup in jsonObj["resourceGroups"]:
+        for resource in resourceGroup["resources"]:
+            if len(resource["actions"]) == 1:
+                if resource["actions"][0]["name"] == resource["name"]:
+                    resource["name"] = None
+
+
+def find_and_mark_empty_resources( jsonFilePath ):
+    """Makes a resource able to be ignored by emprtying its title. 
+
+    When a resource has only one action and they share names, the APIB declared an action witohut parent resource.
+    """
+    
+    jsonContent = ""
+
+    with open( jsonFilePath, 'r' ) as jsonFile:
+        jsonContent = json.load( jsonFile )
+
+    for resourceGroup in jsonContent["resourceGroups"]:
+        for resource in resourceGroup["resources"]:
+            if len(resource["actions"]) == 1:
+                if resource["actions"][0]["name"] == resource["name"]:
+                    resource["ignoreTOC"] = True
+                else:
+                    resource["ignoreTOC"] = False
+
+
+    with open( jsonFilePath, 'w' ) as jsonFile:
+        json.dump( jsonContent, jsonFile, indent=4 )
+
+
+def get_markdown_links( markdownFilePath ):
+    """Returns a list with all the Markdown links present in a gvien Markdown file"""
+
+    link_regex_string = "\[(?P<linkText>[^\(\)\[\]]*)\]\((?P<linkRef>[^\(\)\[\]]*)\)"
+    link_regex = re.compile( link_regex_string )
+    
+    links = []
+    with open( markdownFilePath, 'r' ) as file:
+        for line in file:
+            link_matches = link_regex.findall( line )
+            if link_matches:
+                for link_match in link_matches:
+                    link = {}
+                    link['title'] = link_match[0]
+                    link['url'] = link_match[1]
+
+                    links.append( link )
+
+    return links
+
+
+def add_reference_links_to_json( APISpecificationPath, JSONFilePath ):
+    """Extract all the links from the specification file and adds them to the JSON.
+
+    Arguments:
+    APISpecificationPath -- path to the specification file where all the links will be extracted from.
+    JSONFilePath -- path to the JSON file where all the links will be added.
+    """
+    jsonContent = ""
+
+    with open( JSONFilePath, 'r' ) as jsonFile:
+        jsonContent = json.load( jsonFile )
+
+    jsonContent['reference_links'] = get_markdown_links( APISpecificationPath )
+
+    with open( JSONFilePath, 'w' ) as jsonFile:
+        json.dump( jsonContent, jsonFile, indent=4 )
+
+def add_nested_parameter_description_to_json( APIBlueprintFilePath, JSONFilePath ):
+    """Extracts all nested description for`parameter values and adds them to the JSON.
+
+    Arguments:
+    APISpecificationPath -- path to the specification file where all the links will be extracted from.
+    JSONFilePath -- path to the JSON file where all the links will be added.
+    """
+    jsonContent = ""
+
+    # [{'parameters': [{'name': u'options',
+    #                   'values': [{'description': u'indicates that the attribute value must be returned as plain text',
+    #                               'name': u'text'}]}],
+    #   'parent': u'## Attribute Value by Entity ID [/v2/entities/{entityId}/attrs/{attrName}/value{?options}]'}]
+
+    nested_descriptions_list = custom_codes_utils.get_nested_parameter_values_description( APIBlueprintFilePath )
+    pprint(nested_descriptions_list)
+
+    for nested_description in nested_descriptions_list:
+        for parameter in nested_description["parameters"]:
+            for value in parameter["values"]:
+
+                add_description_to_json_parameter_value( JSONFilePath, 
+                                                         nested_description["parent"], 
+                                                         parameter["name"],
+                                                         value["name"],
+                                                         value["description"] )
+
 
 
 def render_api_specification( APISpecificationPath, templatePath, dstDirPath, clearTemporalDir = True ):
@@ -374,11 +664,24 @@ def render_api_specification( APISpecificationPath, templatePath, dstDirPath, cl
     
     create_directory_if_not_exists( tempDirPath )
     separate_extra_sections_and_api_blueprint( APISpecificationPath, APIExtraSectionsFilePath, APIBlueprintFilePath )
+    customCodes = custom_codes_utils.get_custom_response_codes_from_file( APIBlueprintFilePath )
+    custom_codes_utils.delete_custom_codes_sections_from_file( APIBlueprintFilePath, customCodes )
+
+    parse_markdown_links( APIBlueprintFilePath )
+    parse_markdown_inline_codes( APIBlueprintFilePath )
+
+
     parser_api_blueprint( APIBlueprintFilePath, APIBlueprintJSONFilePath )
     add_metadata_to_json( parse_meta_data( APIExtraSectionsFilePath ), APIBlueprintJSONFilePath )
+    add_nested_parameter_description_to_json( APIBlueprintFilePath, APIBlueprintJSONFilePath )
     parser_json_descriptions_markdown( APIBlueprintJSONFilePath )
     parser_json_data_structures( APIBlueprintJSONFilePath )
+    find_and_mark_empty_resources( APIBlueprintJSONFilePath, )
+    add_custom_codes_to_json( APIBlueprintJSONFilePath, customCodes )
+    add_reference_links_to_json( APISpecificationPath, APIBlueprintJSONFilePath )
+
     render_api_blueprint( templatePath, APIBlueprintJSONFilePath, dstDirPath )
+
     if( clearTemporalDir == True ):
         clear_directory( tempDirPath )
 

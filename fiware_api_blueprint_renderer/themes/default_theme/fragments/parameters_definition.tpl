@@ -14,6 +14,19 @@
 			</dt>
 			<dd>
 				{{ parameter.description }}
+				{% if parameter["values"] %}
+					<p>Allowed values:</p>
+					<dl>
+						{% for value in parameter["values"] %}
+							<dt>
+								{{ value.value }} 
+							</dt>
+							<dd>
+								{{ value.description }}
+							</dd>
+						{% endfor %}
+					</dl>
+				{% endif %}
 			</dd>
 		{% endfor %}
 	</dl>

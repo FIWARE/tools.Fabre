@@ -320,6 +320,7 @@ and attributes, that can be used in the operations that support the `canonical` 
 * Each metadata is described always with `value` and `type`. Both fields are mandatory (metadata
   without type use JSON `null` for that property).
 
+
 ```
 {
   "type": "Room",
@@ -418,10 +419,10 @@ Response Retrieves a list of entities which match criteria defined by the follow
 `geometry` and `coords` attribute (see below for a detailed description of these parameters). A given entity
 have to match all the criteria to be retrieved (i.e. criteria are combined in a logical AND way).
 
-- _Response_Codes
+- Response_Codes
     * 200 OK - Successful operation
     
-+ Responsde_Codes_Error
++ Response_Codes_Error
     * 400 BAD REQUEST - If any of the parameters do not conform to the datatypes or syntax. 
 
 
@@ -490,11 +491,11 @@ have to match all the criteria to be retrieved (i.e. criteria are combined in a 
 The payload is an object representing the entity to be created. The object follows
 the JSON entity representation format (described in a section above).
 
-+ asd ResponseCodes
-    + 201 CREATED - Successful operation uses 201 Created. Reponse includes a `Location` header
++ Response_Codes
+    + 201 CREATED - Successful operation uses 201 Created. Reponse includes a `Location` `varied ww` header
     with the URL of the created entity.
 
-+ RespodnseCodes_Error
++ Response_Codes_Error
     + 400 BAD REQUEST - If the JSON payload does not conform to the one defined by this operation
 
 
@@ -534,10 +535,10 @@ an error mesage is returned, specifying in the description the URL that could be
 the list of conflicting entities, i.e. all the entities with such an ID.
 
 
-+ Respodnse_Codes
++ Response_Codes
     + 200 OK - On success
 
-+ Respodnse_Codes_Error
++ Response_Codes_Error
     + 404 NOT FOUND - When the entity is not found
 
 

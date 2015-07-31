@@ -9,9 +9,11 @@
 <div class="rest-packet-div">
 
             <span class="packetType">{{ packet_type }} {{ rest_packet.name }}</span> {{rest_packet_mime(rest_packet.headers)}}
-            {# shown in examples
+            
+            
             {% set packet_contents = rest_packet.content %}
             {% include "fragments/rest_packet_contents.tpl" %}
+
 
  
             <div id="{{ rest_packet_body_div_id() }}" class=" action-div-body">
@@ -37,7 +39,7 @@
                     <pre><code>{{ rest_packet.schema }}</code></pre>
                 {% endif %}
             </div>
-            #}
+            
             
      
 </div>

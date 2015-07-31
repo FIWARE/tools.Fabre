@@ -1,7 +1,7 @@
 {% macro slug( id ) %}{{ id | lower | replace(' ', '_') }}{% endmacro %}
 {% set top_metadata = ["Introduction", "Concepts", "Terminology"] %}
 {% set bottom_metadata = ["Examples", "Acknowledgements", "References"] %}
-{% set intro_metadata = ["Abstract", "Status", "Status of this document", "Editors", "Versions"]%}
+{% set intro_metadata = ["Copyright", "Abstract", "Status", "Status of this document", "Editors", "Versions"]%}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,10 +37,21 @@
   {% include "fragments/top_metadata.tpl" %}
 
 <!-- API blueprint -->
+<section id="API_specification">
+    <h1>API Specification</h1>
     {% include "fragments/api_blueprint.tpl" %}
-
+</section>
 <!-- API bottom metadata -->
  {% include "fragments/bottom_metadata.tpl" %}
   
+  <!-- References -->
+  <section id="references">
+  <h1>References</h1>
+      <ul>
+          {% for link in reference_links %}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+          {% endfor %}
+      </ul>
+  </section>
 </body>
 </html>
