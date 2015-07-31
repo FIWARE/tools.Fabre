@@ -624,13 +624,8 @@ def add_nested_parameter_description_to_json( APIBlueprintFilePath, JSONFilePath
     """
     jsonContent = ""
 
-    # [{'parameters': [{'name': u'options',
-    #                   'values': [{'description': u'indicates that the attribute value must be returned as plain text',
-    #                               'name': u'text'}]}],
-    #   'parent': u'## Attribute Value by Entity ID [/v2/entities/{entityId}/attrs/{attrName}/value{?options}]'}]
 
     nested_descriptions_list = custom_codes_utils.get_nested_parameter_values_description( APIBlueprintFilePath )
-    pprint(nested_descriptions_list)
 
     for nested_description in nested_descriptions_list:
         for parameter in nested_description["parameters"]:
@@ -669,7 +664,6 @@ def render_api_specification( APISpecificationPath, templatePath, dstDirPath, cl
 
     parse_markdown_links( APIBlueprintFilePath )
     parse_markdown_inline_codes( APIBlueprintFilePath )
-
 
     parser_api_blueprint( APIBlueprintFilePath, APIBlueprintJSONFilePath )
     add_metadata_to_json( parse_meta_data( APIExtraSectionsFilePath ), APIBlueprintJSONFilePath )
