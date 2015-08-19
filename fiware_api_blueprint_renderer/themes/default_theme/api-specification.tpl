@@ -1,4 +1,13 @@
-{% macro slug( id ) %}{{ id | lower | replace(' ', '_') }}{% endmacro %}
+{% from 'fragments/id-generation-macros.tpl' import 
+    slug, 
+    gen_resource_id, 
+    gen_action_id, 
+    gen_resource_group_id, 
+    gen_resource_group_example_id, 
+    gen_resource_example_id,
+    gen_apiary_link
+%}
+
 {% set top_metadata = ["Introduction", "Concepts", "Terminology"] %}
 {% set bottom_metadata = ["Examples", "Acknowledgements", "References"] %}
 {% set intro_metadata = ["Copyright", "Abstract", "Status", "Status of this document", "Editors", "Versions"]%}
@@ -23,35 +32,55 @@
     <script src="js/jquery-1.11.3.min.js"></script>
     <!--<script src="js/TOC.js"></script>-->
     
-    <link rel="stylesheet"href="css/w3c.css">
+    <link rel="stylesheet" href="css/w3c.css">
     <link rel="stylesheet" type="text/css" href="css/api-specification.css"> 
 
     
 </head>
 <body id="respecDocument" class="h-entry">
+<div class="container">
+  <div id="TOC-container">
+    {% include "fragments/toc.tpl" %}
+  </div>
+  <div id="API-content">
+  {% include "fragments/intro.tpl"%}
 
-{% include "fragments/intro.tpl"%}
 
-{% include "fragments/toc.tpl" %}
-  <!-- API top metadata -->
-  {% include "fragments/top_metadata.tpl" %}
+    <!-- API top metadata -->
+    {% include "fragments/top_metadata.tpl" %}
 
-<!-- API blueprint -->
-<section id="API_specification">
-    <h1>API Specification</h1>
-    {% include "fragments/api_blueprint.tpl" %}
+    <!-- Common payload -->
+    {% from 'fragments/common_payload.tpl' import renderPayloadAttributes %}
+    
+    <section id="common-payload-definition">
+    <h2>Common Payload Definition</h2>
+
+    {% for data_structure_name, data_structure in data_structures.iteritems() %}
+        {% if data_structure_name != "REST API" %}
+            <h3>{{ data_structure_name }}</h3>
+            {{ renderPayloadAttributes( data_structure['attributes'] ) }}
+        {% endif %}
+    {% endfor %}
 </section>
-<!-- API bottom metadata -->
- {% include "fragments/bottom_metadata.tpl" %}
-  
-  <!-- References -->
-  <section id="references">
-  <h1>References</h1>
-      <ul>
-          {% for link in reference_links %}
-              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-          {% endfor %}
-      </ul>
+
+  <!-- API blueprint -->
+  <section id="API_specification">
+      <h1>API Specification</h1>
+      {% include "fragments/api_blueprint.tpl" %}
   </section>
+  <!-- API bottom metadata -->
+   {% include "fragments/bottom_metadata.tpl" %}
+    
+    <!-- References -->
+    <section id="references">
+    <h1>References</h1>
+        <ul>
+            {% for link in reference_links %}
+                <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {% endfor %}
+        </ul>
+    </section>
+  </div>
+</div>
 </body>
 </html>

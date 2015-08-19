@@ -14,8 +14,9 @@ from jinja2 import Environment, FileSystemLoader
 import markdown
 import pypandoc
 
-import custom_codes_utils
+import apib_extra_parse_utils
 
+from collections import deque
 
 def print_api_spec_title_to_extra_file( inputFilePath, extraSectionsFilePath ):
     """Extracts the title of the API specification and writes it to the extra sections file
@@ -224,8 +225,8 @@ def add_metadata_to_json( metadata, jsonFilePath ):
         json.dump( jsonContent, jsonFile, indent=4 )
 
 
-def parser_json_descriptions_markdown( jsonFilePath ):
-    """Gets the descriptions of the resources and parses them as markdown. Saves the result in the same JSON file.
+def parser_json_descriptions( jsonFilePath ):
+    """Gets the descriptions of resources and actions and parses them as markdown. Saves the result in the same JSON file.
     
     Arguments: 
     jsonFilePath -- Path to JSON file
@@ -235,8 +236,11 @@ def parser_json_descriptions_markdown( jsonFilePath ):
     with open( jsonFilePath, 'r' ) as jsonFile:
         jsonContent = json.load( jsonFile )
         for resourceGroup in jsonContent['resourceGroups']:
+            resourceGroup['description'] = markdown.markdown( resourceGroup['description'], extensions=['markdown.extensions.tables'] )
             for resource in resourceGroup['resources']:
                 resource['description'] = markdown.markdown( resource['description'], extensions=['markdown.extensions.tables'] )
+                for action in resource['actions']:
+                    action['description'] = markdown.markdown( action['description'], extensions=['markdown.extensions.tables'] )
     
     with open( jsonFilePath, 'w' ) as jsonFile:
         json.dump( jsonContent, jsonFile, indent=4 )
@@ -372,6 +376,8 @@ def parse_property_member_declaration( property_member_declaration_string ):
   property_declaration={}
   property_declaration['name'] = declaration_dict['property_name']
   property_declaration['description'] = declaration_dict['property_description']
+  property_declaration['subproperties'] = []
+  property_declaration['values'] = []
 
   # We construct the type_definition field from the type_definition_list field retrieved in the
   # regular expression.
@@ -386,6 +392,45 @@ def parse_property_member_declaration( property_member_declaration_string ):
 
   return property_declaration
 
+
+def get_indentation( line ):
+    """Returns the indentation (number of spaces and tabs at the begining) of a given line"""
+    i = 0
+    while( i < len( line ) and ( line[i] == ' ' or line[i] == '\t' ) ):
+        i += 1
+    return i
+
+
+def parse_defined_data_structure_properties( properties_list, remaining_property_lines ):
+    """Parses the properties definitions of a given data structure given its body
+
+    Arguments:
+    properties_list - List where we'll insert new properties to
+    remaining_property_lines - Property definition lines pending to be processed
+    """
+    last_member_indentation = -1
+
+    while len( remaining_property_lines ) > 0:
+        property_member_declaration = remaining_property_lines[0]
+        if property_member_declaration != '':
+            # Retrieve the indentation of the current property definition.
+            current_member_indentation = get_indentation( property_member_declaration )
+            if last_member_indentation == -1:
+                last_member_indentation = current_member_indentation
+          
+            # Process the new property as a child, parent or uncle of the last
+            # one processed according to their relative line indentations.
+            if current_member_indentation == last_member_indentation:
+                parsed_attribute_definition = parse_property_member_declaration( property_member_declaration )
+                remaining_property_lines.popleft()
+                properties_list.append( parsed_attribute_definition )
+            elif current_member_indentation > last_member_indentation:
+                parse_defined_data_structure_properties( parsed_attribute_definition['subproperties'], remaining_property_lines )
+            else:
+                return
+        else:
+            remaining_property_lines.popleft()
+    
 
 def parse_defined_data_structures( data ):
   """Retrieves data structures definition from JSON fragment and gives them back as Python dict"""
@@ -404,12 +449,7 @@ def parse_defined_data_structures( data ):
 
     if content["sections"]!=[]:
       data_structure_content = content["sections"][0]["content"]
-
-      for property_member_declaration in data_structure_content.split('\n'):
-        if property_member_declaration != '':
-
-          parsed_attribute_definition = parse_property_member_declaration( property_member_declaration )
-          data_structure_definition.append(parsed_attribute_definition)
+      parse_defined_data_structure_properties( data_structure_definition, deque( data_structure_content.split('\n') ) )
 
     data_structure_name = content["name"]["literal"]
     data_structure["attributes"] = data_structure_definition
@@ -517,28 +557,6 @@ def parse_markdown_links( APIBlueprintFilePath ):
 
     shutil.move(editingFilePath, APIBlueprintFilePath)
 
-def parse_markdown_inline_codes( APIBlueprintFilePath ):
-    """Renders the inline code expressions inside the APIB file"""
-
-    editingFilePath = APIBlueprintFilePath+'.processing_parse_link'
-    
-    shutil.copyfile(APIBlueprintFilePath, APIBlueprintFilePath+'.bak_parse_link')
-
-    regex_string = "(?P<inline_code>`[^`]*`)"
-    inline_code_regex = re.compile(regex_string)
-
-    with open(APIBlueprintFilePath, 'r') as readFile:
-        with open(editingFilePath, 'w') as writeFile:
-            for line in readFile:
-                inline_code_matches = inline_code_regex.findall( line )
-                if inline_code_matches:
-                    for inline_code_match in inline_code_matches:
-                        parsed_inline_code = markdown.markdown( inline_code_match ).replace("<p>","").replace("</p>", "")
-                        line = line.replace(inline_code_match, parsed_inline_code)
-
-                writeFile.write(line)
-
-    shutil.move(editingFilePath, APIBlueprintFilePath)
 
 def find_and_mark_empty_resources( jsonObj ):
     """Makes title of empty resources None.
@@ -624,8 +642,7 @@ def add_nested_parameter_description_to_json( APIBlueprintFilePath, JSONFilePath
     """
     jsonContent = ""
 
-
-    nested_descriptions_list = custom_codes_utils.get_nested_parameter_values_description( APIBlueprintFilePath )
+    nested_descriptions_list = apib_extra_parse_utils.get_nested_parameter_values_description( APIBlueprintFilePath )
 
     for nested_description in nested_descriptions_list:
         for parameter in nested_description["parameters"]:
@@ -636,7 +653,6 @@ def add_nested_parameter_description_to_json( APIBlueprintFilePath, JSONFilePath
                                                          parameter["name"],
                                                          value["name"],
                                                          value["description"] )
-
 
 
 def render_api_specification( APISpecificationPath, templatePath, dstDirPath, clearTemporalDir = True ):
@@ -659,16 +675,15 @@ def render_api_specification( APISpecificationPath, templatePath, dstDirPath, cl
     
     create_directory_if_not_exists( tempDirPath )
     separate_extra_sections_and_api_blueprint( APISpecificationPath, APIExtraSectionsFilePath, APIBlueprintFilePath )
-    customCodes = custom_codes_utils.get_custom_response_codes_from_file( APIBlueprintFilePath )
-    custom_codes_utils.delete_custom_codes_sections_from_file( APIBlueprintFilePath, customCodes )
+    customCodes = apib_extra_parse_utils.get_custom_response_codes_from_file( APIBlueprintFilePath )
+    apib_extra_parse_utils.delete_custom_codes_sections_from_file( APIBlueprintFilePath, customCodes )
 
     parse_markdown_links( APIBlueprintFilePath )
-    parse_markdown_inline_codes( APIBlueprintFilePath )
 
     parser_api_blueprint( APIBlueprintFilePath, APIBlueprintJSONFilePath )
     add_metadata_to_json( parse_meta_data( APIExtraSectionsFilePath ), APIBlueprintJSONFilePath )
     add_nested_parameter_description_to_json( APIBlueprintFilePath, APIBlueprintJSONFilePath )
-    parser_json_descriptions_markdown( APIBlueprintJSONFilePath )
+    parser_json_descriptions( APIBlueprintJSONFilePath )
     parser_json_data_structures( APIBlueprintJSONFilePath )
     find_and_mark_empty_resources( APIBlueprintJSONFilePath, )
     add_custom_codes_to_json( APIBlueprintJSONFilePath, customCodes )

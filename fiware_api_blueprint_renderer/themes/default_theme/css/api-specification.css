@@ -1,13 +1,69 @@
 
 body{
-    background-image: url(../img/fiware-logo.png);
+    /*background-image: url(../img/fiware-logo.png);*/
 }
+
+@media (min-width: 980px) {
+  .container{
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    }
+
+  #TOC-container{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 20%;
+    height: 100%;
+    overflow: auto;
+  }
+
+  #API-content{
+    margin-left: calc(18%);
+  }
+  #API-content{
+    margin-left: calc(20% - 2em - 15px);
+  }
+
+}
+
+#TOC-container ul{
+padding-left: 15px;
+}
+
+#TOC-container h2{
+margin-left: 15px;
+}
+
+.toc li{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; 
+}
+
+
 dd{
     margin-left: 1.2em;
 }
+
+dd dl{
+    margin-bottom: 0px;
+}
+
 .packetType{
     font-weight: bold;
     font-style: italic;
+}
+
+.packetType ~ .payload-title{
+    font-weight: bold;
+    font-style: italic;
+    text-decoration: none;
+    display: block;
+    margin-top: 5px;
 }
 
 .rest-packet-div{
@@ -95,7 +151,7 @@ dd{
     background-color: #E6BFBF;
 }
 
-.action h5{
+.action h4{
     font-size: 1.05em;
     font-style: italic;
     text-decoration: underline;
@@ -137,7 +193,7 @@ dd{
 }
 
 
-.actionExample h5{
+.actionExample h4{
     font-size: 1.05em;
     font-style: italic;
     text-decoration: underline;
@@ -176,11 +232,27 @@ dd{
     margin-bottom: 7px;
 }
 
-.goExample {
+.action{
+    overflow: hidden;
+}
+
+.goExample{
     margin-top: 20px;
+    float: left;
+    margin-right: 10px;
 }
 
 .goExample a{
+    padding: 5px;
+    background-color: rgba(171, 171, 171, 0.4);
+    border:1px solid;
+}
+
+.goApiary {
+    margin-top: 20px;
+}
+
+.goApiary a{
     padding: 5px;
     background-color: rgba(171, 171, 171, 0.4);
     border:1px solid;
@@ -204,14 +276,5 @@ dd{
 
 .versionValue{
     margin-left: 20px;
-}
-
-
-/* Do not display parameters definition in examples */
-.actionExample dl{
-    display:none;
-}
-.actionExample .parameters-title{
-    display:none;
 }
 

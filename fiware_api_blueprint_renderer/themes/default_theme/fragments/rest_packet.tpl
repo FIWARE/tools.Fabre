@@ -1,4 +1,4 @@
-{% macro rest_packet_body_div_id() %}{{ slug( action.name ) }}_{{ packet_type }}_{{ loop_index }}_body{% endmacro %}
+{% macro rest_packet_body_div_id() %}{{ gen_action_id( action.name ) }}_{{ packet_type }}_{{ loop_index }}_body{% endmacro %}
 {% macro rest_packet_mime(headers) -%}
     {% for header in headers %}
         {% if 'Content-Type'==header.name %}

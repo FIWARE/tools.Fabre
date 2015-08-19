@@ -8,8 +8,10 @@
     {% for content in packet_contents %}
         {% if content["typeDefinition"] %}
             {%- if content["typeDefinition"] is defined and displayTypeName( content["typeDefinition"]["typeSpecification"]["name"] ) != "object" and data_structures[ displayTypeName(content["typeDefinition"]["typeSpecification"]["name"])] %}
-                {% set parameters= data_structures[ displayTypeName(content["typeDefinition"]["typeSpecification"]["name"])]["attributes"] %}
-                {% include "fragments/parameters_definition.tpl" %}
+                {% from 'fragments/common_payload.tpl' import renderPayloadAttributes %}
+                {% set attributes = data_structures[ displayTypeName(content["typeDefinition"]["typeSpecification"]["name"])]["attributes"] %}
+                {{ renderPayloadAttributes( attributes ) }}
+                {#{% include "fragments/parameters_definition.tpl" %}#}
             {% endif %}
             {%- if content["sections"] is defined %}
                 {%- for section in content["sections"] %}
@@ -27,10 +29,9 @@
                                     {%- endif -%}
                                     ,
                                     {{ displayTypeName( section_content.content.valueDefinition.typeDefinition.typeSpecification.name ) }}
-                                    {% if section_content.content.valueDefinition.typeDefinition.typeSpecification.name == "array" %}
+                                    {%- if section_content.content.valueDefinition.typeDefinition.typeSpecification.name == "array" %}
                                         [{{ section_content.content.valueDefinition.typeDefinition.typeSpecification.nestedTypes[0] }}]
-                                    {% endif %}
-                                    )
+                                    {%- endif %})
                                     </dt>
                                     <dd>{{ section_content.content.description }}</dd>
                             {%- endif %}

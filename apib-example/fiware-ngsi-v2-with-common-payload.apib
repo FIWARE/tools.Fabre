@@ -374,7 +374,25 @@ Error list (HTTP response code in paranthesis):
   solution is to enhance entity identification adding more information, e.g. adding entity type
   and/or service path.
 
-## Data Structures  
+
+## Data Structures
+
+### Choice (object)
+    + choice (string) - Text
+    + url (string) - Choice URL
+    + votes (number) - Number of votes
+
+### Question (object)
+      + question (string) - Text of the question
+      + published_at (string) - An ISO8601 date when the question was published.
+      + url (string, required) - URL 
+      + choices (array[Choice]) - An array of Choice objects.
+      + person (object) - Person asked
+        + name (string) - Person name.
+        + foo (object) - Sample object por testing nested properties.
+            + bar (string) - Sample string for testing nested properties
+        + age (number) - Age of the person asked.
+
 
 # REST API
 
@@ -1025,3 +1043,76 @@ Cancels registration.
 
 
 + Response 204
+
+
+# Group Question
+
+Resources related to questions in the API.
+
+## Question Data [/questions/{question_id}]
+
+This resource represents a question
+
++ Parameters
+    + question_id: 1 (required, number) - ID of the Question in form of an integer
+
++ Attributes (Question)
+
+### Create a New Question [POST]
+
+You may create your own question using this action. It takes a JSON
+object containing a question and a collection of answers in the
+form of choices.
+
++ Request (application/json)
+
+    + Attributes (object)
+      + question (string, required) - The text of the question
+      + choices (array[string]) - A collection of choices.
+    
+    + Body
+    
+            {
+                "question": "Favourite programming language?",
+                "choices": [
+                    "Swift",
+                    "Python",
+                    "Objective-C",
+                    "Ruby"
+                ]
+            }
+
++ Response 201 (application/json)
+
+    + Attributes (Question)
+    
+    + Headers
+
+            Location: /questions/2
+
+    + Body
+
+            {
+                "question": "Favourite programming language?",
+                "published_at": "2014-11-11T08:40:51.620Z",
+                "url": "/questions/2",
+                "choices": [
+                    {
+                        "choice": "Swift",
+                        "url": "/questions/2/choices/1",
+                        "votes": 0
+                    }, {
+                        "choice": "Python",
+                        "url": "/questions/2/choices/2",
+                        "votes": 0
+                    }, {
+                        "choice": "Objective-C",
+                        "url": "/questions/2/choices/3",
+                        "votes": 0
+                    }, {
+                        "choice": "Ruby",
+                        "url": "/questions/2/choices/4",
+                        "votes": 0
+                    }
+                ]
+            }

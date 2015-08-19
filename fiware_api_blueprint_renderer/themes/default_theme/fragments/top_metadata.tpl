@@ -9,15 +9,15 @@
 
 {%- endmacro %}
 
-<section>
 <!-- specified top metadata -->
 {% for subsections in api_metadata.subsections %}
 	{# {% for subsection in api_metadata.subsections[0].subsections %} #}
-	<section>
 		{%if subsections.name != api_metadata.subsections[0].name %}
-			<h1 id="{{subsections.id}}">{{subsections.name}}</h1>
+            <section>
+			    <h1 id="{{subsections.id}}">{{subsections.name}}</h1>
+            </section>
 		{% endif %}
-	</section>
+	
 	{% for subsection in subsections.subsections %}
 		{% if subsection.name in top_metadata %}
 		  	<section>
@@ -39,5 +39,3 @@
 	{% endfor%}
 
 {% endfor %}
-
-</section>

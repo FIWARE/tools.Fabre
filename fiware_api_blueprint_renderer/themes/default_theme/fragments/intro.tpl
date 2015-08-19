@@ -1,12 +1,8 @@
-{%set title_doc = api_metadata.subsections[0].name %}
 {% for metadata_value in metadata %}
 	{% if metadata_value.name == "TITLE" %}
-		{%set title_doc = metadata_value.value %}
+		<h1>{{metadata_value.value}} </h1>
 	{%endif%}
 {% endfor %}
-
-<h1>{{title_doc}} </h1>
-
 
 {% for metadata_value in metadata %}
 	{% if metadata_value.name == "DATE" %}
@@ -17,27 +13,27 @@
 
 {% for metadata_value in metadata %}
 	{% if metadata_value.name == "HOST" %}
-		{%set HOST =  metadata_value.value %}
+		{% set HOST = metadata_value.value %}
 		<dl>
 		{% for metadata_value_aux in metadata %}
 			{% if metadata_value_aux.name == "VERSION" %}
 				<dt class="versionLabel">This version:</dt> 
-				<dd class="versionValue"> <a href="{{metadata_value.value}}{{ metadata_value_aux.value }}">
-					{{metadata_value.value}}{{ metadata_value_aux.value }}</a> </dd>
+				<dd class="versionValue"> <a href="{{HOST}}{{ metadata_value_aux.value }}">
+					{{HOST}}{{ metadata_value_aux.value }}</a> </dd>
 			{%endif%}
 		{% endfor %}
 
 		{% for metadata_value_aux in metadata %}
 			{% if metadata_value_aux.name == "PREVIOUS_VERSION" %}
 				<dt class="versionLabel">Previous version:</dt> 
-				<dd class="versionValue"> <a href="{{metadata_value.value}}{{ metadata_value_aux.value }}">
-					{{metadata_value.value}}{{ metadata_value_aux.value }}
+				<dd class="versionValue"> <a href="{{HOST}}{{ metadata_value_aux.value }}">
+					{{HOST}}{{ metadata_value_aux.value }}
 				</a> </dd>
 			{%endif%}
 		{% endfor %}
 
-		<dt class="versionLabel">Latest ersion:</dt> 
-		<dd class="versionValue"> <a href="{{metadata_value.value}}latest">{{metadata_value.value}}latest</a> </dd>
+		<dt class="versionLabel">Latest version:</dt> 
+		<dd class="versionValue"> <a href="{{HOST}}latest">{{HOST}}latest</a> </dd>
 
 
 		</dl>
@@ -67,12 +63,9 @@
 {% endfor %}
 
 <hr>
-{% for subsection in api_metadata.subsections[0].subsections %}
-	{% if subsection.name == "Abstract" %}
-		<h2 id="{{subsection.id}}">Abstract</h2>
-		{{subsection.body}}
-	{%endif%}
-{% endfor %}
+
+<h2 id="abstract">Abstract</h2>
+{{description}}
 
 
 {% for subsection in api_metadata.subsections[0].subsections %}
