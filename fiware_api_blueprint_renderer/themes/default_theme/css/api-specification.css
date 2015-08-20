@@ -58,14 +58,6 @@ dd dl{
     font-style: italic;
 }
 
-.packetType ~ .payload-title{
-    font-weight: bold;
-    font-style: italic;
-    text-decoration: none;
-    display: block;
-    margin-top: 5px;
-}
-
 .rest-packet-div{
     margin-top: 15px;
 }
@@ -230,6 +222,12 @@ dd dl{
     font-weight: normal;
     text-decoration: underline;
     margin-bottom: 7px;
+}
+
+.packetType ~ .payload-title{
+    font-size: 1em;
+    display: block;
+    margin-top: 5px;
 }
 
 .action{

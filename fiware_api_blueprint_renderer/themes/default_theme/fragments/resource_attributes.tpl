@@ -35,7 +35,7 @@
 
 {% macro displayPacketContents( packetContents ) %}
     {% if packetContents | length > 0 and packetContents[0]["typeDefinition"] is defined %}
-        <span class="attributes-title">Payload</span>
+        <span class="payload-title">Payload</span>
         {% for content in packetContents %}
             {% if content["typeDefinition"] %}
                 {%- if content["typeDefinition"] is defined and displayTypeName( content["typeDefinition"]["typeSpecification"]["name"] ) != "object" and data_structures[ displayTypeName(content["typeDefinition"]["typeSpecification"]["name"])] %}
