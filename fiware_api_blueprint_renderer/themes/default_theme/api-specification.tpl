@@ -19,20 +19,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ name }}</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
-
+    {#
     <!--
-    
     <script src="js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="css/hightlight_default_theme.css">
     <link rel="stylesheet" href="css/monokai_sublime.css" type="text/css"> -->
+    #}
     <link rel="stylesheet" href="css/idea.css">
     <script src="js/highlight.pack.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
 
     <script src="js/jquery-1.11.3.min.js"></script>
+    {#
     <!--<script src="js/TOC.js"></script>-->
     
-    <link rel="stylesheet" href="css/w3c.css">
+   #}
     <link rel="stylesheet" type="text/css" href="css/api-specification.css"> 
 
     
@@ -45,11 +46,11 @@
   <div id="API-content">
   {% include "fragments/intro.tpl"%}
 
-
-    <!-- API top metadata -->
+    {#  API top metadata #}
     {% include "fragments/top_metadata.tpl" %}
 
-    <!-- Common payload -->
+
+    {# Common payload #}
     {% from 'fragments/common_payload.tpl' import renderPayloadAttributes %}
     
     <section id="common-payload-definition">
@@ -63,15 +64,15 @@
     {% endfor %}
 </section>
 
-  <!-- API blueprint -->
+  {#  API blueprint #}
   <section id="API_specification">
       <h1>API Specification</h1>
       {% include "fragments/api_blueprint.tpl" %}
   </section>
-  <!-- API bottom metadata -->
+  {#  API bottom metadata #}
    {% include "fragments/bottom_metadata.tpl" %}
     
-    <!-- References -->
+    {#  References #}
     <section id="references">
     <h1>References</h1>
         <ul>

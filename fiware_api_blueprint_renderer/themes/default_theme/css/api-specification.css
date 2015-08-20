@@ -1,6 +1,70 @@
 
-body{
-    /*background-image: url(../img/fiware-logo.png);*/
+body {
+  padding: 2em 1em 2em 70px;
+  margin: 0;
+  font-family: sans-serif;
+  color: black;
+}
+
+:link { color: #00C; background: transparent }
+:visited { color: #609; background: transparent }
+a:active { color: #C00; background: transparent }
+
+a:link img, a:visited img { border-style: none } 
+
+
+a img {
+    color: white; 
+}
+
+@media all {                   
+  a img { 
+    color: inherit; 
+    }    
+}
+
+h1, h2, h3, h4, h5, h6 {
+    text-align: left 
+}
+
+h1, h2, h3 {
+    color: #005A9C; 
+}
+
+
+h1 { 
+    font: 170%;  
+}
+
+h2 { 
+    font: 140%;  
+}
+
+h3 {
+    font: 120%;
+}
+
+h4 {
+    font: bold 100%;
+}
+
+h5 {
+    font: italic 100%;
+}
+
+h6 {
+    font: small-caps 100%;
+}
+
+
+@media speech {
+ h1, h2, h3 {
+    voice-stress: moderate;
+    }
+ .hide {
+    speak: none;
+ }
+ dt { pause-before: 63ms; }
 }
 
 @media (min-width: 980px) {
@@ -36,6 +100,11 @@ padding-left: 15px;
 
 #TOC-container h2{
 margin-left: 15px;
+}
+
+ul.toc, ol.toc {
+  list-style: disc;
+  list-style: none;
 }
 
 .toc li{
@@ -169,6 +238,7 @@ dd dl{
     margin-top: 5px;
     margin-bottom: 25px;
     padding-left: 5px;
+    padding-right: 5px;
     padding-bottom: 15px;
     background-color: #E0DCF3;
 }

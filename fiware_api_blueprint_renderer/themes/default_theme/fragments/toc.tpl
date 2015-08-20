@@ -14,11 +14,12 @@
 <section id="toc">
     <h2 id="h-toc" class="introductory">Table of contents</h2>
     <ul class="toc">
-
+{#
 <!--medatada -->
        <!-- {{ render_metadata_toc(api_metadata.subsections[0]) }}-->
 
 <!-- top metadata -->
+#}
 {% for subsections in api_metadata.subsections %}
     {# {% for subsection in api_metadata.subsections[0].subsections %}#}
     {%if subsections.name != api_metadata.subsections[0].name %}
@@ -34,7 +35,7 @@
     {% endfor%}
    
 
-<!-- unespecified metadata -->
+{#  unespecified metadata #}
 {% for subsection in subsections.subsections %}
 {#{% for subsection in api_metadata.subsections[0].subsections %}#}
     {% if not subsection.name in top_metadata  and not subsection.name in bottom_metadata and not subsection.name in intro_metadata %}
@@ -47,10 +48,10 @@
 {% endif %}
 {% endfor%}
 
-<!-- Common Payload Definition -->
+{# Common Payload Definition #}
 <li><a href="#common-payload-definition">Common Payload Definition</a></li>
 
-<!-- API -->
+{# API #}
 <li><a href="#API_specification">API Specification</a>
     <ul class="toc">
     {% for resourceGroup in resourceGroups %}
@@ -80,7 +81,7 @@
     <li><a href="#examples">Examples</a></li>
     </ul>
 </li>
-    <!--bottom metadata -->
+    {# bottom metadata #}
     {% for subsection in api_metadata.subsections[0].subsections %}
     {% if subsection.name in bottom_metadata %}
         {{ render_metadata_toc(subsection) }}

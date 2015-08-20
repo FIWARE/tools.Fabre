@@ -1,4 +1,4 @@
-<!-- Action parameters -->
+{# Action parameters #}
 {% if parameters|length > 0 %}
 	<span class="parameters-title">Parameters</span>
 	<dl>

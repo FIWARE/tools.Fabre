@@ -1,5 +1,5 @@
 {# Deprecated, use parameters definition instead. Will be removed in further versions #}
-<!-- Action parameters -->     
+{# Action parameters #}    
 {% if parameters|length > 0 %}
 	<div class="col-md-12 no-padding">       
 		<table class="action-parameters-table">

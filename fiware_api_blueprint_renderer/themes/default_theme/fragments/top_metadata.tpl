@@ -9,7 +9,7 @@
 
 {%- endmacro %}
 
-<!-- specified top metadata -->
+{# specified top metadata #}
 {% for subsections in api_metadata.subsections %}
 	{# {% for subsection in api_metadata.subsections[0].subsections %} #}
 		{%if subsections.name != api_metadata.subsections[0].name %}
@@ -27,7 +27,7 @@
 	{% endfor%}
 
 
-<!-- unespecified metadata -->
+{# unespecified metadata #}
 
 	{# {% for subsection in api_metadata.subsections[0].subsections %} #}
 	{% for subsection in subsections.subsections[1:] %}

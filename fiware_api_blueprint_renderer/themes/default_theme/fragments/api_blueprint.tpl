@@ -31,7 +31,7 @@
                 {% set parameters = resource.parameters %}
                 {% set parameters_definition_caption = "Parameters" %}
 
-		        <!-- Display attributes -->
+		        {# Display attributes #}
                 {% set packet_contents = resource.content %}
                 {% include "fragments/resource_attributes.tpl" %}
 
@@ -88,7 +88,7 @@
                         {% set parameters = resource.parameters %}
                         {% set parameters_definition_caption = "Parameters" %}
 
-                        <!-- Display attributes -->
+                        {#  Display attributes #}
                         {% set packet_contents = resource.content %}
                         {# {% include "fragments/resource_attributes.tpl" %} #}
 
