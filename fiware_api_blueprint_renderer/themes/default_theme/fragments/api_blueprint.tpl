@@ -42,7 +42,8 @@
 
                         {{ displayActionHeader( "h-" + gen_action_id( action.name ), action, resource ) }}
         
-                            <div id="{{ slug( action.name ) }}_body" class=""> 
+                            <div id="{{ slug( action.name ) }}_body" class="">
+                                {{action.description}}
                                 {% set parameters = action.parameters %}
                                 {% set parameters_table_caption = "Parameters" %}
                                 {% include "fragments/parameters_definition.tpl" %}			

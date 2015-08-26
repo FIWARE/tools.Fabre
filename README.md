@@ -9,6 +9,7 @@ Tool for parsing a FIWARE specification file and rendering it to a HTML page.
 * [Pandoc](http://pandoc.org/)
 * [Jinja2](http://jinja.pocoo.org/)
 * [Python Markdown](http://pythonhosted.org/Markdown/)
+* [wkhtmltopdf](http://wkhtmltopdf.org/)
 
 ## Install
 
@@ -28,7 +29,10 @@ We also need Pandoc for further document analysis:
 sudo apt-get install pandoc
 ```
 
-Once Pandoc and Drafter are installed, we can download fabre and install it like a PIP package:
+wkhtmltopdf is needed for pdf conversion.
+It can be downloaded from [wkhtmltopdf](http://wkhtmltopdf.org/)
+
+Once Pandoc, Drafter and wkhtmltopdf are installed, we can download fabre and install it like a PIP package:
 
 ```
 git clone git@github.com:FiwareULPGC/fiware-api-blueprint-renderer.git
@@ -39,16 +43,37 @@ sudo python setup.py install
 Now we can test fabre. As an example, we can run the following commands for generating a site from the given FIWARE specification template:
 
 ```
-fabre apib-example/template-fiware-open-spec2.apib ~/out
+fabre -i apib-example/template-fiware-open-spec2.apib  -o ~/out
 ```
 
-Fabre arguments are listed below:
+In order to generate a pdf file instead a html site the --pdf option should be used. When this option is used the -o parameter can specify the ouput folder unless the provided output ends with ".pdf", in that case the -o parameter references the output file.
 
-1. Path to the FIWARE API specification file.
-2. Path to the destination directory where the generated web page will be generated.
-
-**Note for developers:** fabre generates some temporary files on /var/tmp while rendering the final web page, and removes them afterwards. We can override this behaviour and make fabre to keep the temporary files by simply passing an extra “0” argument to the command call.
+Examples:
 
 ```
-fabre apib-example/template-fiware-open-spec2.apib ~/out 0
+fabre -i apib-example/template-fiware-open-spec2.apib  -o ~/out --pdf
 ```
+
+Renders the apib and saves it to ~/out/template-fiware-open-spec2.pdf
+
+
+```
+fabre -i apib-example/template-fiware-open-spec2.apib  -o ~/out/ouput.pdf --pdf
+```
+
+Renders the apib and saves it to ~/out/output.pdf
+
+
+**Note for developers:** fabre generates some temporary files on /var/tmp while rendering the final web page, and removes them afterwards. We can override this behaviour and make fabre to keep the temporary files using the --no-clear-temp-dir option.
+
+```
+fabre -i apib-example/template-fiware-open-spec2.apib -o ~/out --no-clear-temp-dir
+```
+
+Fabre accepts the options listed below:
+
+* **-i**, **--input**: Path to the FIWARE API specification file.
+* **-o**, **--output**: Path to the destination directory where the output page will be generated. If the --pdf option is specified, this parameter specifies the output filename if it ends with ".pdf"
+* **--pdf**: Save to pdf instead of a html site.
+* **-t**, **--template** Path to the template to be used to render the API specification file. If it is not provided, a default template is used.
+* **--no-clear-temp-dir**: This option is intended for debug purposes.

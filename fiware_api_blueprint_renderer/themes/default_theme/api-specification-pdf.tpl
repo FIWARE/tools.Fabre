@@ -23,7 +23,8 @@
     <script src="js/highlight.pack.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
 
-    <link rel="stylesheet" type="text/css" href="css/api-specification.css"> 
+    <link rel="stylesheet" type="text/css" href="css/api-specification.css">
+    <link rel="stylesheet" type="text/css" href="css/api-specification-pdf.css"> 
 
     
 </head>
@@ -73,4 +74,27 @@
   </div>
 </div>
 </body>
+<script type="text/javascript">
+  function fix_links_class(){
+     var links = document.getElementsByTagName("a");
+     console.log(links);
+     /*for (link of links)
+     {
+        if ( link.innerHTML.indexOf(link.getAttribute('href')) > -1 )
+          link.className= link.className + " selfContainedLink";
+     }*/
+
+     for (var i=0; i < links.length; i++ )
+     {
+      link = links[i];
+      if ( link.innerHTML.indexOf(link.getAttribute('href')) > -1 )
+          link.className= link.className + " selfContainedLink";
+     }
+  }
+  
+  fix_links_class();
+
+  //window.onload="fix_links_class()";
+
+</script>
 </html>
