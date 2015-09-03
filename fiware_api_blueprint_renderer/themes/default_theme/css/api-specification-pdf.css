@@ -6,7 +6,7 @@ section h1{
 .goApiary{
   clear:both;
   padding-top: 15px;
-  line-height: 2em;
+  line-height: 2.2em;
 }
 
 #TOC-container{
@@ -19,3 +19,7 @@ a:link[href^="https://"]:after, a:visited[href^="https://"]:after,
 a:link[href^="ftp://"]:after, a:visited[href^="ftp://"]:after { 
 	content:" (" attr(href) ") "; 
 } 
+
+pre, pre code{
+	page-break-inside: auto !important;
+}

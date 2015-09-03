@@ -328,7 +328,7 @@ dd dl{
 }
 
 .goExample a{
-    padding: 5px;
+    padding: 0.25em;
     background-color: rgba(171, 171, 171, 0.4);
     border:1px solid;
 }
@@ -338,7 +338,7 @@ dd dl{
 }
 
 .goApiary a{
-    padding: 5px;
+    padding: 0.25em;
     background-color: rgba(171, 171, 171, 0.4);
     border:1px solid;
 }
@@ -348,7 +348,7 @@ dd dl{
 }
 
 .goActions a{
-    padding: 5px;
+    padding: 0.25em;
     background-color: rgba(171, 171, 171, 0.4);
     border:1px solid;
 }
