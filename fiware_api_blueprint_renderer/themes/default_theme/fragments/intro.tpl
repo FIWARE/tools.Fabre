@@ -40,14 +40,6 @@
 	{%endif%}
 {% endfor %}
 
-{# 
-{% for subsection in api_metadata.subsections[0].subsections %}
-	{% if subsection.name == "Versions" %}
-		<h2 id="{{subsection.id}}">Versions</h2>
-		{{subsection.body}}
-	{%endif%}
-{% endfor %}
-#}
 {% for subsection in api_metadata.subsections[0].subsections %}
 	{% if subsection.name == "Editors" %}
 		<h2 id="{{subsection.id}}">Editors</h2>
@@ -64,8 +56,15 @@
 
 <hr>
 
-<h2 id="abstract">Abstract</h2>
-{{description}}
+{% if description %}
+	<h2 id="abstract">Abstract</h2>
+	{{description}}
+{% else %}
+	{% if api_metadata.subsections[0].body %}
+	<h2 id="abstract">Abstract</h2>
+		{{api_metadata.subsections[0].body}}
+	{% endif %}
+{%endif %}
 
 
 {% for subsection in api_metadata.subsections[0].subsections %}

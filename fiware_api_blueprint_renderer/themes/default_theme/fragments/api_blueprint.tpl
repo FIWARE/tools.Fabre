@@ -11,22 +11,29 @@
 {% endmacro %}
 
 {% macro gen_apiary_link( resourceGroupName, resourceName, actionName, metadata ) %}
+    <div class="goApiary">
     {% for metadata_section in metadata %}
         {% if metadata_section['name'] == "APIARY_PROJECT" %}
-            <div class="goApiary">
+            
                 <a target="_blank" href="http://docs.{{ metadata_section['value'] }}.apiary.io/#reference/{{ slug( resourceGroupName ) }}/{{ slug( resourceName ) }}/{{ slug( actionName ) }}">View in Apiary</a>
-            </div>
+            
         {% endif %}
     {% endfor %}
+    </div>
 {% endmacro %}
 
 {% for resourceGroup in resourceGroups %}
-        <section id="{{ gen_resource_group_id( resourceGroup.name ) }}" class="resourceGroup">
-        <h2 id="h-{{ gen_resource_group_id( resourceGroup.name ) }}">{{ resourceGroup.name }}</h2>
+        {% if resourceGroup.name|length > 0 %}
+            <section id="{{ gen_resource_group_id( resourceGroup.name ) }}" class="resourceGroup">
+            <h2 id="h-{{ gen_resource_group_id( resourceGroup.name ) }}">{{ resourceGroup.name }}</h2>
+        {% else %}
+            <section id="default_group" class="resourceGroup">
+             <div class= "header" ><h2 id="h-default_group"> Default </h2></div>
+        {% endif %}
 	{{ resourceGroup.description }}
         {% for resource in resourceGroup.resources %}
             <section id="{{ gen_resource_id( resource.name ) }}" class="resource">
-                <h3 id="h-{{ gen_resource_id( resource.name ) }}">{{ resource.name }} [{{ resource.uriTemplate}}]</h3>
+                 <div class= "header" ><h3 id="h-{{ gen_resource_id( resource.name ) }}">{{ resource.name }} [{{ resource.uriTemplate}}]</h3> </div>
                 {{ resource.description }}
                 {% set parameters = resource.parameters %}
                 {% set parameters_definition_caption = "Parameters" %}
@@ -38,7 +45,19 @@
                 {% include "fragments/parameters_definition.tpl" %}
 
                     {% for action in resource.actions %}
-                        <div id="{{ gen_action_id( action.name ) }}" class="action {{action.method}}">
+                        {% if action.name %}
+                            <div id="{{ gen_action_id( action.name ) }}" class="action {{action.method}}">
+                        {% else %}
+                            {% if action.attributes.uriTemplate%}
+                                <div id="{{ gen_action_id( action.attributes.uriTemplate ) }}" class="action {{action.method}}">
+                            {% else %}
+                                {% if resource.ignoreTOC %}
+                                    <div id="{{ gen_action_id( resource.uriTemplate|join('action.method') ) }}" class="action {{action.method}}">
+                                {% else %}
+                                    <div id="{{ gen_action_id( resource.name|join('action.method') ) }}" class="action {{action.method}}">
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
 
                         {{ displayActionHeader( "h-" + gen_action_id( action.name ), action, resource ) }}
         
@@ -64,11 +83,16 @@
                                         {% include "fragments/rest_packet.tpl" %}
         	                            {% endfor %}
                                     {% endfor %}
+                                    
                                     <div class="goExample">
                                         <a href="#{{ gen_action_id( action.name ) }}_examples">Go to example</a>
                                     </div>
-
-                                    {{ gen_apiary_link( resourceGroup.name, resource.name, action.name, metadata ) }}
+                                    {% if resourceGroup.name|length > 0 %}
+                                        {{ gen_apiary_link( resourceGroup.name, resource.name, action.name, metadata ) }}
+                                    {% else %}
+                                        {{ gen_apiary_link( "Default", resource.name, action.name, metadata ) }}
+                                    {% endif %}
+                                
                             </div>
                         </div>
                     {% endfor %}
@@ -77,58 +101,63 @@
     </section>
 {% endfor %}
 <section id="examples">
-    <h2>Examples</h2>
+    <div class= "header" ><h2>Examples</h2> </div>
     {% for resourceGroup in resourceGroups %}
-        <section id="{{ gen_resource_group_example_id( resourceGroup.name ) }}" class="resourceGroupExample">
-            <h3 id="h-{{ gen_resource_group_example_id( resourceGroup.name ) }}">{{ resourceGroup.name }}</h3>
+        {% if resourceGroup.name|length > 0 %}
+            <section id="{{ gen_resource_group_example_id( resourceGroup.name ) }}" class="resourceGroupExample">
+                <div class= "header" ><h3 id="h-{{ gen_resource_group_example_id( resourceGroup.name ) }}">{{ resourceGroup.name }}</h3> </div>
+        {% else %}
+            <section id="{{ gen_resource_group_example_id( resourceGroup.name ) }}" class="resourceGroupExample">
+                <div class= "header" ><h3 id="h-{{ gen_resource_group_example_id( resourceGroup.name ) }}">Default</h3> </div>
+        {% endif %}
 
-            {% for resource in resourceGroup.resources %}
-                <section id="{{ gen_resource_example_id( resource.name ) }}" class="resourceExample">
-                    <h4 id="h-{{ gen_resource_example_id( resource.name ) }}">{{ resource.name }} [{{ resource.uriTemplate}}]</h4>
-                        
-                        {% set parameters = resource.parameters %}
-                        {% set parameters_definition_caption = "Parameters" %}
+                {% for resource in resourceGroup.resources %}
+                    <section id="{{ gen_resource_example_id( resource.name ) }}" class="resourceExample">
+                         <div class= "header" ><h4 id="h-{{ gen_resource_example_id( resource.name ) }}">{{ resource.name }} [{{ resource.uriTemplate}}]</h4></div>
+                            
+                            {% set parameters = resource.parameters %}
+                            {% set parameters_definition_caption = "Parameters" %}
 
-                        {#  Display attributes #}
-                        {% set packet_contents = resource.content %}
-                        {# {% include "fragments/resource_attributes.tpl" %} #}
+                            {#  Display attributes #}
+                            {% set packet_contents = resource.content %}
+                            {# {% include "fragments/resource_attributes.tpl" %} #}
 
-                        {% include "fragments/parameters_definition.tpl" %}
+                            {% include "fragments/parameters_definition.tpl" %}
 
-                        {% for action in resource.actions %}
-                            <div id="{{ gen_action_id( action.name ) }}_examples" class="actionExample {{action.method}}">
+                            {% for action in resource.actions %}
+                                <div id="{{ gen_action_id( action.name ) }}_examples" class="actionExample {{action.method}}">
 
-                                {{ displayActionHeader( "h-" + gen_action_id( action.name ) + "_examples", action, resource ) }}
+                                    {{ displayActionHeader( "h-" + gen_action_id( action.name ) + "_examples", action, resource ) }}
+                
+                                    <div id="{{ gen_action_id( action.name ) }}_body" class=""> 
+                                        {% set parameters = action.parameters %}
+                                        {% set parameters_table_caption = "Parameters" %}
+                                        
+                                        {% include "fragments/parameters_definition.tpl" %}         
+                                        {% set packet_contents = action.content %}
+                                        {#{% include "fragments/rest_packet_general_contents.tpl" %}  #}    
+                                            {% for example in action.examples %}
+                                                {% for request in example.requests %}
+                                                    {% set rest_packet = request %}
+                                                    {% set packet_type = "Request" %}
+                                                    {% set loop_index = loop.index %}
+                                                    {% include "fragments/rest_packet_examples.tpl" %}
+                                                {% endfor %}
             
-                                <div id="{{ gen_action_id( action.name ) }}_body" class=""> 
-                                    {% set parameters = action.parameters %}
-                                    {% set parameters_table_caption = "Parameters" %}
-                                    
-                                    {% include "fragments/parameters_definition.tpl" %}         
-                                    {% set packet_contents = action.content %}
-                                    {#{% include "fragments/rest_packet_general_contents.tpl" %}  #}    
-                                        {% for example in action.examples %}
-                                            {% for request in example.requests %}
-                                                {% set rest_packet = request %}
-                                                {% set packet_type = "Request" %}
+                                                {% for response in example.responses %}
+                                                    {% set rest_packet = response %}
+                                                {% set packet_type = "Response" %}
                                                 {% set loop_index = loop.index %}
                                                 {% include "fragments/rest_packet_examples.tpl" %}
+                                                {% endfor %}
                                             {% endfor %}
-        
-                                            {% for response in example.responses %}
-                                                {% set rest_packet = response %}
-                                            {% set packet_type = "Response" %}
-                                            {% set loop_index = loop.index %}
-                                            {% include "fragments/rest_packet_examples.tpl" %}
-                                            {% endfor %}
-                                        {% endfor %}
-                                        <div class="goActions">
-                                            <a href="#{{ gen_action_id( action.name ) }}">Go to specification</a>
-                                        </div>
+                                            <div class="goActions">
+                                                <a href="#{{ gen_action_id( action.name ) }}">Go to specification</a>
+                                            </div>
+                                    </div>
                                 </div>
-                            </div>
-                        {% endfor %}
-                </section>
+                            {% endfor %}
+                    </section>
             {% endfor %}
         </section>
     {% endfor %}

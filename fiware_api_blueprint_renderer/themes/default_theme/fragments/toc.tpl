@@ -12,14 +12,10 @@
 
 {%- endmacro %}
 <section id="toc">
-    <h2 id="h-toc" class="introductory">Table of contents</h2>
-    <ul class="toc">
-{#
-<!--medatada -->
-       <!-- {{ render_metadata_toc(api_metadata.subsections[0]) }}-->
 
-<!-- top metadata -->
-#}
+        <div id="fiware-logo"></div>
+    <ul class="toc">
+
 {% for subsections in api_metadata.subsections %}
     {# {% for subsection in api_metadata.subsections[0].subsections %}#}
     {%if subsections.name != api_metadata.subsections[0].name %}
@@ -37,7 +33,6 @@
 
 {#  unespecified metadata #}
 {% for subsection in subsections.subsections %}
-{#{% for subsection in api_metadata.subsections[0].subsections %}#}
     {% if not subsection.name in top_metadata  and not subsection.name in bottom_metadata and not subsection.name in intro_metadata %}
         {{ render_metadata_toc(subsection) }}
     {% endif %}
@@ -48,8 +43,10 @@
 {% endif %}
 {% endfor%}
 
-{# Common Payload Definition #}
-<li><a href="#common-payload-definition">Common Payload Definition</a></li>
+{% if data_structures|length > 1 %}
+    {# Common Payload Definition #}
+    <li><a href="#common-payload-definition">Common Payload Definition</a></li>
+{% endif %}
 
 {# API #}
 <li><a href="#API_specification">API Specification</a>
@@ -57,19 +54,42 @@
     {% for resourceGroup in resourceGroups %}
 
                         <li>
-                            <a href="#{{ gen_resource_group_id( resourceGroup.name ) }}" title = "Group {{ resourceGroup.name }}">Group {{ resourceGroup.name }}</a>
+                            {% if resourceGroup.name|length > 1 %}
+                                <a href="#{{ gen_resource_group_id( resourceGroup.name ) }}" title = "Group {{ resourceGroup.name }}">Group {{ resourceGroup.name }}</a>
+                            {% else %}
+                                <a href="#default_group" title = "Group default">Default</a>
+                            {% endif %}
                             <ul class="toc">
                               {% for resource in resourceGroup.resources %}
                                 {% if resource.ignoreTOC %}
                                     {% for action in resource.actions %}
-                                        <li><a href="#{{ gen_action_id( action.name ) }}" title = "{{action.method}} - {{ action.name }}">{{action.method}} - {{ action.name }}</a></li>
+                                        {% if action.name %}
+                                            <li><a href="#{{ gen_action_id( action.name ) }}" title = "{{action.method}} - {{ action.name }}">{{action.method}} - {{ action.name  }} aaaaaa</a></li>
+                                        {% else %}
+                                            {% if action.attributes.uriTemplate %}
+                                                <li><a href="#{{ gen_action_id( action.attributes.uriTemplate ) }}" title ="{{action.method}} - {{ action.attributes.uriTemplate }}">{{action.method}} - {{ action.attributes.uriTemplate }}  </a></li>
+                                            {% else %}
+                                                <li><a href="#{{ gen_action_id( resource.uriTemplate|join('action.method') ) }}" title ="{{action.method}} - {{ resource.uriTemplate }}">{{action.method}} - {{ resource.uriTemplate }} </a></li>
+                                            {% endif %}
+
+                                        {% endif %}
+                                        
                                     {% endfor %}
                                 {% else %}
                                     <li>
                                         <a href="#{{ gen_resource_id( resource.name ) }}" title = "Resource {{ resource.name }}">Resource {{ resource.name }}</a>
                                         <ul class="toc  ">
                                         {% for action in resource.actions %}
-                                            <li><a href="#{{ gen_action_id( action.name ) }}" title ="{{action.method}} - {{ action.name }}">{{action.method}} - {{ action.name }}</a></li>
+                                            {% if action.name %}
+                                                <li><a href="#{{ gen_action_id( action.name ) }}" title ="{{action.method}} - {{ action.name }}">{{action.method}} - {{ action.name }}</a></li>
+                                            {% else %}
+                                                {% if action.attributes.uriTemplate %}
+                                                    <li><a href="#{{ gen_action_id( action.attributes.uriTemplate ) }}" title ="{{action.method}} - {{ action.attributes.uriTemplate }}">{{action.method}} - {{ action.attributes.uriTemplate  }}</a></li>
+                                                {% else %}
+                                                    <li><a href="#{{ gen_action_id( resource.name|join('action.method') ) }}" title ="{{action.method}}">{{action.method}}</a></li>
+                                                {% endif %}
+                                            {% endif %}
+
                                         {% endfor %}
                                         </ul>
                                     </li>
@@ -87,7 +107,9 @@
         {{ render_metadata_toc(subsection) }}
     {% endif %}
     {% endfor %}
-    <li><a href="#references">References</a></li>
+    {%if reference_links|length > 0 %}
+        <li><a href="#references">References</a></li>
+    {% endif %}
    </ul>
 </section>
 

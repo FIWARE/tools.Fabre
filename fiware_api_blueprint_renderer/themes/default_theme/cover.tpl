@@ -31,58 +31,17 @@
     
 </head>
 <body id="respecDocument" class="h-entry">
-<div class="container">
-  <div id="TOC-container">
-    {% include "fragments/toc.tpl" %}
-  </div>
-  <div id="API-content">
-  {# {% include "fragments/intro.tpl"%} #}
-
-    {#  API top metadata #}
-    {% include "fragments/top_metadata.tpl" %}
-
-    {% if data_structures|length > 1 %}
-      {# Common payload #}
-      {% from 'fragments/common_payload.tpl' import renderPayloadAttributes %}
-      
-      <section id="common-payload-definition">
-      <h2>Common Payload Definition</h2>
-
-      {% for data_structure_name, data_structure in data_structures.iteritems() %}
-          {% if data_structure_name != "REST API" %}
-              <h3>{{ data_structure_name }}</h3>
-              {{ renderPayloadAttributes( data_structure['attributes'] ) }}
-          {% endif %}
-      {% endfor %}
-      </section>
-    {% endif %}
-
-  {#  API blueprint #}
-  <section id="API_specification">
-      <h1>API Specification</h1>
-      {% include "fragments/api_blueprint.tpl" %}
-  </section>
-  {#  API bottom metadata #}
-   {% include "fragments/bottom_metadata.tpl" %}
-    
-    {#  References #}
-    {%if reference_links|length > 0 %}
-      <section id="references">
-      <h1>References</h1>
-          <ul>
-              {% for link in reference_links %}
-                  <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-              {% endfor %}
-          </ul>
-      </section>
-    {% endif %}
-  </div>
-</div>
+   {% include "fragments/intro.tpl"%} 
 </body>
 <script type="text/javascript">
   function fix_links_class(){
      var links = document.getElementsByTagName("a");
      console.log(links);
+     /*for (link of links)
+     {
+        if ( link.innerHTML.indexOf(link.getAttribute('href')) > -1 )
+          link.className= link.className + " selfContainedLink";
+     }*/
 
      for (var i=0; i < links.length; i++ )
      {
@@ -93,7 +52,6 @@
   }
   
   fix_links_class();
-
 
 </script>
 </html>

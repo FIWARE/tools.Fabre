@@ -14,7 +14,7 @@ def get_packages(package):
 
 
 setup(name='fiware_api_blueprint_renderer',
-      version='0.1',
+      version='0.2.0',
       description='Python module to aid with parsing FIWARE API specification files and rendering them to HTML pages.',
       url='https://github.com/FiwareULPGC/fiware-api-blueprint-renderer',
       author='FIWARE ULPGC',
@@ -24,8 +24,7 @@ setup(name='fiware_api_blueprint_renderer',
       include_package_data=True,
       install_requires=[
         'jinja2>=2.7.3',
-        'markdown>=2.6.2',
-        'pypandoc>=0.9.9'
+        'markdown>=2.6.2'
       ],
       entry_points={
         'console_scripts': [
@@ -36,9 +35,8 @@ setup(name='fiware_api_blueprint_renderer',
         ]
       },
       classifiers=[ 
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: Console',
-        'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python',

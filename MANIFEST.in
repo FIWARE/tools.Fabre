@@ -1,1 +1,1 @@
-recursive-include fiware_api_blueprint_renderer *.js *.css *.png *.tpl
+recursive-include fiware_api_blueprint_renderer *.js *.css *.png *.tpl *.html *.woff

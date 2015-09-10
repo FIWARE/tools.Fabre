@@ -10,7 +10,9 @@
 				{%- else -%}
 					Optional
 				{%- endif -%}
-				, {{ parameter.type }})
+				{%- if parameter.type -%}
+					, {{ parameter.type }}
+				{% endif %})
 			</dt>
 			<dd>
 				{{ parameter.description }}

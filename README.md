@@ -6,14 +6,13 @@ Tool for parsing a FIWARE specification file and rendering it to a HTML page.
 
 * [Python 2](https://www.python.org/)
 * [drafter](https://github.com/apiaryio/drafter)
-* [Pandoc](http://pandoc.org/)
 * [Jinja2](http://jinja.pocoo.org/)
 * [Python Markdown](http://pythonhosted.org/Markdown/)
 * [wkhtmltopdf](http://wkhtmltopdf.org/)
 
 ## Install
 
-Before using fabre, we need to install Drafter, an API Blueprint parser:
+Before using FABRE, we need to install Drafter, an API Blueprint parser:
 
 ```
 git clone --recursive git://github.com/apiaryio/drafter.git
@@ -23,16 +22,10 @@ make drafter
 sudo make install
 ```
 
-We also need Pandoc for further document analysis:
-
-```
-sudo apt-get install pandoc
-```
-
 wkhtmltopdf is needed for pdf conversion.
 It can be downloaded from [wkhtmltopdf](http://wkhtmltopdf.org/)
 
-Once Pandoc, Drafter and wkhtmltopdf are installed, we can download fabre and install it like a PIP package:
+Once  Drafter and wkhtmltopdf are installed, we can download fabre and install it like a PIP package:
 
 ```
 git clone git@github.com:FiwareULPGC/fiware-api-blueprint-renderer.git
@@ -70,10 +63,12 @@ Renders the apib and saves it to ~/out/output.pdf
 fabre -i apib-example/template-fiware-open-spec2.apib -o ~/out --no-clear-temp-dir
 ```
 
-Fabre accepts the options listed below:
+FABRE accepts the options listed below:
 
 * **-i**, **--input**: Path to the FIWARE API specification file.
 * **-o**, **--output**: Path to the destination directory where the output page will be generated. If the --pdf option is specified, this parameter specifies the output filename if it ends with ".pdf"
 * **--pdf**: Save to pdf instead of a html site.
 * **-t**, **--template** Path to the template to be used to render the API specification file. If it is not provided, a default template is used.
 * **--no-clear-temp-dir**: This option is intended for debug purposes.
+
+**NOTE: ** FABRE expects an input file with UTF-8 enconding, providing another charset may cause errors.

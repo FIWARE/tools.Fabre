@@ -20,7 +20,7 @@
                 <p>{{ rest_packet.description }}</p>
 
                 {% if rest_packet.headers | length > 0 %}
-        	        <p>Headers</p>
+        	         <div class= "header"><p>Headers</p></div>
                     {% set headersStr = [] %}
                     {% for header in rest_packet.headers %}
                         {% if headersStr.append( header.name + ": " + header.value ) %}{% endif %}
@@ -30,12 +30,12 @@
                 {% endif %}
 
                 {% if rest_packet.body | length > 0 %}
-                    <p>Body</p>
+                    <div class= "header"><p>Body</p></div>
                     <pre><code>{{ rest_packet.body }}</code></pre>
                 {% endif %}
 
                 {% if rest_packet.schema | length > 0 %}
-                    <p>Schema</p>
+                    <div class= "header"><p>Schema</p></div>
                     <pre><code>{{ rest_packet.schema }}</code></pre>
                 {% endif %}
             </div>
