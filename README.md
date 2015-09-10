@@ -23,7 +23,7 @@ sudo make install
 ```
 
 wkhtmltopdf is needed for pdf conversion.
-It can be downloaded from [wkhtmltopdf](http://wkhtmltopdf.org/)
+Installer can be downloaded from [wkhtmltopdf](http://wkhtmltopdf.org/downloads.html)
 
 Once  Drafter and wkhtmltopdf are installed, we can download fabre and install it like a PIP package:
 
