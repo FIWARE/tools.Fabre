@@ -71,4 +71,4 @@ FABRE accepts the options listed below:
 * **-t**, **--template** Path to the template to be used to render the API specification file. If it is not provided, a default template is used.
 * **--no-clear-temp-dir**: This option is intended for debug purposes.
 
-**NOTE: ** FABRE expects an input file with UTF-8 enconding, providing another charset may cause errors.
+**NOTE:** FABRE expects an input file with UTF-8 enconding, providing another charset may cause errors.
