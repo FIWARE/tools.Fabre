@@ -28,7 +28,7 @@ It can be downloaded from [wkhtmltopdf](http://wkhtmltopdf.org/)
 Once  Drafter and wkhtmltopdf are installed, we can download fabre and install it like a PIP package:
 
 ```
-git clone git@github.com:FiwareULPGC/fiware-api-blueprint-renderer.git
+git clone git://github.com/FiwareULPGC/fiware-api-blueprint-renderer.git
 cd fiware-api-blueprint-renderer
 sudo python setup.py install
 ```
