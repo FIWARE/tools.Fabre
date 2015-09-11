@@ -188,7 +188,10 @@ def create_json_section(section_markdown_title, section_body):
     section = {}
     section["id"] = get_markdow_title_id( section_title )
     section["name"] = section_title
-    section["body"] = markdown.markdown( section_body.decode('utf-8'), extensions=['markdown.extensions.tables','markdown.extensions.fenced_code'] )
+    try:
+        section["body"] = markdown.markdown( section_body.decode('utf-8'), extensions=['markdown.extensions.tables','markdown.extensions.fenced_code'] )
+    except UnicodeDecodeError as ude:
+        section["body"] = markdown.markdown( section_body, extensions=['markdown.extensions.tables','markdown.extensions.fenced_code'] )
     section["subsections"] = []
 
     return section
@@ -823,7 +826,10 @@ def render_description(JSON_file_path):
     with open(JSON_file_path, 'rU') as json_file:
         json_content = json.load(json_file)
 
-    json_content["description"] = markdown.markdown( json_content["description"].decode('utf-8'), extensions=['markdown.extensions.tables','markdown.extensions.fenced_code'] )
+    try:
+        json_content["description"] = markdown.markdown( json_content["description"].decode('utf-8'), extensions=['markdown.extensions.tables','markdown.extensions.fenced_code'] )
+    except UnicodeEncodeError as error:
+        json_content["description"] = markdown.markdown( json_content["description"], extensions=['markdown.extensions.tables','markdown.extensions.fenced_code'] )
 
     with open(JSON_file_path, 'w') as json_file:
         json.dump(json_content, json_file, indent=4)
