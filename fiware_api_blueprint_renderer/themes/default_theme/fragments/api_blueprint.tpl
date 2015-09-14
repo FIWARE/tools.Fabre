@@ -10,12 +10,24 @@
     </h4>
 {% endmacro %}
 
-{% macro gen_apiary_link( resourceGroupName, resourceName, actionName, metadata ) %}
+{% macro gen_apiary_link( resourceGroupName, resourceName, resourceUri, actionName, actionMethod, metadata ) %}
     <div class="goApiary">
     {% for metadata_section in metadata %}
         {% if metadata_section['name'] == "APIARY_PROJECT" %}
+            {% if resourceName | length > 0 %}
+                {% set resource_slug = slug( resourceName ) %}
+            {% else %}
+                {% set resource_slug = slug( resourceUri ) |  replace( "/", "" ) | replace( "{", "" ) | replace( "}", "" ) | replace( ".", "" ) %}
+            {% endif %}
+            {% set resource_slug = resource_slug | replace( "*", "" ) %}
+
+            {% if actionName | length > 0 %}
+                {% set action_slug = slug( actionName ) %}
+            {% else %}
+                {% set action_slug = slug( actionMethod ) %}
+            {% endif %}
             
-                <a target="_blank" href="http://docs.{{ metadata_section['value'] }}.apiary.io/#reference/{{ slug( resourceGroupName ) }}/{{ slug( resourceName ) }}/{{ slug( actionName ) }}">View in Apiary</a>
+                <a target="_blank" href="http://docs.{{ metadata_section['value'] }}.apiary.io/#reference/{{ slug( resourceGroupName ) }}/{{ resource_slug }}/{{ action_slug }}">View in Apiary</a>
             
         {% endif %}
     {% endfor %}
@@ -32,7 +44,7 @@
         {% endif %}
 	{{ resourceGroup.description }}
         {% for resource in resourceGroup.resources %}
-            <section id="{{ gen_resource_id( resource.name ) }}" class="resource">
+            <section id="{{ resource.id }}" class="resource">
                  <div class= "header" ><h3 id="h-{{ gen_resource_id( resource.name ) }}">{{ resource.name }} [{{ resource.uriTemplate}}]</h3> </div>
                 {{ resource.description }}
                 {% set parameters = resource.parameters %}
@@ -45,19 +57,7 @@
                 {% include "fragments/parameters_definition.tpl" %}
 
                     {% for action in resource.actions %}
-                        {% if action.name %}
-                            <div id="{{ gen_action_id( action.name ) }}" class="action {{action.method}}">
-                        {% else %}
-                            {% if action.attributes.uriTemplate%}
-                                <div id="{{ gen_action_id( action.attributes.uriTemplate ) }}" class="action {{action.method}}">
-                            {% else %}
-                                {% if resource.ignoreTOC %}
-                                    <div id="{{ gen_action_id( resource.uriTemplate|join('action.method') ) }}" class="action {{action.method}}">
-                                {% else %}
-                                    <div id="{{ gen_action_id( resource.name|join('action.method') ) }}" class="action {{action.method}}">
-                                {% endif %}
-                            {% endif %}
-                        {% endif %}
+                        <div id="{{ action.id }}" class="action {{action.method}}">
 
                         {{ displayActionHeader( "h-" + gen_action_id( action.name ), action, resource ) }}
         
@@ -85,12 +85,12 @@
                                     {% endfor %}
                                     
                                     <div class="goExample">
-                                        <a href="#{{ gen_action_id( action.name ) }}_examples">Go to example</a>
+                                        <a href="#{{ action.id }}_examples">Go to example</a>
                                     </div>
                                     {% if resourceGroup.name|length > 0 %}
-                                        {{ gen_apiary_link( resourceGroup.name, resource.name, action.name, metadata ) }}
+                                        {{ gen_apiary_link( resourceGroup.name, resource.name, resource.uriTemplate, action.name, action.method, metadata ) }}
                                     {% else %}
-                                        {{ gen_apiary_link( "Default", resource.name, action.name, metadata ) }}
+                                        {{ gen_apiary_link( "Default", resource.name, resource.uriTemplate, action.name, action.method, metadata ) }}
                                     {% endif %}
                                 
                             </div>
@@ -125,7 +125,7 @@
                             {% include "fragments/parameters_definition.tpl" %}
 
                             {% for action in resource.actions %}
-                                <div id="{{ gen_action_id( action.name ) }}_examples" class="actionExample {{action.method}}">
+                                <div id="{{ action.id }}_examples" class="actionExample {{action.method}}">
 
                                     {{ displayActionHeader( "h-" + gen_action_id( action.name ) + "_examples", action, resource ) }}
                 
@@ -152,7 +152,7 @@
                                                 {% endfor %}
                                             {% endfor %}
                                             <div class="goActions">
-                                                <a href="#{{ gen_action_id( action.name ) }}">Go to specification</a>
+                                                <a href="#{{ action.id }}">Go to specification</a>
                                             </div>
                                     </div>
                                 </div>

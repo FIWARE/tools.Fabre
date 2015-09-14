@@ -64,12 +64,12 @@
                                 {% if resource.ignoreTOC %}
                                     {% for action in resource.actions %}
                                         {% if action.name %}
-                                            <li><a href="#{{ gen_action_id( action.name ) }}" title = "{{action.method}} - {{ action.name }}">{{action.method}} - {{ action.name  }} aaaaaa</a></li>
+                                            <li><a href="#{{ action.id }}" title = "{{action.method}} - {{ action.name }}">{{action.method}} - {{ action.name  }}</a></li>
                                         {% else %}
                                             {% if action.attributes.uriTemplate %}
-                                                <li><a href="#{{ gen_action_id( action.attributes.uriTemplate ) }}" title ="{{action.method}} - {{ action.attributes.uriTemplate }}">{{action.method}} - {{ action.attributes.uriTemplate }}  </a></li>
+                                                <li><a href="#{{ action.id }}" title ="{{action.method}} - {{ action.attributes.uriTemplate }}">{{action.method}} - {{ action.attributes.uriTemplate }}  </a></li>
                                             {% else %}
-                                                <li><a href="#{{ gen_action_id( resource.uriTemplate|join('action.method') ) }}" title ="{{action.method}} - {{ resource.uriTemplate }}">{{action.method}} - {{ resource.uriTemplate }} </a></li>
+                                                <li><a href="#{{ action.id }}" title ="{{action.method}} - {{ resource.uriTemplate }}">{{action.method}} - {{ resource.uriTemplate }} </a></li>
                                             {% endif %}
 
                                         {% endif %}
@@ -77,16 +77,16 @@
                                     {% endfor %}
                                 {% else %}
                                     <li>
-                                        <a href="#{{ gen_resource_id( resource.name ) }}" title = "Resource {{ resource.name }}">Resource {{ resource.name }}</a>
+                                        <a href="#{{ resource.id }}" title = "Resource {{ resource.name }}">Resource {{ resource.name }}</a>
                                         <ul class="toc  ">
                                         {% for action in resource.actions %}
                                             {% if action.name %}
-                                                <li><a href="#{{ gen_action_id( action.name ) }}" title ="{{action.method}} - {{ action.name }}">{{action.method}} - {{ action.name }}</a></li>
+                                                <li><a href="#{{ action.id }}" title ="{{action.method}} - {{ action.name }}">{{action.method}} - {{ action.name }}</a></li>
                                             {% else %}
                                                 {% if action.attributes.uriTemplate %}
-                                                    <li><a href="#{{ gen_action_id( action.attributes.uriTemplate ) }}" title ="{{action.method}} - {{ action.attributes.uriTemplate }}">{{action.method}} - {{ action.attributes.uriTemplate  }}</a></li>
+                                                    <li><a href="#{{ action.id }}" title ="{{action.method}} - {{ action.attributes.uriTemplate }}">{{action.method}} - {{ action.attributes.uriTemplate  }}</a></li>
                                                 {% else %}
-                                                    <li><a href="#{{ gen_action_id( resource.name|join('action.method') ) }}" title ="{{action.method}}">{{action.method}}</a></li>
+                                                    <li><a href="#{{ action.id }}" title ="{{action.method}}">{{action.method}}</a></li>
                                                 {% endif %}
                                             {% endif %}
 

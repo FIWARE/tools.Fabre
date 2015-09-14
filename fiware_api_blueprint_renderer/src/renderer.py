@@ -13,6 +13,7 @@ from pprint import pprint
 
 from jinja2 import Environment, FileSystemLoader
 import markdown
+from markdown.extensions.toc import slugify
 
 import apib_extra_parse_utils
 
@@ -309,6 +310,23 @@ def add_metadata_to_json(metadata, JSON_file_path):
             json_content['api_metadata'][metadataKey] = metadata[metadataKey]
 
     #json_content['api_metadata_dict'] = generate_metadata_dictionary( metadata )
+
+    with open(JSON_file_path, 'w') as json_file:
+        json.dump(json_content, json_file, indent=4)
+
+
+def add_is_pdf_metadata_to_json(is_PDF, JSON_file_path):
+    """Specifies if FABRE are going to render a PDF or not
+    
+    Arguments: 
+    is_PDF -- Boolean that indicates if FABRE should renderer the PDF template.
+    JSON_file_path -- Path to JSON file
+    """
+    json_content = ""
+
+    with open(JSON_file_path, 'rU') as json_file:
+        json_content = json.load(json_file)
+        json_content['is_PDF'] = is_PDF
 
     with open(JSON_file_path, 'w') as json_file:
         json.dump(json_content, json_file, indent=4)
@@ -857,6 +875,60 @@ def escape_ampersand_uri_templates(JSON_file_path):
     shutil.move(json_file_write_path, JSON_file_path)
 
 
+def generate_resources_and_action_ids(JSON_file_path):
+    """Generate an ID for every resource and action in the given JSON file
+
+    Arguments:
+    JSON_file_path - path to the JSON file containing the API parsed definition"""
+    json_content = ""
+
+    with open(JSON_file_path, 'rU') as json_file:
+        json_content = json.load(json_file)
+
+    for resource_group in json_content["resourceGroups"]:
+        for resource in resource_group["resources"]:
+            if len( resource["name"] ) > 0:
+                resource["id"] = 'resource_' + slugify( resource["name"], '-' )
+            else:
+                resource["id"] = 'resource_' + slugify( resource["uriTemplate"], '-' )
+
+            for action in resource["actions"]:
+                if len( action["name"] ) > 0:
+                    action["id"] = 'action_' + slugify( action["name"],'-' )
+                else:
+                    if len( action["attributes"]["uriTemplate"] ) > 0:
+                        action["id"] = 'action_' + slugify( action["attributes"]["uriTemplate"], '-' )
+                    else:
+                        if resource["ignoreTOC"] == True:
+                            action["id"] = 'action_' + slugify( resource["uriTemplate"] + action["method"], '-' )
+                        else:
+                            action["id"] = 'action_' + slugify( resource["name"] + action["method"], '-' )
+
+    with open(JSON_file_path, 'w') as json_file:
+        json.dump(json_content, json_file, indent=4)
+
+
+def remove_redundant_spaces(JSON_file_path):
+    """Remove redundant spaces from names of resources and actions
+
+    Arguments:
+    JSON_file_path - path to the JSON file containing the API parsed definition"""
+    json_content = ""
+
+    with open(JSON_file_path, 'rU') as json_file:
+        json_content = json.load(json_file)
+
+    for resource_group in json_content["resourceGroups"]:
+        resource_group["name"] = re.sub( " +", " ", resource_group["name"] )
+        for resource in resource_group["resources"]:
+            resource["name"] = re.sub( " +", " ", resource["name"] )
+            for action in resource["actions"]:
+                action["name"] = re.sub( " +", " ", action["name"] )
+
+    with open(JSON_file_path, 'w') as json_file:
+        json.dump(json_content, json_file, indent=4)
+
+
 def render_api_specification(API_specification_path, template_path, dst_dir_path, clear_temporal_dir=True, cover=None):
     """Renders an API specification using a template and saves it to destination directory.
     
@@ -888,7 +960,11 @@ def render_api_specification(API_specification_path, template_path, dst_dir_path
     render_description(API_blueprint_JSON_file_path)
     escape_requests_responses_json(API_blueprint_JSON_file_path)
     escape_ampersand_uri_templates(API_blueprint_JSON_file_path)
+    generate_resources_and_action_ids(API_blueprint_JSON_file_path)
+    remove_redundant_spaces(API_blueprint_JSON_file_path)
     add_reference_links_to_json(API_blueprint_JSON_file_path)
+
+    add_is_pdf_metadata_to_json(cover is not None, API_blueprint_JSON_file_path)
 
     render_api_blueprint(template_path, API_blueprint_JSON_file_path, dst_dir_path)
 
