@@ -104,7 +104,7 @@
                                         {% include "fragments/rest_packet.tpl" %}
         	                            {% endfor %}
                                     {% endfor %}
-                                    
+                                    <div>
                                     <div class="goExample">
                                         <a href="#{{ action.id }}_examples">Go to example</a>
                                     </div>
@@ -113,6 +113,7 @@
                                     {% else %}
                                         {{ gen_apiary_link( "Default", resource.name, resource.uriTemplate, action.name, action.method, metadata ) }}
                                     {% endif %}
+                                    </div>
                                 
                             </div>
                         </div>

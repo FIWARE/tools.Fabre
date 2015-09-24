@@ -9,7 +9,8 @@ $(function() {
         {
             $("#API-content").css("margin-left","");
             $("#TOC-container").css("width","");
-            $("#fiware-logo").css("width","");
+            //$("#fiware-logo").css("width","");
+            $("#fiware-logo-container").css("width","");
             $("#TOC-container").addClass("Responsive-TOC");
         }
         else
@@ -27,7 +28,8 @@ $(function() {
            
            $("#TOC-container").removeClass("Responsive-TOC");
            TOCContainerWidth=$('#TOC-container').width();
-            $("#fiware-logo").css("width", TOCContainerWidth);
+            //$("#fiware-logo").css("width", TOCContainerWidth);
+            $("#fiware-logo-container").css("width", TOCContainerWidth);
         }
     };
     var timer = setInterval(resizeContent, 100);

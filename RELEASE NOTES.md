@@ -1,5 +1,14 @@
 # FIWARE API Blueprint renderer RELEASE NOTES
 
+
+## Version v0.3.0.1
+### Relase date 24/09/2015 
+
+### Fixed bugs
+
+* Minor CSS fixes related to "go to example" buttons.
+
+
 ## Version v0.3.0
 ### Relase date 24/09/2015 
 

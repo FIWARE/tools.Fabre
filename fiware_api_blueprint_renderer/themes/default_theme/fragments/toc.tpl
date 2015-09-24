@@ -11,9 +11,12 @@
 </li>
 
 {%- endmacro %}
+<div id="fiware-logo-container">
+    <div id="fiware-logo"></div>
+</div>
 <nav id="toc">
 
-        <div id="fiware-logo"></div>
+        
     <ul class="toc">
 
         {% for metadata_value in metadata %}
