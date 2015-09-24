@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python
 
 from collections import OrderedDict, deque
@@ -7,15 +8,157 @@ import os
 import re
 import shutil
 import io
-from subprocess import call
+from subprocess import call, Popen, PIPE
 import sys, getopt
 from pprint import pprint
+import pkg_resources
+import subprocess
 
+import mdx_linkify
 from jinja2 import Environment, FileSystemLoader
 import markdown
 from markdown.extensions.toc import slugify
 
 import apib_extra_parse_utils
+
+def order_uri_block(block):
+    """Take a variable block of a URI Template and return it ordered.
+
+    Arguments:
+    block -- String that specifies the block to be ordered
+    """
+
+    if '#' == block[0]: #fragment identifier operator
+        return block
+    if '+' == block[0]:
+        return block #reserved value operator
+
+    if not ('?' == block[0] or '&' == block[0]): #start with name
+        return block
+
+    parameters = (',').join(sorted((block[1:]).split(',')))
+    
+    return ''+block[0]+ parameters 
+
+
+
+def order_request_parameters(request_id):
+    """Take a request identifier and if it has a URI, order it parameters.
+
+    Arguments:
+    request_id -- String that specifies request that is going to be processed
+    """
+    
+    _last_slash_position = request_id.rfind('/')
+
+    if 0 > _last_slash_position:
+        return request_id #parameters not found
+    
+    last_string = request_id[_last_slash_position:]
+
+    if 1 > len(last_string):
+        return request_id #request_id ends with /
+
+    
+    start_param = last_string.find('?')
+
+    if 0 > start_param:
+        return request_id
+
+    parameters = last_string[start_param+1:]
+    
+    if 1 > len(parameters):
+        return request_id
+
+    fragment_pos = parameters.find('#')
+
+    if fragment_pos < 0: #dont have identifier operator
+        query_parameters = ('&').join(sorted(parameters.split('&')))
+        ordered_request = request_id[0:_last_slash_position]+\
+                        last_string[0:start_param+1]+\
+                        query_parameters
+    else:
+        query_parameters = ('&').join(sorted((parameters[:fragment_pos])\
+                            .split('&')))
+        ordered_request = request_id[0:_last_slash_position]+\
+                        last_string[0:start_param+1]+\
+                        query_parameters+parameters[fragment_pos:]
+
+
+    return ordered_request
+
+
+
+
+def order_uri_parameters(URI):
+    """Take an URI and order it parameters.
+
+    Arguments:
+    URI -- URI to be ordered
+    """
+    
+    _last_slash_position = URI.rfind('/')
+    
+
+    if 0 > _last_slash_position:
+        return URI #parameters not found
+    
+    parameters_string = URI[_last_slash_position:]
+    if 1 > len(parameters_string):
+        return URI #URI ends with /
+
+    parameter_blocks = parameters_string.split('{')
+
+    orderer_blocks = ""
+    for parameter_block in parameter_blocks[1:]:
+        
+        if 0 > parameter_block.find('}'):#close block not found
+            return URI
+
+        _close_group_position = parameter_block.find('}')
+
+        ordered_parameters = order_uri_block(parameter_block[0:\
+            _close_group_position])
+        orderer_blocks += '{'+ordered_parameters+parameter_block[\
+        _close_group_position:]
+
+    ordered_URI = URI[0:_last_slash_position]+parameter_blocks[0]+\
+                orderer_blocks
+
+    return ordered_URI
+
+def order_uri_template_of_json(JSON_file_path):
+    """Extract all the links from the JSON file and adds them back to the JSON.
+
+    Arguments:
+    JSON_file_path -- path to the JSON file where all the links will be
+     extracted and added in a separate section.
+    """
+    json_content = ""
+
+    with open(JSON_file_path, 'rU') as json_file:
+        json_content = json.load(json_file)
+
+
+    for resource_group in json_content["resourceGroups"]:
+
+        for resource in resource_group["resources"]:
+            resource["uriTemplate"] = order_uri_parameters(resource["uriTemplate"])
+            for action in resource["actions"]:
+                action["attributes"]["uriTemplate"] = order_uri_parameters(\
+                                        action["attributes"]["uriTemplate"])
+                for example in action["examples"]:
+                    for request in example["requests"]:
+                        request["name"] = \
+                                order_request_parameters(request["name"])
+
+
+
+
+    with open(JSON_file_path, 'w') as json_file:
+        json.dump(json_content, json_file, indent=4)
+    return
+
 
 def print_api_spec_title_to_extra_file(input_file_path, extra_sections_file_path):
     """Extracts the title of the API specification and writes it to the extra sections file.
@@ -68,12 +211,19 @@ def separate_extra_sections_and_api_blueprint(input_file_path, extra_sections_fi
     print_api_spec_title_to_extra_file(input_file_path, extra_sections_file_path) 
 
     with open(input_file_path, 'rU') as input_file, open(extra_sections_file_path, 'a') as extra_sections_file, open(API_blueprint_file_path, 'w') as API_blueprint_file:
+        
+        line_counter = 0
+        title_line_end = -1
+        apib_line_start = -1
+
         metadata_section = True
         apib_part = False
         title_section = False
         parameters_section = False
 
         for line in input_file:
+            line_counter += 1
+
             copy = False
 
             if metadata_section and len(line.split(':')) == 1:
@@ -92,11 +242,15 @@ def separate_extra_sections_and_api_blueprint(input_file_path, extra_sections_fi
                 else:
                     if not apib_part:
                         apib_part = start_apib_section(line)
+                        if title_line_end < 0:
+                            title_line_end = line_counter
                         
                     if not apib_part:
                         copy = True
                     else:
                         copy = False
+                        if apib_line_start < 0:
+                            apib_line_start = line_counter
 
             if copy:
                 extra_sections_file.write(line)
@@ -104,6 +258,8 @@ def separate_extra_sections_and_api_blueprint(input_file_path, extra_sections_fi
                 line = line.replace('\t','    ')
                 (line, parameters_section) = preprocess_apib_parameters_lines(line, parameters_section)
                 API_blueprint_file.write(line)
+
+    return (title_line_end, apib_line_start)
 
 
 def preprocess_apib_parameters_lines(line, defining_parameters):
@@ -135,7 +291,9 @@ def escape_parenthesis_in_parameter_description(parameter_definition):
     if len(parameter_definition_list) > 1:
         parameter_header = parameter_definition_list[0]
         parameter_body = parameter_definition_list[1]
-
+        parameter_body = parse_to_markdown(parameter_body)+ '\n'
+        parameter_body = parameter_body.replace('<p>', "")
+        parameter_body = parameter_body.replace('</p>', "")
         parameter_body = parameter_body.replace('(', "&#40;")
         parameter_body = parameter_body.replace(')', "&#41;")
 
@@ -144,15 +302,61 @@ def escape_parenthesis_in_parameter_description(parameter_definition):
         return parameter_definition
 
 
-def parser_api_blueprint(API_blueprint_file_path, API_blueprint_JSON_file_path):
-    """Extracts from API Blueprint file the API specification and saves it to a JSON file
+def convert_message_error_lines(drafter_output, title_line_end, apib_line_start):
+    """Convert the error lines to match the extended FIWARE APIB file format
+
+    Arguments:
+    drafter_output -- Text with drafter postprocessing output
+    title_line_end -- Line where the specification title ends
+    apib_line_start -- Line where the specification of the API starts
+    """
+
+    line_error_regex = re.compile( "line (\d+)," )
+
+    line_error_matches = line_error_regex.findall(drafter_output)
+    if line_error_matches:
+        line_error_set = set(line_error_matches)
+        for line_error in line_error_set:
+            if line_error >= apib_line_start:
+                line_error_substitute = int(line_error) - title_line_end + apib_line_start
+                drafter_output = drafter_output.replace("line {},".format(line_error), "line {},".format(line_error_substitute))
+
+    return drafter_output
+
+
+
+def parser_api_blueprint(API_blueprint_file_path, API_blueprint_JSON_file_path, title_line_end, apib_line_start):
+    """Parse the API Blueprint file with the API specification and save the output to a JSON file
 
     Arguments:
     API_blueprint_file_path -- An API Blueprint definition file 
     API_blueprint_JSON_file_path -- Path to JSON file
+    title_line_end -- Line where the specification title ends. Needed to reconvert error messages from drafter.
+    apib_line_start -- Line where the specification of the API starts. Needed to reconvert error messages from drafter.
     """
 
-    call( ["drafter", API_blueprint_file_path, "--output", API_blueprint_JSON_file_path, "--format", "json", "--use-line-num"] )
+    command_call = ["drafter", API_blueprint_file_path, "--output", API_blueprint_JSON_file_path, "--format", "json", "--use-line-num"]
+    [_, execution_error_output] = Popen(command_call, stderr=PIPE).communicate()
+
+    print convert_message_error_lines(execution_error_output, title_line_end, apib_line_start)
+
+
+def parse_to_markdown(markdown_text):
+    """Parse Markdown text to HTML
+
+    Arguments:
+    markdown_text -- String to be parsed into HTML format
+    """
+
+    extensions_list = ['linkify','markdown.extensions.tables','markdown.extensions.fenced_code']
+
+    try:
+        parsed_text = markdown.markdown(markdown_text.decode('utf-8'), extensions=extensions_list)
+
+    except (UnicodeEncodeError, UnicodeDecodeError) as encoding_error:
+        parsed_text = markdown.markdown(markdown_text, extensions=extensions_list)
+
+    return parsed_text
 
 
 def get_markdow_title_id(section_title):
@@ -189,89 +393,108 @@ def create_json_section(section_markdown_title, section_body):
     section = {}
     section["id"] = get_markdow_title_id( section_title )
     section["name"] = section_title
-    try:
-        section["body"] = markdown.markdown( section_body.decode('utf-8'), extensions=['markdown.extensions.tables','markdown.extensions.fenced_code'] )
-    except UnicodeDecodeError as ude:
-        section["body"] = markdown.markdown( section_body, extensions=['markdown.extensions.tables','markdown.extensions.fenced_code'] )
+    section["body"] = parse_to_markdown(section_body)
+
     section["subsections"] = []
 
     return section
 
 
-def get_subsection_body(file_descriptor):
+def get_subsection_body(filepath, last_position):
     """Reads the given file until a Markdown header is found and returns the bytes read
 
     Arguments:
-    file_descriptor -- Descriptor of the file being read"""
-    body=''
-    line = file_descriptor.readline()
+    filepath -- Path of the file to iterate over
+    position -- Descriptor of the file being read"""
 
-    while line and not line.startswith('#'):
-        body += line
+    with open(filepath, 'rU') as file_descriptor:
+        body = ''
+        previous_pos = last_position
+        file_descriptor.seek(previous_pos)
         line = file_descriptor.readline()
+        pos = file_descriptor.tell()
 
-    return (body, line)
+        while line and not line.startswith('#'):
+            body += line
+
+            previous_pos = pos
+            line = file_descriptor.readline()
+            pos = file_descriptor.tell()
+
+        return (body, previous_pos)
 
 
-def parse_metadata_subsections(file_descriptor, parent_section_JSON, last_read_line=None):
+def parse_metadata_subsections(filepath, parent_section_JSON, last_pos=0):
     """Generates a JSON tree of nested metadata sections
 
     Arguments:
-    file_descriptor -- list of lines with the content of the file
+    filepath -- Name and path of the file to iterate over
     parent_section_JSON -- JSON object representing the current parent section
-    last_read_line -- Last remaining read line 
+    last_pos -- Last byte position read in the file 
     """
     
-    if last_read_line is None:
+    previous_pos = last_pos
+    with open(filepath, 'rU') as file_descriptor:
+
+        file_descriptor.seek(previous_pos)
         line = file_descriptor.readline()
-    else:
-        line = last_read_line
+        pos = file_descriptor.tell()
 
-    # EOF case
-    if not line:
-        return line
+        # EOF case
+        if line:
+            if line.startswith('#'):
 
-    if line.startswith('#'):
-        section_name = line
-        (body, line) = get_subsection_body(file_descriptor)
+                section_name = line
+                (body, previous_pos) = get_subsection_body(filepath, pos)
 
-        section_JSON = create_json_section(section_name, body)
+                section_JSON = create_json_section(section_name, body)
+                parent_section_JSON['subsections'].append(section_JSON)
 
-        parent_section_JSON['subsections'].append(section_JSON)
+                section_level = get_heading_level(section_name)
 
-        section_level = get_heading_level(section_name)
-        next_section_level = get_heading_level(line)
+                file_descriptor.seek(previous_pos)
+                line = file_descriptor.readline()
+                pos = file_descriptor.tell()            
+                next_section_level = get_heading_level(line)
 
-        if section_level == next_section_level:   # Section sibling
-           next_line = parse_metadata_subsections(file_descriptor, parent_section_JSON, last_read_line=line) 
-        elif section_level < next_section_level:  # Section child
-           next_line = parse_metadata_subsections(file_descriptor, section_JSON, last_read_line=line) 
-        else:   # Not related to current section
-            return line
+                if section_level == next_section_level:   # Section sibling
+                   previous_pos = parse_metadata_subsections(filepath, parent_section_JSON, last_pos=previous_pos) 
+                elif section_level < next_section_level:  # Section child
+                   previous_pos = parse_metadata_subsections(filepath, section_JSON, last_pos=previous_pos) 
+                else:   # Not related to current section
+                    return previous_pos
 
-        if not next_line :
-            return next_line
-        else:
-            next_section_level = get_heading_level(next_line)
+                file_descriptor.seek(previous_pos)
+                next_line = file_descriptor.readline()
+                pos = file_descriptor.tell()
 
-            if section_level == next_section_level:   # Section sibling
-               next_line = parse_metadata_subsections(file_descriptor, parent_section_JSON, last_read_line=next_line) 
-            else:   # Not related to current section
-                return next_line
+                if next_line :
+                    next_section_level = get_heading_level(next_line)
+                    if section_level == next_section_level:   # Section sibling
+                       previous_pos = parse_metadata_subsections(filepath, parent_section_JSON, last_pos=previous_pos)
+                    else:   # Not related to current section
+                        pass 
+
+    return previous_pos
 
 
-def parse_meta_data(file_path):
+def parse_meta_data(filepath):
     """Parses API metadata and returns the result in a JSON object
     
     Arguments: 
-    file_path -- File with extra sections
+    filepath -- File with extra sections
     """
     metadata = create_json_section("root", "")
   
-    with open(file_path, 'rU') as file_:
-        more = parse_metadata_subsections(file_, metadata)
-        while more:
-            more = parse_metadata_subsections(file_, metadata, more)
+    with open(filepath, 'rU') as file_:
+        last_position_read = parse_metadata_subsections(filepath, metadata)
+
+        file_.seek(last_position_read)
+        line = file_.readline()
+        while(line):
+            last_position_read = parse_metadata_subsections(filepath, metadata, last_position_read)
+            file_.seek(last_position_read)
+            line = file_.readline()
 
     return metadata
 
@@ -343,11 +566,13 @@ def parser_json_descriptions(JSON_file_path):
     with open(JSON_file_path, 'rU') as json_file:
         json_content = json.load(json_file)
         for resource_group in json_content['resourceGroups']:
-            resource_group['description'] = markdown.markdown( resource_group['description'], extensions=['markdown.extensions.tables'] )
+            resource_group['description'] = parse_to_markdown(resource_group['description'])
+
             for resource in resource_group['resources']:
-                resource['description'] = markdown.markdown( resource['description'], extensions=['markdown.extensions.tables'] )
+                resource['description'] = parse_to_markdown(resource['description'])
+
                 for action in resource['actions']:
-                    action['description'] = markdown.markdown( action['description'], extensions=['markdown.extensions.tables'] )
+                    action['description'] = parse_to_markdown(action['description'])
     
     with open(JSON_file_path, 'w') as json_file:
         json.dump(json_content, json_file, indent=4)
@@ -377,7 +602,8 @@ def render_api_blueprint(template_file_path, context_file_path, dst_dir_path):
     dst_dir_path -- Path to save the compiled site
     """
 
-    env = Environment(loader=FileSystemLoader(os.path.dirname(template_file_path)))
+    env = Environment(extensions=["jinja2.ext.do",], loader=FileSystemLoader(os.path.dirname(template_file_path)))
+    env.filters['sort_payload_parameters'] = sort_payload_parameters
     template = env.get_template(os.path.basename(template_file_path))
     output = ""
     with open(context_file_path, "rU") as contextFile:
@@ -762,6 +988,8 @@ def get_markdown_links(json_content):
     return links
 
 
+
+
 def add_reference_links_to_json(JSON_file_path):
     """Extract all the links from the JSON file and adds them back to the JSON.
 
@@ -844,10 +1072,7 @@ def render_description(JSON_file_path):
     with open(JSON_file_path, 'rU') as json_file:
         json_content = json.load(json_file)
 
-    try:
-        json_content["description"] = markdown.markdown( json_content["description"].decode('utf-8'), extensions=['markdown.extensions.tables','markdown.extensions.fenced_code'] )
-    except UnicodeEncodeError as error:
-        json_content["description"] = markdown.markdown( json_content["description"], extensions=['markdown.extensions.tables','markdown.extensions.fenced_code'] )
+    json_content["description"] = parse_to_markdown(json_content["description"])
 
     with open(JSON_file_path, 'w') as json_file:
         json.dump(json_content, json_file, indent=4)
@@ -929,6 +1154,31 @@ def remove_redundant_spaces(JSON_file_path):
         json.dump(json_content, json_file, indent=4)
 
 
+def compare_payload_parameter(paramA, paramB):
+    """Returns a boolean indicating whether paramA < paramB (alphabetically)
+
+    Arguments:
+    paramA - first operand of the comparison
+    paramB - second operand of the comparison"""
+    if( paramA['class'] == "property" and 
+        paramB['class'] == "property" 
+    ):
+        if( paramA['content']['name']['literal'] < paramB['content']['name']['literal'] ):
+            return -1
+        else:
+            return 1
+    else:
+        return 0
+
+
+def sort_payload_parameters(parameters_list):
+    """Jinja2 custom filter for ordering a list of parameters
+
+    Arguments:
+    parameters_list - list of payload parameters given by Drafter"""
+    return sorted(parameters_list, cmp=compare_payload_parameter)
+
+
 def render_api_specification(API_specification_path, template_path, dst_dir_path, clear_temporal_dir=True, cover=None):
     """Renders an API specification using a template and saves it to destination directory.
     
@@ -949,12 +1199,15 @@ def render_api_specification(API_specification_path, template_path, dst_dir_path
     API_blueprint_JSON_file_path = os.path.join(temp_dir_path + '/' + API_specification_file_name + '.json')
     
     create_directory_if_not_exists(temp_dir_path)
-    separate_extra_sections_and_api_blueprint(API_specification_path, API_extra_sections_file_path, API_blueprint_file_path)
+    (title_line_end, apib_line_start) = separate_extra_sections_and_api_blueprint(API_specification_path, 
+                                                                                  API_extra_sections_file_path, 
+                                                                                  API_blueprint_file_path)
 
-    parser_api_blueprint(API_blueprint_file_path, API_blueprint_JSON_file_path)
+    parser_api_blueprint(API_blueprint_file_path, API_blueprint_JSON_file_path, title_line_end, apib_line_start)
     add_metadata_to_json(parse_meta_data(API_extra_sections_file_path), API_blueprint_JSON_file_path)
     add_nested_parameter_description_to_json(API_blueprint_file_path, API_blueprint_JSON_file_path)
     parser_json_descriptions(API_blueprint_JSON_file_path)
+    order_uri_template_of_json(API_blueprint_JSON_file_path)####--##
     parser_json_data_structures(API_blueprint_JSON_file_path)
     find_and_mark_empty_resources(API_blueprint_JSON_file_path)
     render_description(API_blueprint_JSON_file_path)
@@ -980,12 +1233,63 @@ def render_api_specification(API_specification_path, template_path, dst_dir_path
         clear_directory( temp_dir_path )
 
 
+def print_package_dependencies():
+    """Print the dependencies of package Fabre"""
+    print "\nPIP dependencies\n"
+    dependencies_matrix = [["Package", "Required version", "Installed version"]]
+    for package in pkg_resources.get_distribution("fiware_api_blueprint_renderer").requires():
+        package_header = str(package).split('>=')
+        package_name = package_header[0]
+        package_required_version = ">= " + package_header[1]
+        package_installed_info = subprocess.check_output(['pip', 'show', package_name])
+        version_regex = re.compile("Version: (.*)")
+        package_installed_version = version_regex.search(package_installed_info).group(1)
+        dependencies_matrix.append([package_name, package_required_version, package_installed_version])
+
+    pretty_print_matrix(dependencies_matrix)
+
+    system_dependencies_matrix = [["Package", "Required version", "Installed version"]]
+    system_dependencies = [('drafter', 'v0.1.9'), ('wkhtmltopdf', '0.12.2.1 (with patched qt)')]
+
+    for (package_name, package_required_version) in system_dependencies:
+        row = []
+        row.append(package_name)
+        row.append(package_required_version)
+        if package_name != 'wkhtmltopdf':
+            row.append(subprocess.check_output([package_name, '--version'])[0:-1])
+        else:
+            row.append(subprocess.check_output([package_name, '--version'])[0:-1].split(' ',1)[1])
+        system_dependencies_matrix.append(row)
+
+    print "\nSystem dependencies\n"
+    pretty_print_matrix(system_dependencies_matrix)
+    print "\n"
+
+
+def pretty_print_matrix(matrix):
+    """Pretty print the given matrix (as a table)"""
+
+    # Retrieve the size of the matrix longest element
+    longest_matrix_string_size = 0
+    for row in matrix:
+        longest_row_string_size = len(max(row, key=len))
+        if longest_row_string_size > longest_matrix_string_size:
+            longest_matrix_string_size = longest_row_string_size
+
+    # Print the matrix as a table
+    row_format = "{:<%i}" % (longest_matrix_string_size + 2)
+    row_format = row_format * len(matrix[0])
+    for row in matrix:
+        print "\t" + row_format.format(*row)
+
+
 def main():   
     
     usage = "Usage: \n\t" + sys.argv[0] + " -i <api-spec-path> -o <dst-dir> [--pdf] [--no-clear-temp-dir] [--template]"
+    version = "fabre " + pkg_resources.require("fiware_api_blueprint_renderer")[0].version
     
     default_theme = os.path.dirname(__file__)+"/../themes/default_theme/api-specification.tpl"
-    pdt_template_path= os.path.dirname(__file__)+"/../themes/default_theme/api-specification-pdf.tpl"
+    pdf_template_path= os.path.dirname(__file__)+"/../themes/default_theme/api-specification.tpl"
     cover_template_path= os.path.dirname(__file__)+"/../themes/default_theme/cover.tpl"
     template_path= default_theme
     clear_temporal_dir = True
@@ -995,13 +1299,20 @@ def main():
     pdf = False
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:],"hi:o:ct:",["ifile=","odir=","no-clear-temp-dir","template=","pdf"])
+        opts, args = getopt.getopt(sys.argv[1:],"hvi:o:ct:",["version","ifile=","odir=","no-clear-temp-dir","template=","pdf","version-dependencies"])
     except getopt.GetoptError:
       print usage
       sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
             print usage
+            sys.exit()
+        elif opt in ("-v", "--version"):
+            print version
+            sys.exit()
+        elif opt == '--version-dependencies':
+            print version
+            print_package_dependencies()
             sys.exit()
         elif opt in ("-i", "--input"):
             API_specification_path = arg
@@ -1015,7 +1326,7 @@ def main():
             pdf = True
             #if no template is specified, uses the default pdf template
             if not ('-t' in zip(*opts)[0] or '--template' in zip(*opts)[0]):
-                template_path = pdt_template_path
+                template_path = pdf_template_path
 
 
     if API_specification_path is None:

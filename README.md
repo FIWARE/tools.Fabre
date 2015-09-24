@@ -5,9 +5,10 @@ Tool for parsing a FIWARE specification file and rendering it to a HTML page.
 ## Dependencies
 
 * [Python 2](https://www.python.org/)
-* [drafter v0.1.9](https://github.com/apiaryio/drafter/tree/v0.1.9)
 * [Jinja2](http://jinja.pocoo.org/)
 * [Python Markdown](http://pythonhosted.org/Markdown/)
+* [mdx_linkify](https://github.com/daGrevis/mdx_linkify)
+* [drafter v0.1.9](https://github.com/apiaryio/drafter/tree/v0.1.9)
 * [wkhtmltopdf](http://wkhtmltopdf.org/)
 
 ## Install
@@ -72,3 +73,6 @@ FABRE accepts the options listed below:
 * **--no-clear-temp-dir**: This option is intended for debug purposes.
 
 **NOTE:** FABRE expects an input file with UTF-8 enconding, providing another charset may cause errors.
+
+## Install
+A troubleshooting guide is provided in the [TROUBLESHOOTING](TROUBLESHOOTING.md) file. If you cannot solve your problem using it, feel free to contact us.

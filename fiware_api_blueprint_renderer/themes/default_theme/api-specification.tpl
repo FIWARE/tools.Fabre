@@ -24,18 +24,35 @@
     <link rel="stylesheet" href="css/idea.css">
     <script src="js/highlight.pack.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="js/toc-resize.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css/api-specification.css"> 
+    {% if is_PDF %}
+      <link rel="stylesheet" type="text/css" href="css/api-specification-pdf.css">
+    {% endif %}
+
 
     
 </head>
 <body id="respecDocument" class="h-entry">
 <div class="container">
+
+{% if not is_PDF %}
   <div id="TOC-container">
     {% include "fragments/toc.tpl" %}
   </div>
+  {% endif %}
+
+
   <div id="API-content">
-  {% include "fragments/intro.tpl"%}
+  {% if not is_PDF %}
+    {% include "fragments/intro.tpl"%}
+  {% endif %}
+
+
+    {# API summary#}
+    {% include "fragments/api-summary.tpl"%}
 
     {#  API top metadata #}
     {% include "fragments/top_metadata.tpl" %}
@@ -78,4 +95,21 @@
   </div>
 </div>
 </body>
+{% if is_PDF %}
+<script type="text/javascript">
+  function fix_links_class(){
+     var links = document.getElementsByTagName("a");
+     console.log(links);
+
+     for (var i=0; i < links.length; i++ )
+     {
+      link = links[i];
+      if ( link.innerHTML.indexOf(link.getAttribute('href')) > -1 )
+          link.className= link.className + " selfContainedLink";
+     }
+  }
+  
+  fix_links_class();
+</script>
+{% endif %}
 </html>

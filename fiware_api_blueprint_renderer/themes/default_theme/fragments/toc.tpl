@@ -11,10 +11,19 @@
 </li>
 
 {%- endmacro %}
-<section id="toc">
+<nav id="toc">
 
         <div id="fiware-logo"></div>
     <ul class="toc">
+
+        {% for metadata_value in metadata %}
+	        {% if metadata_value.name == "TITLE" %}
+		        <li><a href="#API-content">{{metadata_value.value}}</a></li>
+	        {%endif%}
+        {% endfor %}
+
+{#Summary#}
+<li><a href="#api-summary">API Summary</a></li>
 
 {% for subsections in api_metadata.subsections %}
     {# {% for subsection in api_metadata.subsections[0].subsections %}#}
@@ -47,6 +56,8 @@
     {# Common Payload Definition #}
     <li><a href="#common-payload-definition">Common Payload Definition</a></li>
 {% endif %}
+
+
 
 {# API #}
 <li><a href="#API_specification">API Specification</a>
@@ -111,5 +122,5 @@
         <li><a href="#references">References</a></li>
     {% endif %}
    </ul>
-</section>
+</nav>
 

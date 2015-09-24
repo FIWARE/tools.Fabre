@@ -2,9 +2,9 @@
 {% if parameters|length > 0 %}
 	<span class="parameters-title">Parameters</span>
 	<dl>
-		{% for parameter in parameters %}
+		{% for parameter in parameters | sort(attribute='name') %}
 			<dt>
-				{{ parameter.name }} (
+				<span class="parameter-name">{{ parameter.name }}</span> <span class="parameter-attributes">(
 				{%- if parameter.required -%}
 					Required
 				{%- else -%}
@@ -12,7 +12,7 @@
 				{%- endif -%}
 				{%- if parameter.type -%}
 					, {{ parameter.type }}
-				{% endif %})
+				{%- endif -%})</span>
 			</dt>
 			<dd>
 				{{ parameter.description }}

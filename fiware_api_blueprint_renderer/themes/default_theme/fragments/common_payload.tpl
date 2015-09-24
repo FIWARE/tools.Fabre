@@ -1,15 +1,15 @@
 {% macro renderPayloadAttributes( attributes ) %}
     {% if attributes | length > 0 %}
         <dl>
-            {% for attribute in attributes %}
+            {% for attribute in attributes | sort(attribute='name') %}
                 <dt>
-                    {{ attribute.name }} 
+                    <span class="parameter-name">{{ attribute.name }}</span>
                     {%- if attribute.required %}
-                        (required,
+                        <span class="parameter-attributes">(required,
                     {%- else %}
-                        (optional,
+                        <span class="parameter-attributes">(optional,
                     {%- endif %}
-                    {{ attribute.type }})
+                    {{ attribute.type }})</span>
                 </dt>
                 <dd>
                     {{ attribute.description }}

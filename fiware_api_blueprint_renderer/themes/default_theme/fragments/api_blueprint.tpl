@@ -1,13 +1,27 @@
-{% macro displayActionHeader( id, action, resource ) %}
-    <h4 id="{{id}}">
-        {{ action.name }} -
-        {{ action.method }}
-        {% if action.attributes.uriTemplate | length > 0 %}
-            {{ action.attributes.uriTemplate }}
+{% macro displayActionHeader( id, action, resource, header_level ) %}
+    <div class="header">
+        {% if action.name %}
+            <h{{header_level}} id="{{id}}">{{ action.name }} </h{{header_level}}>
+            <span class="extra-header">
+		{{ action.method }} 
+                {% if action.attributes.uriTemplate | length > 0 %}
+                    {{ action.attributes.uriTemplate }}
+                {% else %}
+                    {{ resource.uriTemplate }}
+                {% endif %}
+            </span>
         {% else %}
-            {{ resource.uriTemplate }}
+            <h{{header_level}} id="{{id}}"> {{ action.method }} - 
+            {% if action.attributes.uriTemplate | length > 0 %}
+                {{ action.attributes.uriTemplate }}
+            {% else %}
+                {{ resource.uriTemplate }}
+            {% endif %}
+            </h{{header_level}}>
+
         {% endif %}
-    </h4>
+
+    </div>
 {% endmacro %}
 
 {% macro gen_apiary_link( resourceGroupName, resourceName, resourceUri, actionName, actionMethod, metadata ) %}
@@ -45,7 +59,14 @@
 	{{ resourceGroup.description }}
         {% for resource in resourceGroup.resources %}
             <section id="{{ resource.id }}" class="resource">
-                 <div class= "header" ><h3 id="h-{{ gen_resource_id( resource.name ) }}">{{ resource.name }} [{{ resource.uriTemplate}}]</h3> </div>
+                 <div class= "header" >
+                 {% if resource.name %}
+                    <h3 id="h-{{ gen_resource_id( resource.name ) }}">{{ resource.name }}</h3>
+                    <span class="extra-header">[{{ resource.uriTemplate}}]</span>
+                 {% else %}
+                    <h3 id="h-{{ gen_resource_id( resource.name ) }}">[{{ resource.uriTemplate}}]</h3>
+                 {% endif %}
+                 </div>
                 {{ resource.description }}
                 {% set parameters = resource.parameters %}
                 {% set parameters_definition_caption = "Parameters" %}
@@ -59,7 +80,7 @@
                     {% for action in resource.actions %}
                         <div id="{{ action.id }}" class="action {{action.method}}">
 
-                        {{ displayActionHeader( "h-" + gen_action_id( action.name ), action, resource ) }}
+                        {{ displayActionHeader( "h-" + gen_action_id( action.name ), action, resource, '4'  ) }}
         
                             <div id="{{ slug( action.name ) }}_body" class="">
                                 {{action.description}}
@@ -113,7 +134,15 @@
 
                 {% for resource in resourceGroup.resources %}
                     <section id="{{ gen_resource_example_id( resource.name ) }}" class="resourceExample">
-                         <div class= "header" ><h4 id="h-{{ gen_resource_example_id( resource.name ) }}">{{ resource.name }} [{{ resource.uriTemplate}}]</h4></div>
+                         <div class= "header" >
+                         {%if resource.name %}
+                            <h4 id="h-{{ gen_resource_example_id( resource.name ) }}">{{ resource.name }}</h4>
+                            <span class="extra-header">[{{ resource.uriTemplate}}]</span>
+                         {% else %}
+                            <h4 id="h-{{ gen_resource_example_id( resource.name ) }}">[{{ resource.uriTemplate}}]</h4>
+                         {% endif %}
+                         </div>
+
                             
                             {% set parameters = resource.parameters %}
                             {% set parameters_definition_caption = "Parameters" %}
@@ -122,18 +151,18 @@
                             {% set packet_contents = resource.content %}
                             {# {% include "fragments/resource_attributes.tpl" %} #}
 
-                            {% include "fragments/parameters_definition.tpl" %}
+                           {# {% include "fragments/parameters_definition.tpl" %} #}
 
                             {% for action in resource.actions %}
                                 <div id="{{ action.id }}_examples" class="actionExample {{action.method}}">
 
-                                    {{ displayActionHeader( "h-" + gen_action_id( action.name ) + "_examples", action, resource ) }}
+                                    {{ displayActionHeader( "h-" + gen_action_id( action.name ) + "_examples", action, resource, '5' ) }}
                 
                                     <div id="{{ gen_action_id( action.name ) }}_body" class=""> 
                                         {% set parameters = action.parameters %}
                                         {% set parameters_table_caption = "Parameters" %}
                                         
-                                        {% include "fragments/parameters_definition.tpl" %}         
+                                        {#{% include "fragments/parameters_definition.tpl" %} #}         
                                         {% set packet_contents = action.content %}
                                         {#{% include "fragments/rest_packet_general_contents.tpl" %}  #}    
                                             {% for example in action.examples %}

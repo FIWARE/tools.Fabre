@@ -1,0 +1,44 @@
+.\" Manpage for FABRE (FIWARE API Blueprint renderer).
+.TH FABRE 1 "September 2015" "0.3.0" "fabre man page"
+.SH NAME
+fabre \- render a FIWARE API Blueprint template
+.SH SYNOPSIS
+.B fabre 
+.B -i 
+.I api-spec-path 
+.B -o
+.I dst-dir 
+[\fB--pdf\fR]
+[\fB\-\-no\-clear\-temp\-dir\fR]
+[\fB\-\-template \fItemplate-path\fR]
+
+.B fabre 
+.B --version 
+|
+.B --version-dependencies
+
+.SH DESCRIPTION
+fabre is a tool for parsing a FIWARE specification file and rendering it to a HTML page or a PDF file.
+
+.SH OPTIONS
+.TP
+.B -i, --input \fIinput_file
+Path to the FIWARE API specification file.
+.TP
+.B -o, --output \fIdst_dir
+Path to the destination directory where the output page will be generated. If the \fB--pdf\fR option is specified, this parameter specifies the output filename if it ends with ".pdf"
+.TP
+.B --pdf
+Save to pdf instead of a html
+.TP
+.B -t, --template \fItemplate_path
+Path to the template to be used to render the API specification file. If it is not provided, a default template is used.
+.TP
+.B --no-clear-temp-dir
+Don't delete temporary files. This option is intended for debug purposes.
+
+.SH BUGS
+FABRE expects an input file with UTF-8 enconding, providing another charset may cause errors.
+
+.SH AUTHOR
+FIWARE ULPGC (fiware@ulpgc.es)

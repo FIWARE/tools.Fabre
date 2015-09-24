@@ -18,10 +18,10 @@
                     {%- if section.class == "memberType" %}
                         <dl class="action-parameters-table">
 
-                        {%- for section_content in section.content %}
+                        {%- for section_content in section.content | sort_payload_parameters %}
                             {%- if section_content.class == "property" %}
-                                    <dt>{{ section_content.content.name.literal }}
-                                    (
+                                    <dt><span class="parameter-name">{{ section_content.content.name.literal }}</span>
+                                    <span class="parameter-attributes">(
                                     {%-if("required" in section_content.content.valueDefinition.typeDefinition.attributes) -%}
                                         Required
                                     {%- else -%}
@@ -31,7 +31,7 @@
                                     {{ displayTypeName( section_content.content.valueDefinition.typeDefinition.typeSpecification.name ) }}
                                     {%- if section_content.content.valueDefinition.typeDefinition.typeSpecification.name == "array" %}
                                         [{{ section_content.content.valueDefinition.typeDefinition.typeSpecification.nestedTypes[0] }}]
-                                    {%- endif %})
+                                    {%- endif %})</span>
                                     </dt>
                                     <dd>{{ section_content.content.description }}</dd>
                             {%- endif %}
