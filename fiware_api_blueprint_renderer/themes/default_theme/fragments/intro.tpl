@@ -29,14 +29,14 @@
 	{% if "VERSION" in version_sections %}
 		<dt class="versionLabel">This version:</dt> 
 		<dd class="versionValue"> <a href="{{version_sections['SPEC_URL']}}{{ version_sections['VERSION'] }}">
-			{{version_sections['SPEC_URL']}}{{ version_sections['VERSION'] }}
+			{{version_sections['SPEC_URL']}}{{ version_sections['VERSION']|e }}
 		</a> </dd>
 	{%endif%}
 
 	{% if "PREVIOUS_VERSION" in version_sections %}
 		<dt class="versionLabel">Previous version:</dt> 
 		<dd class="versionValue"> <a href="{{version_sections['SPEC_URL']}}{{ version_sections['PREVIOUS_VERSION'] }}">
-			{{version_sections['SPEC_URL']}}{{ version_sections['PREVIOUS_VERSION'] }}
+			{{version_sections['SPEC_URL']}}{{ version_sections['PREVIOUS_VERSION']|e }}
 		</a> </dd>
 	{%endif%}
 

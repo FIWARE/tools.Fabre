@@ -276,7 +276,12 @@ def preprocess_apib_parameters_lines(line, defining_parameters):
         if re.match(r"^[ \t]*[+|-][ ]([^ +-]*)[ ]*-?(.*)$", line) or re.match(r"^ *$", line):
             line = escape_parenthesis_in_parameter_description(line)
         else:
-            defining_parameters = False
+            if (re.match(r"^[ \t]*[+|-][ ](Attributes)(.*)$", line) or
+                re.match(r"^[ \t]*[+|-][ ](Request)(.*)$", line) or
+                re.match(r"^[ \t]*[+|-][ ](Response)(.*)$", line) or
+                re.match(r"^[ \t]*#(.*)$", line)
+                ):
+                defining_parameters = False
 
     return (line, defining_parameters)
 
@@ -287,6 +292,8 @@ def escape_parenthesis_in_parameter_description(parameter_definition):
     Arguments:
     line - string containing the parameter definition.
     """
+
+
     parameter_definition_list = parameter_definition.split(' - ', 1)
     if len(parameter_definition_list) > 1:
         parameter_header = parameter_definition_list[0]
@@ -573,6 +580,12 @@ def parser_json_descriptions(JSON_file_path):
 
                 for action in resource['actions']:
                     action['description'] = parse_to_markdown(action['description'])
+
+                    for parameter in action['parameters']:
+                        parameter['description'] = parse_to_markdown(parameter['description'])
+                        parameter['description'] = parameter['description'].replace("<p>", "")
+                        parameter['description'] = parameter['description'].replace("</p>", "")
+
     
     with open(JSON_file_path, 'w') as json_file:
         json.dump(json_content, json_file, indent=4)

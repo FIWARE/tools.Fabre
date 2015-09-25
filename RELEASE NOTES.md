@@ -1,16 +1,8 @@
 # FIWARE API Blueprint renderer RELEASE NOTES
 
 
-## Version v0.3.0.1
-### Relase date 24/09/2015 
-
-### Fixed bugs
-
-* Minor CSS fixes related to "go to example" buttons.
-
-
 ## Version v0.3.0
-### Relase date 24/09/2015 
+### Release date 25/09/2015 
 
 ### New features
 * Resizable table of contents
@@ -37,6 +29,9 @@
 * Now, actions headers in the example section are h5 instead of h4.
 * The line numbers of an error shown by Drafter may not correspond with the line number in the original input file.
 * Missing extra sections are now correctly included in the output HTML file.
+* Minor CSS fixes related to "go to example" buttons.
+* HTML escaping of version metadata strings.
+* Parameters definition now renders its markdown content.
 
 ### Known bugs
 * **--dpi** option in wkhtmltopdf does not work correctly. Becasuse of that, FABRE could render different PDF files in different systems.
