@@ -23,9 +23,9 @@
                                     <dt><span class="parameter-name">{{ section_content.content.name.literal }}</span>
                                     <span class="parameter-attributes">(
                                     {%-if("required" in section_content.content.valueDefinition.typeDefinition.attributes) -%}
-                                        Required
+                                        required
                                     {%- else -%}
-                                        Not required
+                                        not required
                                     {%- endif -%}
                                     ,
                                     {{ displayTypeName( section_content.content.valueDefinition.typeDefinition.typeSpecification.name ) }}

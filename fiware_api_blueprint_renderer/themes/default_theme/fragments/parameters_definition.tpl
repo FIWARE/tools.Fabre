@@ -6,9 +6,9 @@
 			<dt>
 				<span class="parameter-name">{{ parameter.name }}</span> <span class="parameter-attributes">(
 				{%- if parameter.required -%}
-					Required
+					required
 				{%- else -%}
-					Optional
+					not required
 				{%- endif -%}
 				{%- if parameter.type -%}
 					, {{ parameter.type }}

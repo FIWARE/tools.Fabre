@@ -7,7 +7,7 @@
                     {%- if attribute.required %}
                         <span class="parameter-attributes">(required,
                     {%- else %}
-                        <span class="parameter-attributes">(optional,
+                        <span class="parameter-attributes">(not required,
                     {%- endif %}
                     {{ attribute.type }})</span>
                 </dt>

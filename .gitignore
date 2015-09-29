@@ -11,3 +11,4 @@ dist/
 *.pyc
 .coverage
 build/
+w3c-validator.py

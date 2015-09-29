@@ -220,6 +220,7 @@ def separate_extra_sections_and_api_blueprint(input_file_path, extra_sections_fi
         apib_part = False
         title_section = False
         parameters_section = False
+        data_structures_section = 0
 
         for line in input_file:
             line_counter += 1
@@ -256,24 +257,47 @@ def separate_extra_sections_and_api_blueprint(input_file_path, extra_sections_fi
                 extra_sections_file.write(line)
             else:
                 line = line.replace('\t','    ')
-                (line, parameters_section) = preprocess_apib_parameters_lines(line, parameters_section)
+                (line, parameters_section, data_structures_section) = preprocess_apib_parameters_lines(line, 
+                                                                                                       parameters_section, 
+                                                                                                       data_structures_section)
                 API_blueprint_file.write(line)
 
     return (title_line_end, apib_line_start)
 
 
-def preprocess_apib_parameters_lines(line, defining_parameters):
+def preprocess_apib_parameters_lines(line, defining_parameters, defining_data_structure):
     """Preprocess a given APIB line if it contains a parameter definition
 
     Arguments:
     line - line to be preprocessed
     defining_parameters - bool indicating whether we are in a parameters section (APIB) or not
+    defining_data_structure - int indicating the level we are respecting to data strucutres section
     """
+    regex_parameter = r"^[ \t]*[+|-][ ]([^ +-]*)[ ]*-?(.*)$"
+
+    if defining_data_structure == 0:
+        match_result = re.match(r"^(#*)[ ]Data Structures[ ]*$", line)
+        if match_result:
+            defining_data_structure = len(match_result.group(0))
+            return (line, defining_parameters, defining_data_structure)
+
+    if defining_data_structure > 0:
+        if re.match(regex_parameter, line) or re.match(r"^ *$", line):
+            line = escape_parenthesis_in_parameter_description(line)
+        else:
+            match_result = re.match(r"^(#*)[ ].*$", line)
+            if match_result:
+                if len(match_result.group(0)) <= defining_data_structure:
+                    # Stop searching for data structures
+                    defining_data_structure = -1
+
+        return (line, defining_parameters, defining_data_structure)
+
     if not defining_parameters:
         if line == '+ Parameters\n':
             defining_parameters = True
     else:
-        if re.match(r"^[ \t]*[+|-][ ]([^ +-]*)[ ]*-?(.*)$", line) or re.match(r"^ *$", line):
+        if re.match(regex_parameter, line) or re.match(r"^ *$", line):
             line = escape_parenthesis_in_parameter_description(line)
         else:
             if (re.match(r"^[ \t]*[+|-][ ](Attributes)(.*)$", line) or
@@ -283,7 +307,7 @@ def preprocess_apib_parameters_lines(line, defining_parameters):
                 ):
                 defining_parameters = False
 
-    return (line, defining_parameters)
+    return (line, defining_parameters, defining_data_structure)
 
 
 def escape_parenthesis_in_parameter_description(parameter_definition):
@@ -562,6 +586,27 @@ def add_is_pdf_metadata_to_json(is_PDF, JSON_file_path):
         json.dump(json_content, json_file, indent=4)
 
 
+def parse_json_description(JSON_element):
+    """Search for a 'decription' key in the current object and parse ti as markdown
+
+    Arguments:
+    JSON_element -- JSON element to iterate and parse
+    """
+
+    if type(JSON_element) is dict:
+        for key in JSON_element:
+            if key == "description":
+                JSON_element[key] = parse_to_markdown(JSON_element[key]).replace("<p>", "").replace("</p>", "")
+            else:
+                JSON_element[key] = parse_json_description(JSON_element[key])
+
+    elif type(JSON_element) is list:
+        for key in range(len(JSON_element)):
+            JSON_element[key] = parse_json_description(JSON_element[key])
+
+    return JSON_element
+
+
 def parser_json_descriptions(JSON_file_path):
     """Gets the descriptions of resources and actions and parses them as markdown. Saves the result in the same JSON file.
     
@@ -572,21 +617,8 @@ def parser_json_descriptions(JSON_file_path):
     
     with open(JSON_file_path, 'rU') as json_file:
         json_content = json.load(json_file)
-        for resource_group in json_content['resourceGroups']:
-            resource_group['description'] = parse_to_markdown(resource_group['description'])
-
-            for resource in resource_group['resources']:
-                resource['description'] = parse_to_markdown(resource['description'])
-
-                for action in resource['actions']:
-                    action['description'] = parse_to_markdown(action['description'])
-
-                    for parameter in action['parameters']:
-                        parameter['description'] = parse_to_markdown(parameter['description'])
-                        parameter['description'] = parameter['description'].replace("<p>", "")
-                        parameter['description'] = parameter['description'].replace("</p>", "")
-
-    
+        json_content = parse_json_description(json_content)
+            
     with open(JSON_file_path, 'w') as json_file:
         json.dump(json_content, json_file, indent=4)
 
