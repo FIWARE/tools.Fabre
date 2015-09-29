@@ -1,5 +1,25 @@
 # FIWARE API Blueprint renderer RELEASE NOTES
 
+## Version v0.3.1
+### Release date <>/<>/2015 
+
+### New features
+* 
+
+### New dependencies
+*
+
+### Fixed bugs
+* All instances of 'optional' changed to 'not equired'.
+* All description sections get properly parsed to markdown.
+* Added support to render description from 'Data Structures' section (left separate by drafter v0.1.9).
+* 
+
+### Known bugs
+* **--dpi** option in wkhtmltopdf does not work correctly. Becasuse of that, FABRE could render different PDF files in different systems.
+
+----
+
 
 ## Version v0.3.0
 ### Release date 25/09/2015 
