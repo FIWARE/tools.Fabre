@@ -12,7 +12,8 @@
             
             
             {% set packet_contents = rest_packet.content %}
-            {% include "fragments/rest_packet_contents.tpl" %}
+            {# Now show in definition #}
+           {# {% include "fragments/rest_packet_contents.tpl" %} #}
 
 
  

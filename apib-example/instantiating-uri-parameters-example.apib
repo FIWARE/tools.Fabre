@@ -1,0 +1,105 @@
+FORMAT: 1A
+HOST: http://
+TITLE: Instantiating URI parameters example
+DATE: 08 September 2015
+VERSION: v1.0
+PREVIOUS_VERSION: v0.9
+APIARY_PROJECT: orioncontextbroker
+
+# Instantiating URI parameters example
+
+Description
+
+## Editors
+
+  + Editor 1.
+  + Editor 2.
+
+## Copyright
+
+Copyright text.
+
+## Status
+
+Status text.
+
+# Entity [/Entity/{id}]
+
++ Parameters
+  + id: 666 (number, required) - Id of a post.
+
+## Retrieve entity - simple parameter [GET /Entity/{id}]
+
++ Parameters
+  + id: 32 (number, required) - Id of a post.
+
++ Request Retrieving an entity (application/json)
+
++ Response 200
+
+
+
+## Retrieve entity - Multiple parameters [GET /Entity/{id}/{name}]
+
++ Parameters
+  + id: `32` (number, required) - Id of a post.
+  + name: post name (string, required) - Name of a post.
+
++ Request Retrieving an entity (application/json)
+
++ Response 200
+
+
+
+## Retrieve entity - Multiple parameters with empty one [GET /Entity/{empty_id}/{name}]
+
++ Parameters
+  + empty_id (number, required) - Id of a post.
+  + name: post name (string, required) - Name of a post.
+
++ Request Retrieving an entity (application/json)
+
++ Response 200
+
+
+
+## Retrieve entity - Multiple parameters with one defined in resource, not in action [GET /Entity/{id}/{name}]
+
++ Parameters
+  + name: post name (string, required) - Name of a post.
+
++ Request Retrieving an entity (application/json)
+
++ Response 200
+
+
+
+## Retrieve entity - Multiple ? and & parameters empty one [GET /Entity/{?id}{&name}{&empty_foovar}]
+
++ Parameters
+  + id: 15 (number, required) - Id of a post.
+  + name: post name (string, required) - Name of a post.
+
++ Request Retrieving an entity (application/json)
+
++ Response 200
+
+
+
+## Retrieve entity - Multiple + parameters [GET /Entity/{+path_to_dir1,path_to_dir2,path_to_dir3}]
+
++ Parameters
+  + path_to_dir1: /path/to/dir1 (string, required) - Path to dir 1
+  + path_to_dir2: /path/to/dir2 (string, required) - Path to dir 2
+
++ Request Retrieving an entity (application/json)
+
++ Response 200
+
+
+
+## Retrieve entity - Request with its own URI defined; no instantiation [GET /Entity/{id}]
+
++ Request Retrieving an entity /Entity/foo (application/json)
+
++ Response 200

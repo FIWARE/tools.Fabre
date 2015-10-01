@@ -4,7 +4,8 @@
 ### Release date <>/<>/2015 
 
 ### New features
-* 
+* Added URI parameters instantiation for requests with no URI specified.
+* Payload definitions moved from examples to specifications.
 
 ### New dependencies
 *
@@ -17,6 +18,9 @@
 
 ### Known bugs
 * **--dpi** option in wkhtmltopdf does not work correctly. Becasuse of that, FABRE could render different PDF files in different systems.
+
+### Other actions
+* Improvements in code structure.
 
 ----
 
