@@ -3,11 +3,14 @@
 from collections import deque
 import json
 import re
+from pprint import pprint
 
 from markdown.extensions.toc import slugify
 
 from apib_extra_parse_utils import parse_property_member_declaration, get_nested_parameter_values_description
 from apib_extra_parse_utils import parse_to_markdown, get_indentation
+
+from instantiate_body import instantiate_all_example_body
 
 
 def extract_markdown_header_dict(markdown_header):
@@ -94,9 +97,9 @@ def add_description_to_json_object_parameter_value(JSON_object, parameter_name, 
 def get_links_from_description(description):
     """Find via regex all the links in a description string"""
 
-    link_regex = re.compile( "\[(?P<linkText>[^\(\)\[\]]*)\]\((?P<linkRef>[^\(\)\[\]]*)\)" )
-    auto_link_regex = re.compile("\<(?P<linkRef>http[s]?://.*)\>")
-    html_link_regex = re.compile("\<a href=\"(?P<linkRef>http[s]?://.*)\"\>(?P<linkText>[^\<]*)\</a>")
+    link_regex = re.compile( r"\[(?P<linkText>[^\(\)\[\]]*)\]\((?P<linkRef>[^\(\)\[\]]*)\)" )
+    auto_link_regex = re.compile(r"\<(?P<linkRef>http[s]?://[^\"]*)\>")
+    html_link_regex = re.compile(r"\<a href=\"(?P<linkRef>http[s]?://[^\"]*)\"\>(?P<linkText>[^\<]*)\</a>")
 
     links = []
 
@@ -139,36 +142,6 @@ def get_links_api_metadata(section):
 
     for subsection in section["subsections"]:
         links += get_links_api_metadata(subsection)
-
-    return links
-
-
-def get_markdown_links(json_content):
-    """Returns a list with all the Markdown links present in a the json representation of a Markdown file."""
-
-    links = []
-    # Abstract
-    links += get_links_from_description(json_content["description"])
-
-    # API Metadata
-    links += get_links_api_metadata(json_content["api_metadata"])
-
-    # API specification
-    for resource_group in json_content["resourceGroups"]:
-        links += get_links_from_description(resource_group["description"])
-
-        for resource in resource_group["resources"]:
-            links += get_links_from_description(resource["description"])
-
-            for action in resource["actions"]:
-                links += get_links_from_description(action["description"])
-
-                for example in action["examples"]:
-                    for request in example["requests"]:
-                        links += get_links_from_description(request["description"])
-
-                    for response in example["responses"]:
-                        links += get_links_from_description(response["description"])
 
     return links
 
@@ -225,6 +198,7 @@ def parse_defined_data_structures(data):
 
     data_structure_name = content["name"]["literal"]
     data_structure["attributes"] = data_structure_definition
+    data_structure["is_common_payload"] = True
     data_structure_dict[data_structure_name] = data_structure
 
   return data_structure_dict
@@ -442,23 +416,29 @@ def combine_uri_parameters(resource_uri_parameters, action_uri_parameters):
     return uri_parameters
 
 
-def parse_json_description(JSON_element):
+def parse_json_description(JSON_element, links):
     """Search for a 'decription' key in the current object and parse ti as markdown
 
     Arguments:
     JSON_element -- JSON element to iterate and parse
+    links - List of links gathered from the descriptions
     """
 
     if type(JSON_element) is dict:
         for key in JSON_element:
             if key == "description":
                 JSON_element[key] = parse_to_markdown(JSON_element[key]).replace("<p>", "").replace("</p>", "")
+
+                for link in get_links_from_description(JSON_element[key]):
+                    if link not in links:
+                        links.append(link)
+                
             else:
-                JSON_element[key] = parse_json_description(JSON_element[key])
+                JSON_element[key] = parse_json_description(JSON_element[key], links)
 
     elif type(JSON_element) is list:
         for key in range(len(JSON_element)):
-            JSON_element[key] = parse_json_description(JSON_element[key])
+            JSON_element[key] = parse_json_description(JSON_element[key], links)
 
     return JSON_element
 
@@ -615,13 +595,24 @@ def add_metadata_to_json(metadata, json_content):
         json_content['api_metadata'][metadataKey] = metadata[metadataKey]
 
 
-def parser_json_descriptions(json_content):
+def parse_json_descriptions_and_get_links(json_content):
     """Gets the descriptions of resources and actions and parses them as markdown. Saves the result in the same JSON file.
     
     Arguments: 
     json_content -- JSON object containing the parsed apib.
     """
-    json_content = parse_json_description(json_content)
+    links = []
+    # Abstract
+    for link in get_links_from_description(json_content["description"]):
+        if link not in links: links.append(link)
+
+    # API Metadata
+    for link in get_links_api_metadata(json_content["api_metadata"]):
+        if link not in links: links.append(link)
+
+    json_content = parse_json_description(json_content, links)
+
+    return links
 
 
 def instantiate_request_uri_templates(json_content):
@@ -671,6 +662,60 @@ def order_uri_template_of_json(json_content):
     return
 
 
+def get_data_structure_properties_from_json(data_structure_content):
+    """Extract simpler representation of properties from drafter JSON representation.
+
+    Arguments:
+    data_structure_content -- JSON content section of "dataStructures" element or nested property
+    """
+    attributes = []
+
+    for membertype in data_structure_content:
+        if "content" not in membertype: return attributes
+        
+        for property_ in membertype["content"]:
+            attribute = {}
+
+            attribute['name'] = property_['content']['name']['literal']
+            attribute['required'] = 'required' in property_['content']['valueDefinition']['typeDefinition']['attributes']
+            attribute['type'] = \
+                property_['content']['valueDefinition']['typeDefinition']['typeSpecification']['name']
+            attribute['description'] = property_['content']['description']
+            try:
+                values_string = property_['content']['valueDefinition']['values'][0]['literal']
+                attribute['values'] = [e.strip(" ") for e in values_string.split(',')]
+            except IndexError as error:
+                attribute['values'] = []
+            attribute['subproperties'] = get_data_structure_properties_from_json(property_['content']["sections"])
+
+            attributes.append(attribute)
+
+    return attributes
+
+
+def get_data_structures_from_resources(json_content):
+    """Retrieve data structures defined in named resources.
+
+    Arguments:
+    json_content -- JSON object where resources will be analysed
+    """
+
+    data_structures = {}
+
+    for resource_group in json_content["resourceGroups"]:
+        for resource in resource_group["resources"]:
+
+            if resource["name"] == "": continue
+
+            for content in resource["content"]:
+                if content["element"] == "dataStructure":
+                    attributes = get_data_structure_properties_from_json(content["sections"])
+                    data_structures[resource["name"]] = {"attributes": attributes, "is_common_payload": False}
+
+
+    return data_structures
+
+
 def parser_json_data_structures(json_content):
     """Retrieves data structures definition from JSON file and writes them in an easier to access format"""
     
@@ -678,6 +723,11 @@ def parser_json_data_structures(json_content):
         json_content['data_structures'] = parse_defined_data_structures(json_content['content'][0])
     else:
         json_content['data_structures'] = {}
+
+
+    # Add resource level defined data structures
+    structures_from_resources = get_data_structures_from_resources(json_content)
+    json_content['data_structures'].update(structures_from_resources)
 
 
 def find_and_mark_empty_resources(json_content):
@@ -784,14 +834,6 @@ def remove_redundant_spaces(json_content):
                 action["name"] = re.sub( " +", " ", action["name"] )
 
 
-def add_reference_links_to_json(json_content):
-    """Extract all the links from the JSON file and adds them back to the JSON.
-
-    Arguments:
-    json_content -- JSON object where all the links will be extracted and added in a separate section.
-    """
-    json_content['reference_links'] = get_markdown_links(json_content)
-
 
 def postprocess_drafter_json(JSON_file_path, API_blueprint_file_path, API_extra_sections_file_path, is_PDF):
     """Apply a set of modifications to a JSON file containing an API specification""" 
@@ -800,7 +842,8 @@ def postprocess_drafter_json(JSON_file_path, API_blueprint_file_path, API_extra_
     
     add_metadata_to_json(parse_meta_data(API_extra_sections_file_path), json_content)
     add_nested_parameter_description_to_json(API_blueprint_file_path, json_content)
-    parser_json_descriptions(json_content)
+    links = parse_json_descriptions_and_get_links(json_content)
+    json_content['reference_links'] = links
     instantiate_request_uri_templates(json_content)
     order_uri_template_of_json(json_content)####--##
     parser_json_data_structures(json_content)
@@ -810,7 +853,7 @@ def postprocess_drafter_json(JSON_file_path, API_blueprint_file_path, API_extra_
     escape_ampersand_uri_templates(json_content)
     generate_resources_and_action_ids(json_content)
     remove_redundant_spaces(json_content)
-    add_reference_links_to_json(json_content)
+    instantiate_all_example_body(json_content)##
 
     json_content['is_PDF'] = is_PDF
 

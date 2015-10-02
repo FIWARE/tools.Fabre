@@ -6,6 +6,7 @@
 ### New features
 * Added URI parameters instantiation for requests with no URI specified.
 * Payload definitions moved from examples to specifications.
+* Now FABRE instantiates an example request body if its specifications has defined values.
 
 ### New dependencies
 *
@@ -14,7 +15,9 @@
 * All instances of 'optional' changed to 'not equired'.
 * All description sections get properly parsed to markdown.
 * Added support to render description from 'Data Structures' section (left separate by drafter v0.1.9).
-* 
+* Removed *.py and *.pyc files from the generated sited.
+* Fixed some reference links that appear together.
+* Avoid duplicating links in the reference sections
 
 ### Known bugs
 * **--dpi** option in wkhtmltopdf does not work correctly. Becasuse of that, FABRE could render different PDF files in different systems.

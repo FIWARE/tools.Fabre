@@ -169,7 +169,7 @@ def copy_static_files(template_dir_path, dst_dir_path):
     for subdirectory in subdirectories:
         if os.path.exists(dst_dir_path + subdirectory):
             shutil.rmtree(dst_dir_path + subdirectory)
-        shutil.copytree(template_dir_path + subdirectory, dst_dir_path + subdirectory)
+        shutil.copytree(template_dir_path + subdirectory, dst_dir_path + subdirectory, ignore=shutil.ignore_patterns('*.pyc', '*.py'))
 
 
 def render_api_blueprint(template_file_path, context_file_path, dst_dir_path):

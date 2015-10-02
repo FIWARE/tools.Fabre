@@ -159,10 +159,11 @@ def parse_property_member_declaration(property_member_declaration_string):
 
   # Parse the line in order to get the following fields:
   #  - property_name: The name given to the property
+  #  - values: Possbile values the property can have
   #  - type_definition_list: The list with the technical definition of the property. Since this
   #    list is unordered, we will parse it later to find the needed keywords.
   #  - description: The text provided to describe the context of the property.
-  regex_string = "^[ ]*[-|+][ ](?P<property_name>\w+)[ ]*(?:[[: ][\w, ]*]?[ ]*\((?P<type_definition_list>[\w\W ]+)\))?[ ]*(?:[-](?P<property_description>[ \w\W]+))?\Z"
+  regex_string = "^[ ]*[-|+][ ](?P<property_name>\w+)[ ]*(?:[[: ](?P<values>[\w, ]*)]?[ ]*\((?P<type_definition_list>[\w\W ]+)\))?[ ]*(?:[-](?P<property_description>[ \w\W]+))?\Z"
   declaration_regex = re.compile(regex_string)
 
   declaration_match = declaration_regex.match(property_member_declaration_string)
@@ -172,7 +173,13 @@ def parse_property_member_declaration(property_member_declaration_string):
   property_declaration['name'] = declaration_dict['property_name']
   property_declaration['description'] = declaration_dict['property_description']
   property_declaration['subproperties'] = []
-  property_declaration['values'] = []
+  try:
+    property_declaration['values'] = [e.strip(" ") for e in declaration_dict['values'].split(',')]
+  except AttributeError as error:
+    property_declaration['values'] = []
+
+  if property_declaration['values'] == ['']:
+    property_declaration['values'] = []
 
   # Construct the type_definition field from the type_definition_list field retrieved in the
   # regular expression.

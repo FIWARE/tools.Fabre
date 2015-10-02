@@ -65,7 +65,7 @@
       <h2>Common Payload Definition</h2>
 
       {% for data_structure_name, data_structure in data_structures.iteritems() %}
-          {% if data_structure_name != "REST API" %}
+          {% if data_structure_name != "REST API" and data_structure['is_common_payload'] %}
               <h3>{{ data_structure_name }}</h3>
               {{ renderPayloadAttributes( data_structure['attributes'] ) }}
           {% endif %}

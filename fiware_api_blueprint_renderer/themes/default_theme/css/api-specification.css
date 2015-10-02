@@ -313,6 +313,7 @@ dd dl{
 .parameters-title{
     font-weight: bold;
     font-size: 1.1em;
+    display: block;
 }
 
 .parameters-title+dl dl{
@@ -485,6 +486,7 @@ dd dl{
     font-weight: normal;
     text-decoration: underline;
     margin-bottom: 7px;
+    display: block;
 }
 
 .packetType ~ .payload-title{
