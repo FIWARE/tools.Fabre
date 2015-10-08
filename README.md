@@ -80,4 +80,3 @@ Some instrucctions about to how to use FABRE with docker are in the [HOW_TO_USE_
 ## Troubleshooting
 A troubleshooting guide is provided in the [TROUBLESHOOTING](TROUBLESHOOTING.md) file. If you cannot solve your problem using it, feel free to contact us.
 
-
