@@ -75,7 +75,7 @@ FABRE accepts the options listed below:
 **NOTE:** FABRE expects an input file with UTF-8 enconding, providing another charset may cause errors.
 
 ## Use FABRE with Docker
-Some instrucctions about to how to use FABRE with docker are in the [HOW_TO_USE_FABRE_WITH_DOCKER](HOW_TO_USE_FABRE_WITH_DOCKER) file.
+Some instrucctions about to how to use FABRE with docker are in the [HOW_TO_USE_FABRE_WITH_DOCKER](HOW_TO_USE_FABRE_WITH_DOCKER.md) file.
 
 ## Troubleshooting
 A troubleshooting guide is provided in the [TROUBLESHOOTING](TROUBLESHOOTING.md) file. If you cannot solve your problem using it, feel free to contact us.
