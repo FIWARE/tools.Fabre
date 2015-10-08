@@ -3,6 +3,9 @@
     {%- else %}{{ nameObject }}
     {%- endif %}
 {%- endmacro %}
+
+{% from "fragments/resource_attributes.tpl" import displayPacketProperties %}
+
 {% if packet_contents | length > 0 and packet_contents[0]["typeDefinition"] is defined %}
     <span class="payload-title">Payload</span>
     {% for content in packet_contents %}
@@ -25,7 +28,7 @@
                                     {%-if("required" in section_content.content.valueDefinition.typeDefinition.attributes) -%}
                                         required
                                     {%- else -%}
-                                        not required
+                                        optional
                                     {%- endif -%}
                                     ,
                                     {{ displayTypeName( section_content.content.valueDefinition.typeDefinition.typeSpecification.name ) }}
@@ -33,7 +36,13 @@
                                         [{{ section_content.content.valueDefinition.typeDefinition.typeSpecification.nestedTypes[0] }}]
                                     {%- endif %})</span>
                                     </dt>
-                                    <dd>{{ section_content.content.description }}</dd>
+                                    <dd>
+                                        {{ section_content.content.description }}
+                                        {% if displayTypeName( section_content.content.valueDefinition.typeDefinition.typeSpecification.name ) == "object" 
+                                        and section_content.content.sections | length > 0 %}
+                                            {{ displayPacketProperties( section_content.content.sections[0].content ) }}
+                                        {% endif %}
+                                    </dd>
                             {%- endif %}
                         {%- endfor %}
                         </dl> 

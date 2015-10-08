@@ -1,8 +1,5 @@
-#!/usr/bin/env python
-
 import json
 import os
-import pprint
 
 def instantiate_all_example_body(json_content):
     """Instantiate the body of payload if it is not specified.

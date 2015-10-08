@@ -57,7 +57,7 @@
     {#  API top metadata #}
     {% include "fragments/top_metadata.tpl" %}
 
-    {% if data_structures|length > 1 %}
+    {% if data_structures | contains_common_payload_definitions %}
       {# Common payload #}
       {% from 'fragments/common_payload.tpl' import renderPayloadAttributes %}
       

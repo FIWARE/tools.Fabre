@@ -8,7 +8,7 @@
 				{%- if parameter.required -%}
 					required
 				{%- else -%}
-					not required
+					optional
 				{%- endif -%}
 				{%- if parameter.type -%}
 					, {{ parameter.type }}

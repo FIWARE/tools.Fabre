@@ -1,8 +1,15 @@
+{% set title_metadata = {} %}
 {% for metadata_value in metadata %}
 	{% if metadata_value.name == "TITLE" %}
-		<h1>{{metadata_value.value}} </h1>
+		{% do title_metadata.update(TITLE = metadata_value.value) %}
 	{%endif%}
 {% endfor %}
+
+{% if "TITLE" in title_metadata %}
+	<h1>{{ title_metadata['TITLE'] | e }} </h1>
+{% else %}
+	<h1>{{name | e}} </h1>
+{% endif %}
 
 {% for metadata_value in metadata %}
 	{% if metadata_value.name == "DATE" %}

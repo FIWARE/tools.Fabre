@@ -350,7 +350,6 @@ dd dl{
 }
 
 .resource dl dd>p{
-    font-weight: bold;
     margin-top: 0px;
     margin-bottom: 0px;
 }
@@ -365,7 +364,6 @@ dd dl{
 }
 
 .action dl dd>p{
-    font-weight: bold;
     margin-top: 0px;
     margin-bottom: 0px;
 }
@@ -421,7 +419,6 @@ dd dl{
 }
 
 .resourceExample dl dd>p{
-    font-weight: bold;
     margin-top: 0px;
     margin-bottom: 0px;
 }
@@ -438,7 +435,6 @@ dd dl{
 }
 
 .actionExample dl dd>p{
-    font-weight: bold;
     margin-top: 0px;
     margin-bottom: 0px;
 }
@@ -571,3 +567,4 @@ dd dl{
     width: 4em;
     display: inline-table;
 }
+

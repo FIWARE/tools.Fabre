@@ -55,7 +55,7 @@
 {% endif %}
 {% endfor%}
 
-{% if data_structures|length > 1 %}
+{% if data_structures | contains_common_payload_definitions %}
     {# Common Payload Definition #}
     <li><a href="#common-payload-definition">Common Payload Definition</a></li>
 {% endif %}

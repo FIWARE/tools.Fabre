@@ -1,16 +1,24 @@
 #!/usr/bin/env python
 
-from collections import deque
 import json
+import sys
+from os import path
 import re
-from pprint import pprint
 
 from markdown.extensions.toc import slugify
 
-from apib_extra_parse_utils import parse_property_member_declaration, get_nested_parameter_values_description
-from apib_extra_parse_utils import parse_to_markdown, get_indentation
+if __package__ is None:
+    sys.path.append( path.dirname( path.dirname( path.abspath(__file__) ) ) )
+    from apib_extra_parse_utils import get_nested_parameter_values_description
+    from apib_extra_parse_utils import parse_to_markdown
+else:
+    from ..apib_extra_parse_utils import get_nested_parameter_values_description
+    from ..apib_extra_parse_utils import parse_to_markdown
 
+from data_structures import parser_json_data_structures
 from instantiate_body import instantiate_all_example_body
+from instantiate_uri import instantiate_request_uri_templates
+from metadata import parse_meta_data
 
 
 def extract_markdown_header_dict(markdown_header):
@@ -146,64 +154,6 @@ def get_links_api_metadata(section):
     return links
 
 
-def parse_defined_data_structure_properties(properties_list, remaining_property_lines):
-    """Parses the properties definitions of a given data structure given its body
-
-    Arguments:
-    properties_list - List where we'll insert new properties to
-    remaining_property_lines - Property definition lines pending to be processed
-    """
-    last_member_indentation = -1
-
-    while len(remaining_property_lines) > 0:
-        property_member_declaration = remaining_property_lines[0]
-        if property_member_declaration != '':
-            # Retrieve the indentation of the current property definition.
-            current_member_indentation = get_indentation(property_member_declaration)
-            if last_member_indentation == -1:
-                last_member_indentation = current_member_indentation
-          
-            # Process the new property as a child, parent or uncle of the last
-            # one processed according to their relative line indentations.
-            if current_member_indentation == last_member_indentation:
-                parsed_attribute_definition = parse_property_member_declaration(property_member_declaration)
-                remaining_property_lines.popleft()
-                properties_list.append(parsed_attribute_definition)
-            elif current_member_indentation > last_member_indentation:
-                parse_defined_data_structure_properties(parsed_attribute_definition['subproperties'], remaining_property_lines)
-            else:
-                return
-        else:
-            remaining_property_lines.popleft()
-    
-
-def parse_defined_data_structures(data):
-  """Retrieves data structures definition from JSON fragment and gives them back as Python dict"""
-  data_structure_dict = {}
-
-  try:
-    if data["content"][0]["sections"][0]["class"] != u'blockDescription':
-        raise ValueError('Unexpected section received.')
-  except:
-    return data_structure_dict
-
-
-  for content in data["content"]:
-    data_structure = {}
-    data_structure_definition = []
-
-    if content["sections"]!=[]:
-      data_structure_content = content["sections"][0]["content"]
-      parse_defined_data_structure_properties(data_structure_definition, deque(data_structure_content.split('\n')))
-
-    data_structure_name = content["name"]["literal"]
-    data_structure["attributes"] = data_structure_definition
-    data_structure["is_common_payload"] = True
-    data_structure_dict[data_structure_name] = data_structure
-
-  return data_structure_dict
-
-
 def order_request_parameters(request_id):
     """Take a request identifier and if it has a URI, order it parameters.
 
@@ -308,114 +258,6 @@ def order_uri_parameters(URI):
     return ordered_URI
 
 
-def instantiate_uri(URI_template, parameters):
-    """Instantiate an URI template from a list of parameters
-
-    Arguments:
-    URI_template - URI template to be instanted
-    parameters - List of URI parameters used for instantiating
-    """
-    # Find all the parameter blocks (ie. {var}, {?var1,var2}, etc). 
-    regex = re.compile("{([^}]*)}")
-    URI_parameters_blocks = re.findall(regex,URI_template)
-
-    # Process every parameter block found in the URI
-    for URI_parameter_block in URI_parameters_blocks:
-        # Parameters of the form "#var" will be replaced with "#value", so we
-        # keep the '#' as a prefix.
-        prefix = ''
-        if URI_parameter_block[0] == '#':
-            prefix = '#'
-
-        # Form-style parameters (ie. ?var, &var) requires a different 
-        # substitution, so mark them as special cases for the substitutions
-        # loop.
-        form_style_query_parameters = False;
-        if URI_parameter_block[0] == '?':
-            form_style_query_parameters = True;
-            first_form_style_query_parameter = True;
-        elif URI_parameter_block[0] == '&':
-            form_style_query_parameters = True;
-            first_form_style_query_parameter = False;
-
-        # If the current parameters blocks startswith '?', '&', etc we
-        # remove such prefix for the substitutions loop.
-        if prefix == '' and form_style_query_parameters == False and URI_parameter_block[0] != '+':
-            URI_parameter_block_replace = URI_parameter_block
-        else:
-            URI_parameter_block_replace = URI_parameter_block[1:]
-
-        # Start replacing all the parameters inside the parameter blocks one
-        # by one.
-        for URI_parameter in URI_parameter_block_replace.split(','):
-            # Form-style parameters as "?var" will be replaced by 
-            # "?var=value", so keep "var=" as a prefix.
-            if form_style_query_parameters == True:
-                if first_form_style_query_parameter:
-                    prefix = "?" + URI_parameter + "="
-                    first_form_style_query_parameter = False
-                else:
-                    prefix = "&" + URI_parameter + "="
-
-            # Search the current URI parameter in the list of parameters 
-            # given and replace its name with its example value.
-            i = 0
-            parameter_definition_found = False
-            while i < len(parameters) and not parameter_definition_found:
-                if parameters[i]['name'] == URI_parameter and len(parameters[i]['example']) > 0:
-                    parameter_definition_found = True
-                    URI_parameter_block_replace = URI_parameter_block_replace.replace(URI_parameter, prefix + parameters[i]['example'])
-                i += 1
-
-            # If the parameter can not be found or it has not example value,
-            # we replace it with "{prefix+var-name}" or simply ignore it 
-            # depending on the type of parameter.
-            if parameter_definition_found == False:
-                if URI_parameter_block[0] != '?' and URI_parameter_block[0] != '&':
-                    if URI_parameter_block[0] == '+':
-                        prefix = '+'
-                    URI_parameter_block_replace = URI_parameter_block_replace.replace(URI_parameter, "{" + prefix + URI_parameter + "}")
-                else:
-                    URI_parameter_block_replace = URI_parameter_block_replace.replace(URI_parameter, '')
-
-        # Replace the original parameter block with the values of its members
-        # omiting the separator character (',').
-        URI_parameter_block_replace = URI_parameter_block_replace.replace(',','')
-        URI_template = URI_template.replace("{" + URI_parameter_block + "}",URI_parameter_block_replace)
-
-    return URI_template
-
-
-def combine_uri_parameters(resource_uri_parameters, action_uri_parameters):
-    """Combine the URI parameters of the given action and resource
-
-    Combine URI parameters of the current action and resource. In case 
-    of a parameter being defined in both the resource and the action, 
-    list only that of the action.
-
-    Arguments:
-    resource_uri_parameters -- URI parameters of the given resource
-    action_uri_parameters -- URI parameters of the given action 
-    """
-    uri_parameters = []
-
-    # Append to the result list all the URI parameters from the resource 
-    # which are not redefined in the action.
-    for resource_uri_parameter in resource_uri_parameters:
-        parameter_overwritten_in_action = False
-        for action_uri_parameter in action_uri_parameters:
-            if resource_uri_parameter["name"] == action_uri_parameter["name"]:
-                parameter_overwritten_in_action = True
-
-        if not parameter_overwritten_in_action:
-            uri_parameters.append(resource_uri_parameter)
-
-    # Append all the parameters from the action to the result list.
-    uri_parameters.extend(action_uri_parameters)
-
-    return uri_parameters
-
-
 def parse_json_description(JSON_element, links):
     """Search for a 'decription' key in the current object and parse ti as markdown
 
@@ -427,7 +269,7 @@ def parse_json_description(JSON_element, links):
     if type(JSON_element) is dict:
         for key in JSON_element:
             if key == "description":
-                JSON_element[key] = parse_to_markdown(JSON_element[key]).replace("<p>", "").replace("</p>", "")
+                JSON_element[key] = parse_to_markdown(JSON_element[key])
 
                 for link in get_links_from_description(JSON_element[key]):
                     if link not in links:
@@ -441,146 +283,6 @@ def parse_json_description(JSON_element, links):
             JSON_element[key] = parse_json_description(JSON_element[key], links)
 
     return JSON_element
-
-
-def get_heading_level(heading):
-    """Returns the level of a given Markdown heading
-    
-    Arguments:
-    heading -- Markdown title    
-    """
-    i = 0
-    while( i < len(heading) and heading[i] == '#' ):
-        i += 1
-
-    return i
-
-
-def get_subsection_body(filepath, last_position):
-    """Reads the given file until a Markdown header is found and returns the bytes read
-
-    Arguments:
-    filepath -- Path of the file to iterate over
-    position -- Descriptor of the file being read"""
-
-    with open(filepath, 'rU') as file_descriptor:
-        body = ''
-        previous_pos = last_position
-        file_descriptor.seek(previous_pos)
-        line = file_descriptor.readline()
-        pos = file_descriptor.tell()
-
-        while line and not line.startswith('#'):
-            body += line
-
-            previous_pos = pos
-            line = file_descriptor.readline()
-            pos = file_descriptor.tell()
-
-        return (body, previous_pos)
-
-
-def parse_metadata_subsections(filepath, parent_section_JSON, last_pos=0):
-    """Generates a JSON tree of nested metadata sections
-
-    Arguments:
-    filepath -- Name and path of the file to iterate over
-    parent_section_JSON -- JSON object representing the current parent section
-    last_pos -- Last byte position read in the file 
-    """
-    
-    previous_pos = last_pos
-    with open(filepath, 'rU') as file_descriptor:
-
-        file_descriptor.seek(previous_pos)
-        line = file_descriptor.readline()
-        pos = file_descriptor.tell()
-
-        # EOF case
-        if line:
-            if line.startswith('#'):
-
-                section_name = line
-                (body, previous_pos) = get_subsection_body(filepath, pos)
-
-                section_JSON = create_json_section(section_name, body)
-                parent_section_JSON['subsections'].append(section_JSON)
-
-                section_level = get_heading_level(section_name)
-
-                file_descriptor.seek(previous_pos)
-                line = file_descriptor.readline()
-                pos = file_descriptor.tell()            
-                next_section_level = get_heading_level(line)
-
-                if section_level == next_section_level:   # Section sibling
-                   previous_pos = parse_metadata_subsections(filepath, parent_section_JSON, last_pos=previous_pos) 
-                elif section_level < next_section_level:  # Section child
-                   previous_pos = parse_metadata_subsections(filepath, section_JSON, last_pos=previous_pos) 
-                else:   # Not related to current section
-                    return previous_pos
-
-                file_descriptor.seek(previous_pos)
-                next_line = file_descriptor.readline()
-                pos = file_descriptor.tell()
-
-                if next_line :
-                    next_section_level = get_heading_level(next_line)
-                    if section_level == next_section_level:   # Section sibling
-                       previous_pos = parse_metadata_subsections(filepath, parent_section_JSON, last_pos=previous_pos)
-                    else:   # Not related to current section
-                        pass 
-
-    return previous_pos
-
-
-def get_markdown_title_id(section_title):
-    """Returns the HTML equivalent id from a section title
-    
-    Arguments: 
-    section_title -- Section title
-    """
-    return section_title.replace(" ", "_").lower()
-
-
-def create_json_section(section_markdown_title, section_body):
-    """Creates a JSON
-    
-    Arguments:
-    section_markdown_title -- Markdown title of the section
-    section_body -- body of the subsection
-    """
-    section_title = section_markdown_title.lstrip('#').strip()
-
-    section = {}
-    section["id"] = get_markdown_title_id( section_title )
-    section["name"] = section_title
-    section["body"] = parse_to_markdown(section_body)
-
-    section["subsections"] = []
-
-    return section
-
-
-def parse_meta_data(filepath):
-    """Parses API metadata and returns the result in a JSON object
-    
-    Arguments: 
-    filepath -- File with extra sections
-    """
-    metadata = create_json_section("root", "")
-  
-    with open(filepath, 'rU') as file_:
-        last_position_read = parse_metadata_subsections(filepath, metadata)
-
-        file_.seek(last_position_read)
-        line = file_.readline()
-        while(line):
-            last_position_read = parse_metadata_subsections(filepath, metadata, last_position_read)
-            file_.seek(last_position_read)
-            line = file_.readline()
-
-    return metadata
 
 
 def add_metadata_to_json(metadata, json_content):
@@ -615,33 +317,6 @@ def parse_json_descriptions_and_get_links(json_content):
     return links
 
 
-def instantiate_request_uri_templates(json_content):
-    """Instantiate the parameters for all the requests URI templates
-
-    Arguments:
-    json_content -- JSON object containing the API parsed spec
-    """
-    for resource_group in json_content["resourceGroups"]:
-        for resource in resource_group["resources"]:
-            for action in resource["actions"]:
-                for example in action["examples"]:
-                    for request in example["requests"]:
-                        if request["name"].find('/') < 0:
-                            # URI parameters can be defined in the resource 
-                            # and / or the action. Combine the list of parameters
-                            # of both.
-                            uri_parameters = combine_uri_parameters(resource["parameters"], action["parameters"])
-                                
-                            # Instantiate the parameters in the action URI (or in
-                            # the resource URI if action URI is empty).
-                            if len(action["attributes"]["uriTemplate"]) > 0:
-                                request["name"] = \
-                                    request["name"] + " " + instantiate_uri( action["attributes"]["uriTemplate"], uri_parameters)
-                            else:
-                                request["name"] = \
-                                    request["name"] + " " + instantiate_uri( resource["uriTemplate"], uri_parameters)
-
-
 def order_uri_template_of_json(json_content):
     """Extract all the links from the JSON object and adds them back to the JSON.
 
@@ -660,74 +335,6 @@ def order_uri_template_of_json(json_content):
                         request["name"] = \
                                 order_request_parameters(request["name"])
     return
-
-
-def get_data_structure_properties_from_json(data_structure_content):
-    """Extract simpler representation of properties from drafter JSON representation.
-
-    Arguments:
-    data_structure_content -- JSON content section of "dataStructures" element or nested property
-    """
-    attributes = []
-
-    for membertype in data_structure_content:
-        if "content" not in membertype: return attributes
-        
-        for property_ in membertype["content"]:
-            attribute = {}
-
-            attribute['name'] = property_['content']['name']['literal']
-            attribute['required'] = 'required' in property_['content']['valueDefinition']['typeDefinition']['attributes']
-            attribute['type'] = \
-                property_['content']['valueDefinition']['typeDefinition']['typeSpecification']['name']
-            attribute['description'] = property_['content']['description']
-            try:
-                values_string = property_['content']['valueDefinition']['values'][0]['literal']
-                attribute['values'] = [e.strip(" ") for e in values_string.split(',')]
-            except IndexError as error:
-                attribute['values'] = []
-            attribute['subproperties'] = get_data_structure_properties_from_json(property_['content']["sections"])
-
-            attributes.append(attribute)
-
-    return attributes
-
-
-def get_data_structures_from_resources(json_content):
-    """Retrieve data structures defined in named resources.
-
-    Arguments:
-    json_content -- JSON object where resources will be analysed
-    """
-
-    data_structures = {}
-
-    for resource_group in json_content["resourceGroups"]:
-        for resource in resource_group["resources"]:
-
-            if resource["name"] == "": continue
-
-            for content in resource["content"]:
-                if content["element"] == "dataStructure":
-                    attributes = get_data_structure_properties_from_json(content["sections"])
-                    data_structures[resource["name"]] = {"attributes": attributes, "is_common_payload": False}
-
-
-    return data_structures
-
-
-def parser_json_data_structures(json_content):
-    """Retrieves data structures definition from JSON file and writes them in an easier to access format"""
-    
-    if len(json_content['content']) > 0:
-        json_content['data_structures'] = parse_defined_data_structures(json_content['content'][0])
-    else:
-        json_content['data_structures'] = {}
-
-
-    # Add resource level defined data structures
-    structures_from_resources = get_data_structures_from_resources(json_content)
-    json_content['data_structures'].update(structures_from_resources)
 
 
 def find_and_mark_empty_resources(json_content):

@@ -13,7 +13,7 @@
                     {%-if("required" in section_content.content.valueDefinition.typeDefinition.attributes) -%}
                         required
                     {%- else -%}
-                        not required
+                        optional
                     {%- endif -%}
                     ,
                     {{ displayTypeName( section_content.content.valueDefinition.typeDefinition.typeSpecification.name ) }}

@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 
 from collections import OrderedDict
@@ -10,13 +9,12 @@ import shutil
 import io
 from subprocess import call, Popen, PIPE
 import sys, getopt
-from pprint import pprint
 import pkg_resources
 import subprocess
 
 from jinja2 import Environment, FileSystemLoader
 
-from json_processing import postprocess_drafter_json
+from drafter_postprocessing.json_processing import postprocess_drafter_json
 from apib_extra_parse_utils import preprocess_apib_parameters_lines, start_apib_section, get_indentation
 
 
@@ -183,6 +181,7 @@ def render_api_blueprint(template_file_path, context_file_path, dst_dir_path):
 
     env = Environment(extensions=["jinja2.ext.do",], loader=FileSystemLoader(os.path.dirname(template_file_path)))
     env.filters['sort_payload_parameters'] = sort_payload_parameters
+    env.filters['contains_common_payload_definitions'] = contains_common_payload_definitions
     template = env.get_template(os.path.basename(template_file_path))
     output = ""
     with open(context_file_path, "rU") as contextFile:
@@ -239,6 +238,17 @@ def sort_payload_parameters(parameters_list):
     return sorted(parameters_list, cmp=compare_payload_parameter)
 
 
+def contains_common_payload_definitions(data_structures):
+    """Jinja2 custom filter for checking if a data structures list contains common payload definitions
+
+    Arguments:
+    data_structures - list of data structures"""
+    for data_structure in data_structures.itervalues():
+        if data_structure['is_common_payload']:
+            return True
+    return False
+
+
 def render_api_specification(API_specification_path, template_path, dst_dir_path, clear_temporal_dir=True, cover=None):
     """Renders an API specification using a template and saves it to destination directory.
     
@@ -283,34 +293,34 @@ def render_api_specification(API_specification_path, template_path, dst_dir_path
 
 def print_package_dependencies():
     """Print the dependencies of package Fabre"""
-    print "\nPIP dependencies\n"
+    
+    print "\n# PIP dependencies\n"
     dependencies_matrix = [["Package", "Required version", "Installed version"]]
+
+    version_regex = re.compile("Version: (.*)")
     for package in pkg_resources.get_distribution("fiware_api_blueprint_renderer").requires():
         package_header = str(package).split('>=')
         package_name = package_header[0]
         package_required_version = ">= " + package_header[1]
         package_installed_info = subprocess.check_output(['pip', 'show', package_name])
-        version_regex = re.compile("Version: (.*)")
-        package_installed_version = version_regex.search(package_installed_info).group(1)
+        package_installed_version = version_regex.search(package_installed_info).group(1)      
+
         dependencies_matrix.append([package_name, package_required_version, package_installed_version])
 
     pretty_print_matrix(dependencies_matrix)
 
-    system_dependencies_matrix = [["Package", "Required version", "Installed version"]]
+    print "\n\n# System dependencies\n"
     system_dependencies = [('drafter', 'v0.1.9'), ('wkhtmltopdf', '0.12.2.1 (with patched qt)')]
-
     for (package_name, package_required_version) in system_dependencies:
-        row = []
-        row.append(package_name)
-        row.append(package_required_version)
-        if package_name != 'wkhtmltopdf':
-            row.append(subprocess.check_output([package_name, '--version'])[0:-1])
-        else:
-            row.append(subprocess.check_output([package_name, '--version'])[0:-1].split(' ',1)[1])
-        system_dependencies_matrix.append(row)
+        package_installed_version = subprocess.check_output([package_name, '--version'])
 
-    print "\nSystem dependencies\n"
-    pretty_print_matrix(system_dependencies_matrix)
+        print "Name: "
+        print "\t%s\n" % package_name
+        print "Required version: "
+        print "\t%s\n" % package_required_version
+        print "Installed version (%s --version): " % package_name
+        for version_line in package_installed_version.split('\n'):
+            print "\t%s" % version_line
     print "\n"
 
 

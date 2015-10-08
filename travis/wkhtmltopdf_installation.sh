@@ -1,0 +1,2 @@
+sudo apt-get install -y -f fontconfig libfontconfig1 libfreetype6 libjpeg-turbo8 libxrender1 xfonts-base xfonts-75dpi
+wget http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-trusty-amd64.deb && sudo dpkg -i wkhtmltox-0.12.2.1_linux-trusty-amd64.deb

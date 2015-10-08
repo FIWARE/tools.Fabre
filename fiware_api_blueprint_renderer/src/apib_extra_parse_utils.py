@@ -26,7 +26,27 @@ def parse_to_markdown(markdown_text):
     except (UnicodeEncodeError, UnicodeDecodeError) as encoding_error:
         parsed_text = markdown.markdown(markdown_text, extensions=extensions_list)
 
+    parsed_text = escape_code_sections(parsed_text)
+
     return parsed_text
+
+
+def escape_code_sections(html_text):
+  """Parse HTML code sections to escape them
+
+    Arguments:
+    html_text -- String to find code sections
+    """
+
+  code_regex = re.compile(r"<code>(.*?)</code>")
+
+  code_matches = code_regex.findall(html_text)
+  if code_matches:
+      for code_match in code_matches:
+          html_text = html_text.replace( code_match[0], code_match[0].replace("<", "&lt;"))
+
+  return html_text
+
 
 
 def get_indentation(line):
@@ -271,7 +291,7 @@ def start_apib_section(line):
     """
     result = False
 
-    group_regex = re.compile("^#*[ ]Group([ \w\W\-\_]*)$")
+    group_regex = re.compile("^#*[ ]Group ([ \w\W\-\_]*)$")
     resource_regex = re.compile("^#*[ ]([ \w\W\-\_]*) \[([ \w\W\-\_]*)\]$")
     direct_URI_regex = re.compile("^#*[ ]([ ]*[/][ \w\W\-\_]*)$")
 

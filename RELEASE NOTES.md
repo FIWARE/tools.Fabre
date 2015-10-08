@@ -7,17 +7,22 @@
 * Added URI parameters instantiation for requests with no URI specified.
 * Payload definitions moved from examples to specifications.
 * Now FABRE instantiates an example request body if its specifications has defined values.
+* Changed output format for "fabre --version-dependencies".
+* Added a Dockerfile that allows use FABRE using a docker VM
+* Now the project uses continuos integration using Travis CI <http://travis-ci.org>
 
 ### New dependencies
 *
 
 ### Fixed bugs
-* All instances of 'optional' changed to 'not equired'.
+* All instances of 'not required' changed to 'optional'.
 * All description sections get properly parsed to markdown.
 * Added support to render description from 'Data Structures' section (left separate by drafter v0.1.9).
 * Removed *.py and *.pyc files from the generated sited.
 * Fixed some reference links that appear together.
-* Avoid duplicating links in the reference sections
+* Avoid duplicating links in the reference sections.
+* Fixed wrong separation of files for APIB and extra sections.
+* Fixed wrong condition check when rendering section "Common Payload Definitions".
 
 ### Known bugs
 * **--dpi** option in wkhtmltopdf does not work correctly. Becasuse of that, FABRE could render different PDF files in different systems.
