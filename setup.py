@@ -26,7 +26,10 @@ setup(name='fiware_api_blueprint_renderer',
       install_requires=[
         'jinja2>=2.7.3',
         'markdown>=2.6.2',
-        'mdx-linkify>=0.6'
+        'mdx-linkify>=0.6',
+        'lxml>=3.4.4',
+        'cssselect>=0.9.1',
+        'pyquery>=1.2.9'
       ],
       entry_points={
         'console_scripts': [

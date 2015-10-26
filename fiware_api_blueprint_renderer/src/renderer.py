@@ -90,9 +90,8 @@ def separate_extra_sections_and_api_blueprint(input_file_path, extra_sections_fi
                 extra_sections_file.write(line)
             else:
                 line = line.replace('\t','    ')
-                (line, parameters_section, data_structures_section) = preprocess_apib_parameters_lines(line, 
-                                                                                                       parameters_section, 
-                                                                                                       data_structures_section)
+                (line, parameters_section, data_structures_section) = preprocess_apib_parameters_lines(line, parameters_section, 
+                                                    data_structures_section)
                 API_blueprint_file.write(line)
 
     return (title_line_end, apib_line_start)
@@ -270,8 +269,8 @@ def render_api_specification(API_specification_path, template_path, dst_dir_path
     
     create_directory_if_not_exists(temp_dir_path)
     (title_line_end, apib_line_start) = separate_extra_sections_and_api_blueprint(API_specification_path, 
-                                                                                  API_extra_sections_file_path, 
-                                                                                  API_blueprint_file_path)
+                                                API_extra_sections_file_path, 
+                                                API_blueprint_file_path)
 
     parse_api_blueprint_with_drafter(API_blueprint_file_path, API_blueprint_JSON_file_path, title_line_end, apib_line_start)
     

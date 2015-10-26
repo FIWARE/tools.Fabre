@@ -65,6 +65,8 @@ def instantiate_uri(URI_template, parameters):
     parameters - List of URI parameters used for instantiating
     """
     # Find all the parameter blocks (ie. {var}, {?var1,var2}, etc). 
+
+    processed_URI = ''
     regex = re.compile("{([^}]*)}")
     URI_parameters_blocks = re.findall(regex,URI_template)
 
@@ -72,6 +74,7 @@ def instantiate_uri(URI_template, parameters):
     for URI_parameter_block in URI_parameters_blocks:
         # Parameters of the form "#var" will be replaced with "#value", so we
         # keep the '#' as a prefix.
+        
         prefix = ''
         if URI_parameter_block[0] == '#':
             prefix = '#'
@@ -99,6 +102,7 @@ def instantiate_uri(URI_template, parameters):
         for URI_parameter in URI_parameter_block_replace.split(','):
             # Form-style parameters as "?var" will be replaced by 
             # "?var=value", so keep "var=" as a prefix.
+            #processed_URI += proccess_URI_parameter(URI_parameter)
             if form_style_query_parameters == True:
                 if first_form_style_query_parameter:
                     prefix = "?" + URI_parameter + "="
@@ -114,6 +118,7 @@ def instantiate_uri(URI_template, parameters):
                 if parameters[i]['name'] == URI_parameter and len(parameters[i]['example']) > 0:
                     parameter_definition_found = True
                     URI_parameter_block_replace = URI_parameter_block_replace.replace(URI_parameter, prefix + parameters[i]['example'])
+                    processed_URI += prefix + parameters[i]['example']
                 i += 1
 
             # If the parameter can not be found or it has not example value,
@@ -124,12 +129,15 @@ def instantiate_uri(URI_template, parameters):
                     if URI_parameter_block[0] == '+':
                         prefix = '+'
                     URI_parameter_block_replace = URI_parameter_block_replace.replace(URI_parameter, "{" + prefix + URI_parameter + "}")
+                    processed_URI += "{" + prefix + URI_parameter + "}"
                 else:
                     URI_parameter_block_replace = URI_parameter_block_replace.replace(URI_parameter, '')
+                    processed_URI += ''
 
         # Replace the original parameter block with the values of its members
         # omiting the separator character (',').
+    
         URI_parameter_block_replace = URI_parameter_block_replace.replace(',','')
-        URI_template = URI_template.replace("{" + URI_parameter_block + "}",URI_parameter_block_replace)
+        URI_template = URI_template.replace("{" + URI_parameter_block + "}",processed_URI)
 
     return URI_template

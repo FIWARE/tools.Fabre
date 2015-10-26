@@ -1,0 +1,167 @@
+FORMAT: 1A
+HOST: http://telefonicaid.github.io/fiware-orion/api/v2/
+TITLE: FIWARE-NGSI v2 Specification
+
+# Testing URI API
+
+This specification defines the FIWARE-NGSI version 2 API. FIWARE-NGSI v2 is intended to manage all the whole lifecycle of
+context information including updates, queries, registrations and subscriptions.
+
+
+# REST API
+
+# Group Root
+
+## Retrieve Entry Points [GET /v2]
+
++ Request (application/json)
+        {
+            "foo": "barr"
+        }
+
++ Request /v2 (application/json)
+        {
+            "foo": "barr"
+        }
+
++ Response 200 (application/json)
+
+        {
+            "entities_url":      "/v2/entities",
+            "types_url":         "/v2/types",
+            "subscriptions_url": "/v2/subscriptions",
+            "registrations_url": "/v2/registrations"
+        }
+
+
+# Group Entities
+
+## Entities [/v2/entities{?limit,offset,options,type,id,idPattern,q,geometry,coords,attrs}]
+
+### List entities [GET /v2/entities{?limit,offset,options,type,id,idPattern,q,geometry,coords,attrs}]
+
++ Request /v2/entities?id=foo&limit=10&options=bar
+
++ Request /v2/entities?options=bar&limit=10&id=foo
+
++ Response 200 (application/json)
+
+        [
+         {
+            "type": "Room",
+            "id": "DC_S1-D41",
+            "temperature": 35.6
+         },
+         {
+            "type": "Room",
+            "id": "Boe-Idearium",
+            "temperature": 22.5
+         },
+         {
+            "type": "Car",
+            "id": "P-9873-K",
+            "speed": {
+                "value": 100,
+                "type": "number",
+                "accuracy": 2,
+                "timestamp": {
+                    "value": "2015-06-04T07:20:27.378Z",
+                    "type": "date"
+                }
+            }
+         }
+        ]
+
+# Group AutoInstantiateEntities
+
+## Entities [/v2/entities2{?limit,offset,options,type,id,idPattern,q,geometry,coords,attrs}]
+
+### List entities [GET /v2/entities2{?limit,offset,options,type,id,idPattern,q,geometry,coords,attrs}]
+
++ Request /v2/entities2{?attrs,coords,geometry,id,idPattern,limit,offset,options,q,type}
+        {
+            "foo": "barr"
+        }
+
++ Request (application/json)
+        {
+            "foo": "barr"
+        } 
+
+
++ Response 200 (application/json)
+
+        [
+         {
+            "type": "Room",
+            "id": "DC_S1-D41",
+            "temperature": 35.6
+         },
+         {
+            "type": "Room",
+            "id": "Boe-Idearium",
+            "temperature": 22.5
+         },
+         {
+            "type": "Car",
+            "id": "P-9873-K",
+            "speed": {
+                "value": 100,
+                "type": "number",
+                "accuracy": 2,
+                "timestamp": {
+                    "value": "2015-06-04T07:20:27.378Z",
+                    "type": "date"
+                }
+            }
+         }
+        ]
+
+# Group instantiate with values
+
+## Entities3 [/v2/entities3{?limit,offset}]
+
++ Parameters
+    + limit: 100 (optional, string) - Max number of elements to retrieve
+    + offset: 101 (optional, string) - number of element that the petition will skip.
+
+### List entities [GET /v2/entities2/{?limit,offset,options,type,id,idPattern,q,geometry,coords,attrs}]
+
++ Request /v2/entities2{?attrs,coords,geometry,id,idPattern,limit,offset,options,q,type}
+        {
+            "foo": "barr"
+        }
+
++ Request (application/json)
+        {
+            "foo": "barr"
+        } 
+
+
++ Response 200 (application/json)
+
+        [
+         {
+            "type": "Room",
+            "id": "DC_S1-D41",
+            "temperature": 35.6
+         },
+         {
+            "type": "Room",
+            "id": "Boe-Idearium",
+            "temperature": 22.5
+         },
+         {
+            "type": "Car",
+            "id": "P-9873-K",
+            "speed": {
+                "value": 100,
+                "type": "number",
+                "accuracy": 2,
+                "timestamp": {
+                    "value": "2015-06-04T07:20:27.378Z",
+                    "type": "date"
+                }
+            }
+         }
+        ]

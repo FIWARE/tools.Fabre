@@ -48,7 +48,7 @@
 	{%endif%}
 
 	<dt class="versionLabel">Latest version:</dt> 
-	<dd class="versionValue"> <a href="{{SPEC_URL}}latest">{{version_sections['SPEC_URL']}}latest</a> </dd>
+	<dd class="versionValue"> <a href="{{version_sections['SPEC_URL']}}latest">{{version_sections['SPEC_URL']}}latest</a> </dd>
 
 	</dl>
 {%endif%}

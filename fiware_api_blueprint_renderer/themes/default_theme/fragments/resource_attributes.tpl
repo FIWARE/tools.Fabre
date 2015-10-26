@@ -6,7 +6,7 @@
 
 {% macro displayPacketProperties( packetContent ) %}
     <dl class="action-parameters-table">
-        {%- for section_content in packetContent %}
+        {%- for section_content in packetContent | sort_payload_parameters %}
             {%- if section_content.class == "property" %}
                     <dt><span class="parameter-name">{{ section_content.content.name.literal }}</span>
                     <span class="parameter-attributes">(

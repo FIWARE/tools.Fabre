@@ -11,6 +11,12 @@ Tool for parsing a FIWARE specification file and rendering it to a HTML page.
 * [drafter v0.1.9](https://github.com/apiaryio/drafter/tree/v0.1.9)
 * [wkhtmltopdf](http://wkhtmltopdf.org/)
 
+### Dependencies for tests
+
+* [lxml](http://lxml.de/)
+* [cssselect](https://github.com/SimonSapin/cssselect/)
+* [pyquery](https://github.com/gawel/pyquery/)
+
 ## Install
 
 Before using FABRE, we need to install Drafter version 0.1.9, an API Blueprint parser:

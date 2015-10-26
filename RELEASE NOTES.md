@@ -8,11 +8,14 @@
 * Payload definitions moved from examples to specifications.
 * Now FABRE instantiates an example request body if its specifications has defined values.
 * Changed output format for "fabre --version-dependencies".
+* Added support to use defined data structures inside resources.
 * Added a Dockerfile that allows use FABRE using a docker VM
 * Now the project uses continuos integration using Travis CI <http://travis-ci.org>
 
 ### New dependencies
-*
+* [lxml](http://lxml.de/)
+* [cssselect](https://github.com/SimonSapin/cssselect/)
+* [pyquery](https://github.com/gawel/pyquery/)
 
 ### Fixed bugs
 * All instances of 'not required' changed to 'optional'.
@@ -21,8 +24,11 @@
 * Removed *.py and *.pyc files from the generated sited.
 * Fixed some reference links that appear together.
 * Avoid duplicating links in the reference sections.
+* When TITLE metadatum is not defined, the H1 title is the first markdown title found in the document.
 * Fixed wrong separation of files for APIB and extra sections.
 * Fixed wrong condition check when rendering section "Common Payload Definitions".
+* Fixed wrong link generation for latest version
+* Fixed ordering of recursive payload parameters
 
 ### Known bugs
 * **--dpi** option in wkhtmltopdf does not work correctly. Becasuse of that, FABRE could render different PDF files in different systems.
@@ -69,3 +75,4 @@
 * **--dpi** option in wkhtmltopdf does not work correctly. Becasuse of that, FABRE could render different PDF files in different systems.
 
 ----
+
