@@ -4,6 +4,8 @@ python:
 
 install:
     - pip install unittest2
+    - pip install lxml
+    - pip install pyquery
     - travis/drafter_installation.sh
     - travis/wkhtmltopdf_installation.sh
     - sudo python setup.py install
