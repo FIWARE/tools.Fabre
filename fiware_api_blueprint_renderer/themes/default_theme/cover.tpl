@@ -28,6 +28,14 @@
     <link rel="stylesheet" type="text/css" href="css/api-specification.css">
     <link rel="stylesheet" type="text/css" href="css/api-specification-pdf.css"> 
 
+    {%- for metadatum in metadata %}
+      {%- if metadatum.name.upper() == 'CSS' %}
+        <link rel="stylesheet" type="text/css" href="{{ metadatum.value }}"> 
+      {%- endif %}
+      {%- if metadatum.name.upper() == 'CSS-PDF' %}
+        <link rel="stylesheet" type="text/css" href="{{ metadatum.value }}"> 
+      {%- endif %}
+    {%- endfor %}
     
 </head>
 <body id="respecDocument" class="h-entry">

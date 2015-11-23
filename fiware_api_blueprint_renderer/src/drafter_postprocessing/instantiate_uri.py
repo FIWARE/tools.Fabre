@@ -11,6 +11,11 @@ def instantiate_request_uri_templates(json_content):
             for action in resource["actions"]:
                 for example in action["examples"]:
                     for request in example["requests"]:
+                        if request["name"].replace(' ', '').replace('\t', '').lower().startswith('example-'):
+                            request["is_example"] = True
+                        else:
+                            request["is_example"] = False
+
                         if request["name"].find('/') < 0:
                             # URI parameters can be defined in the resource 
                             # and / or the action. Combine the list of parameters

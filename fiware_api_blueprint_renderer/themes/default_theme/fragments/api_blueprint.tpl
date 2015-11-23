@@ -90,11 +90,16 @@
                                 {% set packet_contents = action.content %}
                                 {% include "fragments/rest_packet_general_contents.tpl" %}      
                                     {% for example in action.examples %}
-        	                            {% for request in example.requests %}
+
+                                        {% for request in example.requests %}
                                             {% set rest_packet = request %}
                                             {% set packet_type = "Request" %}
                                             {% set loop_index = loop.index %}
-                                            {% include "fragments/rest_packet.tpl" %}
+
+                                            {% if rest_packet.is_example == False %}
+                                                {% set first_found = True %}
+                                                {% include "fragments/rest_packet.tpl" %}
+                                            {% endif %}
         	                            {% endfor %}
     
         	                            {% for response in example.responses %}
@@ -167,11 +172,15 @@
                                         {% set packet_contents = action.content %}
                                         {#{% include "fragments/rest_packet_general_contents.tpl" %}  #}    
                                             {% for example in action.examples %}
+
                                                 {% for request in example.requests %}
                                                     {% set rest_packet = request %}
                                                     {% set packet_type = "Request" %}
                                                     {% set loop_index = loop.index %}
-                                                    {% include "fragments/rest_packet_examples.tpl" %}
+
+                                                    {% if rest_packet.is_example == True %}
+                                                        {% include "fragments/rest_packet_examples.tpl" %}
+                                                    {% endif %}
                                                 {% endfor %}
             
                                                 {% for response in example.responses %}
