@@ -9,10 +9,11 @@
 * Now FABRE instantiates an example request body if its specifications has defined values.
 * Changed output format for "fabre --version-dependencies".
 * Added support to use defined data structures inside resources.
-* Added a Dockerfile that allows use FABRE using a docker VM
-* Now the project uses continuos integration using Travis CI <http://travis-ci.org>
+* Added a Dockerfile that allows use FABRE using a docker VM.
+* Now the project uses continuos integration using Travis CI <http://travis-ci.org>.
 * Now request examples do not get listed under the action definition. A request example starts its id with **example-**.
 * Added support for external CSS loading via metadata keywords **CSS** and **CSS-PDF**.
+* Now response blocks are paired with request blocks.
 
 ### New dependencies
 * [lxml](http://lxml.de/)
@@ -29,8 +30,8 @@
 * When TITLE metadatum is not defined, the H1 title is the first markdown title found in the document.
 * Fixed wrong separation of files for APIB and extra sections.
 * Fixed wrong condition check when rendering section "Common Payload Definitions".
-* Fixed wrong link generation for latest version
-* Fixed ordering of recursive payload parameters
+* Fixed wrong link generation for latest version.
+* Fixed ordination of recursive payload parameters.
 
 ### Known bugs
 * **--dpi** option in wkhtmltopdf does not work correctly. Becasuse of that, FABRE could render different PDF files in different systems.

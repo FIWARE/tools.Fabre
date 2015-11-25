@@ -89,36 +89,49 @@
                                 {% include "fragments/parameters_definition.tpl" %}			
                                 {% set packet_contents = action.content %}
                                 {% include "fragments/rest_packet_general_contents.tpl" %}      
-                                    {% for example in action.examples %}
 
-                                        {% for request in example.requests %}
-                                            {% set rest_packet = request %}
-                                            {% set packet_type = "Request" %}
-                                            {% set loop_index = loop.index %}
+                                {% for example in action.examples %}
 
-                                            {% if rest_packet.is_example == False %}
-                                                {% set first_found = True %}
-                                                {% include "fragments/rest_packet.tpl" %}
-                                            {% endif %}
-        	                            {% endfor %}
-    
-        	                            {% for response in example.responses %}
-        		                            {% set rest_packet = response %}
-                                        {% set packet_type = "Response" %}
+                                    {% for request in example.requests %}
+                                        {% set rest_packet = request %}
+                                        {% set packet_type = "Request" %}
                                         {% set loop_index = loop.index %}
-                                        {% include "fragments/rest_packet.tpl" %}
-        	                            {% endfor %}
-                                    {% endfor %}
-                                    <div>
-                                    <div class="goExample">
-                                        <a href="#{{ action.id }}_examples">Go to example</a>
-                                    </div>
-                                    {% if resourceGroup.name|length > 0 %}
-                                        {{ gen_apiary_link( resourceGroup.name, resource.name, resource.uriTemplate, action.name, action.method, metadata ) }}
-                                    {% else %}
-                                        {{ gen_apiary_link( "Default", resource.name, resource.uriTemplate, action.name, action.method, metadata ) }}
-                                    {% endif %}
-                                    </div>
+
+                                        {%- if rest_packet.is_example == False -%}
+                                            {% set first_found = True %}
+                                            {% include "fragments/rest_packet.tpl" %}
+
+                                            {# Display resposnes if they exist #}
+                                            {%- if example.responses|length != 0 -%}
+
+                                                {# If there are less responses than requests, 
+                                                use the last defined response #}
+                                                {%- if loop.index < example.responses|length -%}
+                                                    {% set response_index = loop_index %}
+                                                {%- else -%}
+                                                    {% set response_index = example.reponses|length %}
+                                                {%- endif -%}
+
+                                                {% set rest_packet = example.responses[response_index] %}
+                                                {% set packet_type = "Response" %}
+                                                {% set loop_index = loop.index %}
+                                                {% include "fragments/rest_packet.tpl" %}
+
+                                            {%- endif -%}
+
+                                        {%- endif -%}
+    	                            {% endfor %}
+                                {% endfor %}
+                                <div>
+                                <div class="goExample">
+                                    <a href="#{{ action.id }}_examples">Go to example</a>
+                                </div>
+                                {% if resourceGroup.name|length > 0 %}
+                                    {{ gen_apiary_link( resourceGroup.name, resource.name, resource.uriTemplate, action.name, action.method, metadata ) }}
+                                {% else %}
+                                    {{ gen_apiary_link( "Default", resource.name, resource.uriTemplate, action.name, action.method, metadata ) }}
+                                {% endif %}
+                                </div>
                                 
                             </div>
                         </div>
@@ -180,14 +193,25 @@
 
                                                     {% if rest_packet.is_example == True %}
                                                         {% include "fragments/rest_packet_examples.tpl" %}
+
+                                                        {# Display resposnes if they exist #}
+                                                        {%- if example.responses|length != 0 -%}
+
+                                                            {# If there are less responses than requests, 
+                                                            use the last defined response #}
+                                                            {%- if loop.index < example.responses|length -%}
+                                                                {% set response_index = loop_index %}
+                                                            {%- else -%}
+                                                                {% set response_index = example.reponses|length %}
+                                                            {%- endif -%}
+
+                                                            {% set rest_packet = example.responses[response_index] %}
+                                                            {% set packet_type = "Response" %}
+                                                            {% set loop_index = loop.index %}
+                                                            {% include "fragments/rest_packet_examples.tpl" %}
+
+                                                        {%- endif -%}
                                                     {% endif %}
-                                                {% endfor %}
-            
-                                                {% for response in example.responses %}
-                                                    {% set rest_packet = response %}
-                                                {% set packet_type = "Response" %}
-                                                {% set loop_index = loop.index %}
-                                                {% include "fragments/rest_packet_examples.tpl" %}
                                                 {% endfor %}
                                             {% endfor %}
                                             <div class="goActions">
