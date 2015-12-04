@@ -32,6 +32,8 @@
 * Fixed wrong condition check when rendering section "Common Payload Definitions".
 * Fixed wrong link generation for latest version.
 * Fixed ordination of recursive payload parameters.
+* Fix generation of empty sections in Examples section when examples are not defined.
+* Fix generation of Example section only when the apib has examples defined.
 
 ### Known bugs
 * **--dpi** option in wkhtmltopdf does not work correctly. Becasuse of that, FABRE could render different PDF files in different systems.

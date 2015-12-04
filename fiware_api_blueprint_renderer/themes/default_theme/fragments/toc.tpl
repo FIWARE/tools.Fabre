@@ -112,7 +112,9 @@
                             </ul>
                         </li>
                       {% endfor %}
-    <li><a href="#examples">Examples</a></li>
+    {%- if has_example -%}
+        <li><a href="#examples">Examples</a></li>
+    {%- endif -%}
     </ul>
 </li>
     {# bottom metadata #}

@@ -6,13 +6,25 @@ def instantiate_request_uri_templates(json_content):
     Arguments:
     json_content -- JSON object containing the API parsed spec
     """
+    json_content["has_example"] = False
     for resource_group in json_content["resourceGroups"]:
+
+        resource_group["has_example"] = False
         for resource in resource_group["resources"]:
+        
+            resource["has_example"] = False
             for action in resource["actions"]:
+        
+                action["has_example"] = False
                 for example in action["examples"]:
                     for request in example["requests"]:
                         if request["name"].replace(' ', '').replace('\t', '').lower().startswith('example-'):
                             request["is_example"] = True
+                            
+                            json_content["has_example"] = True
+                            resource_group["has_example"] = True
+                            resource["has_example"] = True
+                            action["has_example"] = True
                         else:
                             request["is_example"] = False
 
