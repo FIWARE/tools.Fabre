@@ -101,13 +101,13 @@
                                             {% set first_found = True %}
                                             {% include "fragments/rest_packet.tpl" %}
 
-                                            {# Display resposnes if they exist #}
+                                            {# Display responses if they exist #}
                                             {%- if example.responses|length != 0 -%}
 
                                                 {# If there are less responses than requests, 
                                                 use the last defined response #}
-                                                {%- if loop.index < example.responses|length -%}
-                                                    {% set response_index = loop_index %}
+                                                {%- if loop.index-1 < example.responses|length -%}
+                                                    {% set response_index = loop_index-1 %}
                                                 {%- else -%}
                                                     {% set response_index = example.reponses|length %}
                                                 {%- endif -%}
@@ -207,13 +207,13 @@
                                                     {% if rest_packet.is_example == True %}
                                                         {% include "fragments/rest_packet_examples.tpl" %}
 
-                                                        {# Display resposnes if they exist #}
+                                                        {# Display responses if they exist #}
                                                         {%- if example.responses|length != 0 -%}
 
                                                             {# If there are less responses than requests, 
                                                             use the last defined response #}
-                                                            {%- if loop.index < example.responses|length -%}
-                                                                {% set response_index = loop_index %}
+                                                            {%- if loop.index-1 < example.responses|length -%}
+                                                                {% set response_index = loop_index-1 %}
                                                             {%- else -%}
                                                                 {% set response_index = example.reponses|length %}
                                                             {%- endif -%}

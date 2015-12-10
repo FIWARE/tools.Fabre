@@ -1,0 +1,168 @@
+FORMAT: 1A
+TITLE: Request example and request-response pairing document
+DATE: 10 December 2015
+GITHUB_SOURCE: https://github.com/FiwareULPGC/fiware-api-blueprint-renderer/
+
+# Request example and request-response pairing document
+
+ This is a full example document example which displays the usage of request examples and how the grouping of responses with their requests work.
+
+# REST API
+
+# Group main
+
+## Resource1  [/example1]
+
+ This resource will not appear in the **Examples** section since it contains no examples.
+
+### Action with no examples [GET /example1]
+
++ Request (application/json)
+
+    + Body
+
+            { }
+
++ Response 200 (application/json) 
+
+        {
+            "valid": ok
+        }
+
+## Resource2  [/example2]
+
+ This resource will appear in the **Examples** section since it contains examples.
+
+### Action without requests and responses [GET /example2/1]
+
+### Action with one normal request and one request example [GET /example2/2]
+
+ In this action you can already see how the paired response goes to the same section the request belongs, either
+specifcation block or **Examples** section.
+
++ Request normal_request (application/json)
+
+    + Body
+
+            { }
+
++ Response 200 (application/json) 
+
+        {
+            "valid": ok
+        }
+
++ Request example-request (application/json)
+
+    + Body
+
+            { }
+
++ Response 201 (application/json) 
+
+        {
+            "paired-with-example-request": true
+        }
+
+## Resource3  [/example3]
+
+ This resource will show different pairing cases.
+
+### Action with request without response [GET /example3/1]
+
++ Request (application/json)
+
+    + Body
+
+            { }
+
+### Action with response without request [GET /example3/2]
+
++ Response 200 (application/json) 
+
+        {
+            "no-request-to-be-paired-with": true
+        }
+
+
+### Action without visual pairing [GET /example3/3]
+
+ In this action the responses are not direcctly behind the paired request.
+
++ Request paired-with-response-200 (application/json)
+
+    + Body
+
+            { }
+
++ Request paired-with-response-201 (application/json)
+
+    + Body
+
+            { }
+
++ Request example-paired-with-response-202 (application/json)
+
+    + Body
+
+            { }
+
++ Request example-paired-with-response-203 (application/json)
+
+    + Body
+
+            { }
+
++ Response 200 (application/json) 
+
+        {
+            "paired-with-request-1": true
+        }
+
++ Response 201 (application/json) 
+
+        {
+            "paired-with-request-2": true
+        }
+
+
++ Response 202 (application/json) 
+
+        {
+            "paired-with-request3": true
+        }
+
++ Response 203 (application/json) 
+
+        {
+            "paired-with-request4": true
+        }
+
+
+### Action with all request paired to the same response [GET /example3/4]
+
+ In this action there is only one request, which will be paired with all the requests
+
++ Request paired-with-response-200_first (application/json)
+
+    + Body
+
+            { }
+
++ Request example-paired-with-response-200_second (application/json)
+
+    + Body
+
+            { }
+
++ Request paired-with-response-200_third (application/json)
+
+    + Body
+
+            { }
+
++ Response 200 (application/json) 
+
+        {
+            "paired-with-all_requests": true
+        }
