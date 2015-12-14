@@ -18,15 +18,15 @@ def instantiate_request_uri_templates(json_content):
                 action["has_example"] = False
                 for example in action["examples"]:
                     for request in example["requests"]:
-                        if request["name"].replace(' ', '').replace('\t', '').lower().startswith('example-'):
+                        if request["name"].replace(' ', '').replace('\t', '').lower().endswith('-no-example'):
+                            request["is_example"] = False
+                        else:
                             request["is_example"] = True
                             
                             json_content["has_example"] = True
                             resource_group["has_example"] = True
                             resource["has_example"] = True
                             action["has_example"] = True
-                        else:
-                            request["is_example"] = False
 
                         if request["name"].find('/') < 0:
                             # URI parameters can be defined in the resource 

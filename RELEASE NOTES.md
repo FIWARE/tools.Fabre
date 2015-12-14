@@ -11,10 +11,10 @@
 * Added support to use defined data structures inside resources.
 * Added a Dockerfile that allows use FABRE using a docker VM.
 * Now the project uses continuos integration using Travis CI <http://travis-ci.org>.
-* Now request examples do not get listed under the action definition. A request example starts its id with **example-**.
 * Added support for external CSS loading via metadata keywords **CSS** and **CSS-PDF**.
 * Link to github source code will be generated from metadatum keyword **GITHUB_SOURCE**.
 * Now response blocks are paired with request blocks.
+* Now request examples do not get listed under the action definition. All requests are considered examples unless they end their ID with **-no-example**.
 
 ### New dependencies
 * [lxml](http://lxml.de/)
