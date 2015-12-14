@@ -291,9 +291,9 @@ def start_apib_section(line):
     """
     result = False
 
-    group_regex = re.compile("^#*[ ]Group ([ \w\W\-\_]*)$")
-    resource_regex = re.compile("^#*[ ]([ \w\W\-\_]*) \[([ \w\W\-\_]*)\]$")
-    direct_URI_regex = re.compile("^#*[ ]([ ]*[/][ \w\W\-\_]*)$")
+    group_regex = re.compile("^#+[ ]Group ([ \w\W\-\_]*)$")
+    resource_regex = re.compile("^#+[ ]([ \w\W\-\_]*) \[([ \w\W\-\_]*)\]$")
+    direct_URI_regex = re.compile("^#+[ ]([ ]*[/][ \w\W\-\_]*)$")
 
 
     if (line.strip() == "# REST API" 

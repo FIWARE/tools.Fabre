@@ -110,7 +110,7 @@
      for (var i=0; i < links.length; i++ )
      {
       link = links[i];
-      if ( link.innerHTML.indexOf(link.getAttribute('href')) > -1 )
+      if ( link.textContent.indexOf(link.getAttribute('href')) > -1 )
           link.className= link.className + " selfContainedLink";
      }
   }
