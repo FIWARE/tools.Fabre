@@ -15,6 +15,9 @@
 * Link to github source code will be generated from metadatum keyword **GITHUB_SOURCE**.
 * Now response blocks are paired with request blocks.
 * Now request examples do not get listed under the action definition. All requests are considered examples unless they end their ID with **-no-example**.
+* Output PDF files will not add navigability links between sections.
+* Output PDf files will not expand links inside the content of sections but they will be expanded in the **References** section.
+* Apiary project and github source links now appear in the **References** section.
 
 ### New dependencies
 * [lxml](http://lxml.de/)

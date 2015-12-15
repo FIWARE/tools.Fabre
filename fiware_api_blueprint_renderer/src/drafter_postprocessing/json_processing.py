@@ -202,6 +202,17 @@ def parse_json_descriptions_and_get_links(json_content):
     json_content -- JSON object containing the parsed apib.
     """
     links = []
+
+    for metadatum in json_content['metadata']:
+        if 'APIARY_PROJECT' == metadatum['name']:
+            link = {"title": "Apiary project", 
+                    "url": "http://docs.{}.apiary.io/#reference".format(metadatum['value'])}
+            links.append(link)
+
+        if 'GITHUB_SOURCE' == metadatum['name']:
+            link = {"title": "Github source", "url":metadatum['value']}
+            links.append(link)
+
     # Abstract
     for link in get_links_from_description(json_content["description"]):
         if link not in links: links.append(link)
