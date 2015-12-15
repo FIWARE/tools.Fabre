@@ -348,6 +348,7 @@ def main():
     default_theme = os.path.dirname(__file__)+"/../themes/default_theme/api-specification.tpl"
     pdf_template_path= os.path.dirname(__file__)+"/../themes/default_theme/api-specification.tpl"
     cover_template_path= os.path.dirname(__file__)+"/../themes/default_theme/cover.tpl"
+    pdf_toc_xsl = os.path.dirname(__file__)+"/../themes/default_theme/xsl/toc.xsl"
     template_path= default_theme
     clear_temporal_dir = True
     API_specification_path = None
@@ -407,7 +408,13 @@ def main():
             dst_dir_path = os.path.join(dst_dir_path, rendered_HTML_filename + ".pdf")
 
         render_api_specification(API_specification_path, template_path, temp_pdf_path, clear_temporal_dir, cover_template_path)
-        call( ["wkhtmltopdf", '-d', '125', '--page-size','A4', "page", "file://"+rendered_HTML_cover ,"toc" ,"page", "file://"+rendered_HTML_path, '--footer-center', "Page [page]",'--footer-font-size', '8', '--footer-spacing', '3','--run-script', "setInterval(function(){if(document.readyState=='complete') window.status='done';},100)", "--window-status", "done", dst_dir_path ])
+        call( ["wkhtmltopdf", '-d', '125', '--page-size','A4', "cover", "file://"+rendered_HTML_cover, 
+               "toc", "--xsl-style-sheet", pdf_toc_xsl, 
+               "page", "file://"+rendered_HTML_path, 
+               '--footer-center', "Page [page]",'--footer-font-size', '8', '--footer-spacing', '3',
+               '--run-script', "setInterval(function(){if(document.readyState=='complete') window.status='done';},100)", 
+               "--window-status", "done", dst_dir_path ])
+
     else:
         create_directory_if_not_exists( dst_dir_path )
         render_api_specification( API_specification_path, template_path, dst_dir_path, clear_temporal_dir, None)

@@ -18,6 +18,7 @@
 * Output PDF files will not add navigability links between sections.
 * Output PDf files will not expand links inside the content of sections but they will be expanded in the **References** section.
 * Apiary project and github source links now appear in the **References** section.
+* PDF TOC now starts from API Summary section
 
 ### New dependencies
 * [lxml](http://lxml.de/)
