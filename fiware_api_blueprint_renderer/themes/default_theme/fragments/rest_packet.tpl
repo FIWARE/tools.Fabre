@@ -14,7 +14,6 @@
     {% set packet_contents = rest_packet.content %}
     {% include "fragments/rest_packet_contents.tpl" %}
 
-    {# shown in examples
     <div id="{{ rest_packet_body_div_id() }}" class=" action-div-body">
         <p>{{ rest_packet.description }}</p>
 
@@ -38,5 +37,4 @@
             <pre><code>{{ rest_packet.schema }}</code></pre>
         {% endif %}
     </div>
-    #}
 </div>
