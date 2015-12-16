@@ -168,7 +168,7 @@ class TestTOCJSON(unittest.TestCase):
             try:
                 next_element = list_elements.pop(0)
             except IndexError as e:
-                print "TOC has to much elements"
+                print "TOC has too many elements"
                 assert False
             except Exception as e:
                 print e

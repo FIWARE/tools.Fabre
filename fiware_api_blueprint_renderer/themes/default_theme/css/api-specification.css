@@ -80,6 +80,7 @@ table, td, th {
     border-color: black;
     border-collapse: collapse;
     padding: 0.15em;
+    margin-bottom: 16px;
 }
 @media print {
     .goExample, .goActions {
