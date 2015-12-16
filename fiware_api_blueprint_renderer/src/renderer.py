@@ -84,6 +84,8 @@ def separate_extra_sections_and_api_blueprint(input_file_path, extra_sections_fi
                     else:
                         copy = False
                         if apib_line_start < 0:
+                            if line.strip() == "# REST API":
+                                line = '\n'
                             apib_line_start = line_counter
 
             if copy:
