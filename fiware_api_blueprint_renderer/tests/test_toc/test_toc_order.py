@@ -151,6 +151,11 @@ class TestTOCJSON(unittest.TestCase):
             "text":"Acknowledgements",
             "href":"#acknowledgements",
             "subelements":[]
+            },
+            {
+            "text":"References",
+            "href":"#references",
+            "subelements":[]
             }
         ]
 

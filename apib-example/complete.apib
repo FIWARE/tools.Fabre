@@ -1,0 +1,338 @@
+FORMAT: 1A
+HOST: http://telefonicaid.github.io/fiware-orion/api/v2/
+TITLE: FIWARE-NGSI v2 Specification
+DATE: 30 July 2015
+VERSION: abcedefg
+PREVIOUS_VERSION: jhdfgh
+APIARY_PROJECT: test5950
+GITHUB_SOURCE: http://github.com/telefonicaid/fiware-orion.git
+
+SPEC_URL: http://example.com/
+
+# FIWARE-NGSI v2 Specification
+
+This specification defines the FIWARE-NGSI version 2 API. FIWARE-NGSI v2 is intended to manage all the whole lifecycle of
+context information including updates, queries, registrations and subscriptions.
+
+## Editors
+
+  + José Manuel Cantera Fonseca, Telefónica I+D
+  + Fermín Galán, Telefónica I+D. 
+  + Tobias Jacobs, NEC
+  
+## Acknowledgements
+
+The editors would like to express their gratitude to the following people who actively contributed to this specification:
+Juan José Hierro, Marcos Reyes, Ken Gunnar, Antonio López, ... 
+
+  
+
+## Status
+
+This is a work in progress and is changing on a daily basis.
+
+
+## Copyright
+
+Copyright - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed lacinia, nisl non tristique sollicitudin, nisl lectus finibus erat, a mattis orci turpis non nunc. Maecenas convallis diam odio, vel blandit turpis varius at. Duis hendrerit lectus non viverra vehicula. Nunc eu eros nec nisl facilisis commodo. Nam at dui arcu. Quisque vitae augue metus. Sed quis consequat lacus. Duis sed eros rhoncus, fringilla mauris ut, interdum orci. Cras sodales facilisis luctus. Quisque fringilla tincidunt sapien at iaculis. Phasellus tempus a enim ac volutpat. Ut tincidunt fermentum massa quis sagittis. Ut non scelerisque risus, a dignissim odio.
+
+See http://example.com/copyright 
+
+
+# Specification
+
+## Introduction
+
+The FIWARE NGSI (Next Generation Service Interface) API defines: 
+
+* a **data model** for context information, based on a simple information model using the notion of *context entities*
+* a **context data interface** for exchanging information by means of query, subscription, and update operations
+* a **context availability interface** for exchanging information on how to obtain context information
+(whether to separate the two interfaces is currently under discussion).
+* a set of typical **roles** played by NGSI-compliant components
+
+It can be consulted in [API definition](http://example.com/api/intro.html)
+
+
+## Data Structures
+
+### Choice (object)
+    + choice (string) - Text
+    + url aa (string) - Choice URL
+    + votes (number) - Number of votes
+    + first_level (object) - recursivity test
+        + second_level: stringValue (string)
+        + another_second (string)
+        + third_level (object)
+            + terString: value3 (string) - Choice level 3
+
+### Question (object)
+      + question (string) - Text of the question
+      + published_at (string) - An ISO8601 date when the question was published.
+      + url (string, required) - URL 
+      + choices (array[Choice]) - An array of Choice objects.
+
+
+# REST API
+
+# Group Root
+
+## Action with attributes and without parent [GET /v2]
+
+This resource does not have any attributes. Instead it offers the initial
+API affordances in the form of the links in the JSON body.
+
++ Attributes(object)
+    + entities_url: entityExample(required, string) - URL which points to the entities resource
+    + types_url (required, string) - URL which points to the types resource
+    + subscriptions_url (required, string) - URL which points to the subscriptions resource
+    + registrations_url (required, string) - URL which points to the registrations resource
+
+
++ Request get_with_body (application/json)
+
+    + Body
+
+            {
+                "ambientNoise": 31.5
+            }
+
++ Request get_without_body (application/json)
+
++ Response 200 (application/json)
+
+        {
+            "entities_url":      "/v2/entities",
+            "types_url":         "/v2/types",
+            "subscriptions_url": "/v2/subscriptions",
+            "registrations_url": "/v2/registrations"
+        }
+
+
+# Group Entities
+
+Resources related to Context Entities.
+
+## Resource with attributes [/v2/entities{?limit,offset,options,type,id,idPattern,q,geometry,coords,attrs}]
+
+At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+
++ Attributes(object)
+    + entities_url: entityExample (required, string) - URL which points to the entities resource
+    + types_url (required, string) - URL which points to the types resource
+    + subscriptions_url (required, string) - URL which points to the subscriptions resource
+    + registrations_url (required, object) - URL which points to the registrations resource
+        + second_level (object) - second level
+            + thirdLevel (object) - third level
+                + fourthLevel: fourth level value (string) - Es pepe
+
+### Action without attr but with resoruce attr [GET /v2/entities{?limit,offset,options,type,id,idPattern,q,geometry,coords,attrs}]
+
+Retrieves a list of entities which match criteria defined by the following parameters: `id`, `type`, `idPattern`, `q`,
+`geometry` and `coords`
+
++ Parameters
+    + limit: 100 (optional, string) - Max number of elements to retrieve
+    + offset: 101 (optional, string) - number of element that the petition will skip.
+
+
+
++ Request get_with_body (application/json)
+
+    + Body
+
+            {
+                "ambientNoise": 31.5
+            }
+
++ Request get_without_body (application/json)
+
++ Response 200 (application/json)
+
+        {
+            "entities_url":      "/v2/entities",
+            "types_url":         "/v2/types",
+            "subscriptions_url": "/v2/subscriptions",
+            "registrations_url": "/v2/registrations"
+        }
+
+### action with attr link [POST /v2/entities]
+
++ Attributes (Choice)
+
+
++ Request get_with_body (application/json)
+
+    + Body
+
+            {
+                "ambientNoise": 31.5
+            }
+
++ Request get_without_body (application/json)
+
++ Response 200 (application/json)
+
+        {
+            "entities_url":      "/v2/entities",
+            "types_url":         "/v2/types",
+            "subscriptions_url": "/v2/subscriptions",
+            "registrations_url": "/v2/registrations"
+        }
+
+## Resource with link [/v2/entities2{?limit,offset,options,type,id,idPattern,q,geometry,coords,attrs}]
+
+
+At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+
+
++ Parameters
+    + limit: 100 (optional, string) - Max number of elements to retrieve
+    + offset: 101 (optional, string) - number of element that the petition will skip.
+
++ Attributes(Choice)
+
+### Action without attr but with resoruce link [GET /v2/entities{?limit,offset,options,type,id,idPattern,q,geometry,coords,attrs}]
+
+Retrieves a list of entities which match criteria defined by the following parameters: `id`, `type`, `idPattern`, `q`,
+`geometry` and `coords`
+
+
++ Request get_with_body (application/json)
+
+    + Body
+
+            {
+                "ambientNoise": 31.5
+            }
+
++ Request get_without_body (application/json)
+
++ Response 200 (application/json)
+
+        {
+            "entities_url":      "/v2/entities",
+            "types_url":         "/v2/types",
+            "subscriptions_url": "/v2/subscriptions",
+            "registrations_url": "/v2/registrations"
+        }
+
++ Response 404 (application/json)
+
+### action with attr link [POST /v2/entities]
+
++ Attributes (Choice)
+
+
++ Request get_with_body (application/json)
+
+    + Body
+
+            {
+                "ambientNoise": 31.5
+            }
+
++ Request get_without_body (application/json)
+
++ Response 200 (application/json)
+
+        {
+            "entities_url":      "/v2/entities",
+            "types_url":         "/v2/types",
+            "subscriptions_url": "/v2/subscriptions",
+            "registrations_url": "/v2/registrations"
+        }
+
+
+### attributes in request test [PUT /v2/entitiess]
+
++ Attributes (Choice)
+
+
++ Request get_with_body (application/json)
+
+    + Body
+
+            {
+                "ambientNoise": 31.5
+            }
+
++ Request get_without_body_but_attr (application/json)
+
+    + Attributes (object)
+        + entities_url: entityExampleREQ (required, string) - URL which points to the entities resource
+
+
++ Request get_without_body_but_attr_linked (application/json)
+
+    + Attributes (Choice)
+
++ Response 200 (application/json)
+
+    + Attributes (object)
+        + entities_url: entityExampleRES (required, string) - URL which points to the entities resource
+
+
+## recursive attributes [GET /v2/entitiesR]
+
++ Attributes (object)
+    + first_level (object)
+        + city: London (string) - Description of London
+        + Country: United Kingdom (string) - description of United Kingdom
+        + second_level (object) - second level
+            + with_value: defaultValue (string) - 2.1
+            + without_value (string) - string without value
+            + third_level (object) - third level
+                + with_value: value - (string) string with value
+                + without_value (string) - string without value
+
+
++ Request get_recursive (application/json)
+
++ Request attribute_referencing_resource (application/json)
+
+    + Attributes (Resource with attributes)
+
++ Response 200 (application/json)
+
+
+# Group instantiate with values
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+## Entities3 [/v2/entities3{?limit,offset}]
+
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+
++ Parameters
+    + limit: 100 (optional, string) - Max number of elements to retrieve
+    + offset: 101 (optional, string) - number of element that the petition will skip.
+
+### List entities [GET /v2/entities2/{?limit,offset,options,type,id,idPattern,q,geometry,coords,attrs}]
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+
++ Request /v2/entities2{?attrs,coords,geometry,id,idPattern,limit,offset,options,q,type} (application/json)
+    
+        {
+            "foo": "barr"
+        }
+
+
++ Request (application/json)
+        
+        {
+            "foo": "barr"
+        }
+
+### Del entity [DELETE /v2/entities2/{?entityId}]
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+
++ Request /v2/entities2/?EntityId="exampleEntity" (application/json)
+
+
+
++ Response 200
+        
+  
+           
