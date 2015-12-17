@@ -12,7 +12,7 @@
 
 FROM ubuntu
 
-ENV FABRE_VERSION 0.3.0
+ENV FABRE_VERSION v0.3.1
 
 RUN apt-get update -y && apt-get install -y unzip git python python-pip wget build-essential
 
@@ -20,7 +20,7 @@ RUN apt-get update -y && apt-get install -y unzip git python python-pip wget bui
 RUN git clone --recursive --branch v0.1.9 --depth 1 git://github.com/apiaryio/drafter.git && cd drafter && ./configure && make drafter && make install && cd
 
 # Install Fabre
-RUN wget https://github.com/FiwareULPGC/fiware-api-blueprint-renderer/archive/v$FABRE_VERSION.zip && unzip v$FABRE_VERSION.zip && cd fiware-api-blueprint-renderer-$FABRE_VERSION && python setup.py install && cd
+RUN wget https://github.com/FiwareULPGC/fiware-api-blueprint-renderer/archive/$FABRE_VERSION.zip && unzip $FABRE_VERSION.zip && cd fiware-api-blueprint-renderer-$FABRE_VERSION && python setup.py install && cd
 
 # Install wkhtmltopdf
 RUN apt-get install -y -f fontconfig libfontconfig1 libfreetype6 libjpeg-turbo8 libxrender1 xfonts-base xfonts-75dpi
