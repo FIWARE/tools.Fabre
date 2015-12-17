@@ -1,12 +1,12 @@
 # FIWARE API Blueprint renderer RELEASE NOTES
 
 ## Version v0.3.1
-### Release date <>/<>/2015 
+### Release date 17/12/2015 
 
 ### New features
 * Added URI parameters instantiation for requests with no URI specified.
 * Payload definitions moved from examples to specifications.
-* Now FABRE instantiates an example request body if its specifications has defined values.
+* Now FABRE instantiates an example request and response body if its specification has defined values.
 * Changed output format for "fabre --version-dependencies".
 * Added support to use defined data structures inside resources.
 * Added a Dockerfile that allows use FABRE using a docker VM.
@@ -16,7 +16,7 @@
 * Now response blocks are paired with request blocks.
 * Now request examples do not get listed under the action definition. All requests are considered examples unless they end their ID with **-no-example**.
 * Output PDF files will not add navigability links between sections.
-* Output PDf files will not expand links inside the content of sections but they will be expanded in the **References** section.
+* Output PDF files will not expand links inside the content of sections but they will be expanded in the **References** section.
 * Apiary project and github source links now appear in the **References** section.
 * PDF TOC now starts from API Summary section
 
