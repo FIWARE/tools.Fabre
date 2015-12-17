@@ -10,11 +10,12 @@
 #     docker run -it --rm -v /home/login/project/doc/apib:/apib fabre -i /apib/spec.apib -o /apib/spec.pdf --pdf
 #
 
-FROM ubuntu
+FROM ubuntu:14.04
 
 ENV FABRE_VERSION 0.3.1
 
 RUN apt-get update -y && apt-get install -y unzip git python python-pip wget build-essential
+RUN apt-get install -y libxml2-dev libxslt1-dev python-dev zlib1g-dev
 
 # Install drafter
 RUN git clone --recursive --branch v0.1.9 --depth 1 git://github.com/apiaryio/drafter.git && cd drafter && ./configure && make drafter && make install && cd
