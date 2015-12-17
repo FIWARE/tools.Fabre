@@ -75,6 +75,70 @@ def instantiate_all_example_body(json_content):
                                         pass
                             continue
 
+                    for response in example["responses"]:
+                        if len(response["body"]):
+                            continue #if it has body don't replace it
+
+                        ##check itselft definition ???
+                        if len(response['content']):
+                            for data_structure in response["content"]:
+                                if len(data_structure["sections"]):
+
+                                   _json=get_attributes(data_structure["sections"])
+                                   if {} == _json:
+                                        continue
+                                   response["body"] = json.dumps(_json,sort_keys=True, indent=4)
+                                else:
+                                    try:
+                                        _json = get_attributes_from_data_structure(data_structure["typeDefinition"]["typeSpecification"]["name"]["literal"],json_content["data_structures"] )
+                                        if {} == _json:
+                                            continue
+                                        response["body"] = json.dumps(_json, sort_keys=True, indent=4)
+                                    except Exception, e:
+                                        print "error resquest"
+                                        pass
+                            continue
+                        #check action parent
+                        if len(action["content"]): 
+                            #it has elements
+                            for data_structure in action["content"]:
+                                if len(data_structure["sections"]):
+
+                                   response["body"] = json.dumps(get_attributes(data_structure["sections"]),sort_keys=True, indent=4)
+
+                                else:
+                                    try:
+                                        _json = get_attributes_from_data_structure(data_structure["typeDefinition"]["typeSpecification"]["name"]["literal"],json_content["data_structures"] )
+                                        if {} == _json:
+                                            continue
+                                        response["body"] = json.dumps(_json, sort_keys=True, indent=4)
+                                    except Exception, e:
+                                        print "error resquest"
+                                        pass
+                            continue
+                        
+                        #check resource grandparent
+                        if len(resource["content"]):
+                            
+                            for data_structure in resource["content"]:
+                                if len(data_structure["sections"]):
+
+
+                                   _json = get_attributes(data_structure["sections"])
+                                   if {} == _json:
+                                        continue
+                                   response["body"] = json.dumps(_json, sort_keys=True, indent=4)
+                                else:
+                                    try:
+                                        _json = get_attributes_from_data_structure(data_structure["typeDefinition"]["typeSpecification"]["name"]["literal"],json_content["data_structures"] )
+                                        if {} == _json:
+                                            continue
+                                        response["body"] = json.dumps(_json, sort_keys=True, indent=4)
+                                    except Exception, e:
+                                        print "error resquest"
+                                        pass
+                            continue
+
     return
 
 
