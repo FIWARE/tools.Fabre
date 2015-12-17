@@ -8,7 +8,7 @@ A dockerfile that allows to create a virtual machine with FABRE is provided in t
 From the project directory execute:
 
 ```
-sudo docker build -t fabre:0.3.0 docker/
+sudo docker build -t fabre:0.3.1 docker/
 ```
 
 ### Create directories for docker volume and populate them with the apib file. 
