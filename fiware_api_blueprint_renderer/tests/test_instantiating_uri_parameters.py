@@ -10,6 +10,7 @@ from src.drafter_postprocessing.instantiate_uri import instantiate_uri
 
 
 class TestInstantiatingURIParameters( unittest.TestCase ):
+    
     def test_simple_uri_parameter(self):
         parameters = [
             {
@@ -191,7 +192,20 @@ class TestInstantiatingURIParameters( unittest.TestCase ):
             }
         ]
         self.assertEqual(instantiate_uri('/Entity{&id,name}', parameters), '/Entity&name=entity-name')
+    
+    def test_multiple_blocks_bug(self):
+        parameters = [
+            {
+                "name": "environment", 
+                "example": "env1",
+            },
+            {
+                "name": "tier", 
+                "example": "tier1",
+            }
+        ]
 
+        self.assertEqual(instantiate_uri('/rest/catalog/org/FIWARE/environment/{environment}/tier/{tier}', parameters),'/rest/catalog/org/FIWARE/environment/env1/tier/tier1')
 
 if __name__ == "__main__":
     unittest.main()

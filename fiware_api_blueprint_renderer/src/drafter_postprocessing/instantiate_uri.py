@@ -57,6 +57,7 @@ def combine_uri_parameters(resource_uri_parameters, action_uri_parameters):
     """
     uri_parameters = []
 
+
     # Append to the result list all the URI parameters from the resource 
     # which are not redefined in the action.
     for resource_uri_parameter in resource_uri_parameters:
@@ -82,7 +83,6 @@ def instantiate_uri(URI_template, parameters):
     parameters - List of URI parameters used for instantiating
     """
     # Find all the parameter blocks (ie. {var}, {?var1,var2}, etc). 
-
     processed_URI = ''
     regex = re.compile("{([^}]*)}")
     URI_parameters_blocks = re.findall(regex,URI_template)
@@ -91,7 +91,7 @@ def instantiate_uri(URI_template, parameters):
     for URI_parameter_block in URI_parameters_blocks:
         # Parameters of the form "#var" will be replaced with "#value", so we
         # keep the '#' as a prefix.
-        
+        processed_URI = ''
         prefix = ''
         if URI_parameter_block[0] == '#':
             prefix = '#'
@@ -135,7 +135,9 @@ def instantiate_uri(URI_template, parameters):
                 if parameters[i]['name'] == URI_parameter and len(parameters[i]['example']) > 0:
                     parameter_definition_found = True
                     URI_parameter_block_replace = URI_parameter_block_replace.replace(URI_parameter, prefix + parameters[i]['example'])
+                    
                     processed_URI += prefix + parameters[i]['example']
+
                 i += 1
 
             # If the parameter can not be found or it has not example value,
