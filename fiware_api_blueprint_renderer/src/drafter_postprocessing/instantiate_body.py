@@ -151,7 +151,7 @@ def get_attributes(sections):
                 if contents["class"] == "property":
                     try:
                         name = contents["content"]["name"]["literal"]
-                        value = contents["content"]["valueDefinition"]["values"][0]["literal"] # TODO check if not literal
+                        value = contents["content"]["valueDefinition"]["values"][0]["literal"] 
 
                         _json[name]=value
 

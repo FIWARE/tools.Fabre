@@ -2,6 +2,20 @@
 
 Tool for parsing a FIWARE specification file and rendering it to a HTML page.
 
+
+## Quick Start Guide (with Docker)
+
+This section assumes that you already have installed Docker in your machine. If you don't, you can install it following the instruccions for your operating system in <https://docs.docker.com/engine/installation/>
+
+
+### Run FABRE with the Docker image
+
+If you have the API Blueprint file wich path is `/Users/myusername/example_project/myspecification.apib` and you want to save the generated site in the folder `/Users/myusername/html/example_project` you should use the following command:
+
+```
+docker run -it --rm -v /Users/myusername/example_project:/apib -v /Users/myusername/html:/html fiwareulpgc/fabre -i /apib/myspecification.apib -o /html/example-project
+```
+
 ## Dependencies
 
 * [Python 2](https://www.python.org/)
