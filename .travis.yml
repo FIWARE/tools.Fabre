@@ -22,7 +22,7 @@ branches:
     - master
     - develop
     - /^travis-.*$/
-    - /^release-.*$/
+    - /^release.*$/
 
 notifications:
     email:
