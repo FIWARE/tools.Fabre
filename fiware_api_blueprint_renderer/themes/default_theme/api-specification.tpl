@@ -10,7 +10,7 @@
 
 {% set top_metadata = ["Introduction", "Concepts", "Terminology"] %}
 {% set bottom_metadata = ["Examples", "Acknowledgements", "References"] %}
-{% set intro_metadata = ["Copyright", "Abstract", "Status", "Status of this document", "Editors", "Versions"]%}
+{% set intro_metadata = ["Copyright", "Abstract", "Status", "Status of this document", "Editors", "Versions", "License"]%}
 <!DOCTYPE html>
 <html lang="en">
 <head>

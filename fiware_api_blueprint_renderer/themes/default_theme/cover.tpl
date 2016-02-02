@@ -41,25 +41,5 @@
 <body id="respecDocument" class="h-entry">
    {% include "fragments/intro.tpl"%} 
 </body>
-<script type="text/javascript">
-  function fix_links_class(){
-     var links = document.getElementsByTagName("a");
-     console.log(links);
-     /*for (link of links)
-     {
-        if ( link.innerHTML.indexOf(link.getAttribute('href')) > -1 )
-          link.className= link.className + " selfContainedLink";
-     }*/
 
-     for (var i=0; i < links.length; i++ )
-     {
-      link = links[i];
-      if ( link.textContent.indexOf(link.getAttribute('href')) > -1 )
-          link.className= link.className + " selfContainedLink";
-     }
-  }
-  
-  fix_links_class();
-
-</script>
 </html>

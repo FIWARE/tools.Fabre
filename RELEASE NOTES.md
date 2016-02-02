@@ -1,5 +1,17 @@
 # FIWARE API Blueprint renderer RELEASE NOTES
 
+## Version v0.3.2
+### Release date xx/xx/2016 
+
+### New features
+* Added Quick Start Guide (with Docker) to README.md
+* Now, all metadata are mandatory (except PREVIOUS_VERSION).
+* License section added.
+* Now, Copyright and License are mandatory.
+* Repository transfered to FIWARE organization.
+* Dcoker image available in Docker Hub.
+
+
 ## Version v0.3.1
 ### Release date 17/12/2015 
 

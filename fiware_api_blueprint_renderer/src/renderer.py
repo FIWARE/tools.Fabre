@@ -18,6 +18,10 @@ from drafter_postprocessing.json_processing import postprocess_drafter_json
 from apib_extra_parse_utils import preprocess_apib_parameters_lines, start_apib_section, get_indentation
 
 
+class MandatoryFieldException(Exception):
+    '''raised when a mandatory field or section is missing'''
+    pass
+
 def print_api_spec_title_to_extra_file(input_file_path, extra_sections_file_path):
     """Extracts the title of the API specification and writes it to the extra sections file.
 
@@ -171,6 +175,39 @@ def copy_static_files(template_dir_path, dst_dir_path):
         shutil.copytree(template_dir_path + subdirectory, dst_dir_path + subdirectory, ignore=shutil.ignore_patterns('*.pyc', '*.py'))
 
 
+def check_all_metadata_exists(context_file_path):
+    with open(context_file_path, "rU") as contextFile:
+        metadata = json.load(contextFile)
+
+    metadata_list = {}
+    for metadata_value in metadata['metadata']:
+        metadata_list[metadata_value['name']] = metadata_value['value']
+    
+    forced_metadata = ['HOST','TITLE','DATE','VERSION','APIARY_PROJECT','SPEC_URL','GITHUB_SOURCE']
+
+    for forced_metadatum in forced_metadata:
+        if not metadata_list.has_key(forced_metadatum):
+            err_msg = 'Metadata ' + forced_metadatum + ' not provided'
+            raise MandatoryFieldException(err_msg)
+
+
+def check_required_sections(context_file_path):
+    with open(context_file_path, "rU") as contextFile:
+        metadata = json.load(contextFile)
+
+    required_sections=['Copyright', 'License']
+    existing_sections =[]
+    for subsection in metadata['api_metadata']['subsections'][0]['subsections']:
+        existing_sections.append(subsection['name'])
+    
+    
+    for required_section in required_sections:
+        if required_section not in existing_sections:
+            err_msg = 'Section ' + required_section + ' not provided' 
+            raise MandatoryFieldException(err_msg) 
+
+
+
 def render_api_blueprint(template_file_path, context_file_path, dst_dir_path):
     """Renders an API Blueprint context file with a Jinja2 template.
     
@@ -278,7 +315,13 @@ def render_api_specification(API_specification_path, template_path, dst_dir_path
     
     is_PDF = cover is not None
     postprocess_drafter_json(API_blueprint_JSON_file_path,API_blueprint_file_path,API_extra_sections_file_path, is_PDF)
+    
 
+ 
+    check_all_metadata_exists(API_blueprint_JSON_file_path)
+    check_required_sections(API_blueprint_JSON_file_path)
+
+    
     render_api_blueprint(template_path, API_blueprint_JSON_file_path, dst_dir_path)
 
     if is_PDF: #cover needed for pdf
@@ -342,9 +385,14 @@ def pretty_print_matrix(matrix):
         print "\t" + row_format.format(*row)
 
 
-def main():   
+def main(argv=None):   
     
-    usage = "Usage: \n\t" + sys.argv[0] + " -i <api-spec-path> -o <dst-dir> [--pdf] [--no-clear-temp-dir] [--template]"
+    exit = False
+    if argv == None:
+        exit = True
+        argv = sys.argv
+
+    usage = "Usage: \n\t" + argv[0] + " -i <api-spec-path> -o <dst-dir> [--pdf] [--no-clear-temp-dir] [--template]"
     version = "fabre " + pkg_resources.require("fiware_api_blueprint_renderer")[0].version
     
     default_theme = os.path.dirname(__file__)+"/../themes/default_theme/api-specification.tpl"
@@ -359,7 +407,7 @@ def main():
     pdf = False
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:],"hvi:o:ct:",["version","ifile=","odir=","no-clear-temp-dir","template=","pdf","version-dependencies"])
+        opts, args = getopt.getopt(argv[1:],"hvi:o:ct:",["version","ifile=","odir=","no-clear-temp-dir","template=","pdf","version-dependencies"])
     except getopt.GetoptError:
       print usage
       sys.exit(2)
@@ -408,8 +456,15 @@ def main():
         if ".pdf" not in dst_dir_path:
             create_directory_if_not_exists(dst_dir_path)
             dst_dir_path = os.path.join(dst_dir_path, rendered_HTML_filename + ".pdf")
+        try:
+            render_api_specification(API_specification_path, template_path, temp_pdf_path, clear_temporal_dir, cover_template_path)
+        except MandatoryFieldException, e:
+            print e.message
+            if exit:
+                sys.exit(-1)
+            else:
+                raise e
 
-        render_api_specification(API_specification_path, template_path, temp_pdf_path, clear_temporal_dir, cover_template_path)
         call( ["wkhtmltopdf", '-d', '125', '--page-size','A4', "cover", "file://"+rendered_HTML_cover, 
                "toc", "--xsl-style-sheet", pdf_toc_xsl, 
                "page", "file://"+rendered_HTML_path, 
@@ -419,8 +474,19 @@ def main():
 
     else:
         create_directory_if_not_exists( dst_dir_path )
-        render_api_specification( API_specification_path, template_path, dst_dir_path, clear_temporal_dir, None)
-    sys.exit(0)
+        try:
+            render_api_specification( API_specification_path, template_path, dst_dir_path, clear_temporal_dir, None)
+        except MandatoryFieldException, e:
+            print e.message
+            if exit:
+                sys.exit(-1)
+            else:
+                raise e
+    
+    if exit:
+        sys.exit(0)
+    else:
+        return
 
 
 if __name__ == "__main__":

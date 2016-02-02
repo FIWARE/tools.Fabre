@@ -10,6 +10,7 @@ from lxml import etree, objectify
 from lxml.cssselect import CSSSelector
 from pyquery import PyQuery as pq
 
+
 import_path = path.abspath(__file__)
 
 while path.split(import_path)[1] != 'fiware_api_blueprint_renderer':
@@ -20,6 +21,8 @@ sys.path.append(import_path)
 
 from src.drafter_postprocessing.order_uri import  order_uri_parameters, order_request_parameters
 from tests.test_utils import *
+from src.renderer import main
+
 
 
 class TestLinksGithubApiary(unittest.TestCase):
@@ -32,18 +35,34 @@ class TestLinksGithubApiary(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         pass
-
+    """
     @for_examples(
     ('api_test1', ['http://docs.test5950.apiary.io/#reference','http://github.com/telefonicaid/fiware-orion.git']),
     ('api_test2', ['http://docs.test5950.apiary.io/#reference']),
     ('api_test3', ['http://github.com/telefonicaid/fiware-orion.git']),
     ('api_test4', []),
     )
+    """
+    @for_examples(
+    ('api_test1', ['http://docs.test5950.apiary.io/#reference','http://github.com/telefonicaid/fiware-orion.git']),
+    ('api_test2', ['exception','GITHUB_SOURCE' ]),
+    ('api_test3', ['exception','APIARY_PROJECT']),
+    ('api_test4', ['exception','APIARY_PROJECT']),
+    )
 
     def test_github_apiary_links(self, apib_file_name, expected_urls):
 
+
+        if 'exception' == expected_urls[0]:
+
+            try:
+                self.render_apib(apib_file_name)
+            except Exception, e:
+                err_msg = 'Metadata ' + expected_urls[1] + ' not provided'
+                self.assertEqual(err_msg, e.message)
+                return
+       
         self.render_apib(apib_file_name)
-        
         sel = CSSSelector('div#top-source-buttons')
 
 
@@ -94,8 +113,13 @@ class TestLinksGithubApiary(unittest.TestCase):
 
         os.makedirs(self.tmp_result_files)
 
+        main(["fabre", "-i", self.apib_file, "-o", 
+             self.tmp_result_files, "--no-clear-temp-dir"])
+        
+        """
         Popen(["fabre", "-i", self.apib_file, "-o", 
              self.tmp_result_files, "--no-clear-temp-dir"], stdout=PIPE, stderr=PIPE).communicate()
+        """
 
         parser = etree.HTMLParser()
         self.tree = etree.parse(""+self.tmp_result_files+"/"+apib_file+".html", parser)

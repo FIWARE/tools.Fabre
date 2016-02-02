@@ -83,8 +83,15 @@
 {% endfor %}
 
 {% for subsection in api_metadata.subsections[0].subsections %}
-	{% if subsection.name == "Copyright" %}
-		<h2 id="{{subsection.id}}">Copyright</h2>
+    {% if subsection.name == "Copyright" %}
+        <h2 id="{{subsection.id}}">Copyright</h2>
+        {{subsection.body}}
+    {%endif%}
+{% endfor %}
+
+{% for subsection in api_metadata.subsections[0].subsections %}
+	{% if subsection.name == "License" %}
+		<h2 id="{{subsection.id}}">License</h2>
 		{{subsection.body}}
 	{%endif%}
 {% endfor %}

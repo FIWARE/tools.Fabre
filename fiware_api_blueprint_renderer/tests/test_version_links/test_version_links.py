@@ -37,7 +37,7 @@ class TestVersionLinks(unittest.TestCase):
     """
     
     """
-
+    """
     @for_examples(
     ('api_test1', [
         'http://example.com/api/abcedefg',
@@ -56,6 +56,19 @@ class TestVersionLinks(unittest.TestCase):
     ),
     ('api_test5', []
     ),
+
+    )
+    """
+    @for_examples(
+    ('api_test1', [
+        'http://example.com/api/abcedefg',
+        'http://example.com/api/jhdfgh',
+        'http://example.com/api/latest'
+        ]),
+    ('api_test2', [
+        'http://example.com/api/abcedefg',
+        'http://example.com/api/latest'
+        ]),
 
     )
 
