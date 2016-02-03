@@ -10,7 +10,7 @@ before_install:
 
 install:
     - pip install unittest2
-    - pip install -Iv setuptools==1.1.6
+    - pip install setuptools --upgrade
     #- pip install lxml
     #- pip install pyquery
     #- pip install jinja2
