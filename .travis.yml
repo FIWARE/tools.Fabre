@@ -12,9 +12,10 @@ install:
     - pip install jinja2
     - travis/drafter_installation.sh
     - travis/wkhtmltopdf_installation.sh
-    - sudo python setup.py install
 
-script: 
+
+script:
+    - sudo python setup.py install 
     - fabre -i apib-example/fiware-ngsi-v2.apib -o ~/out/test.pdf --pdf
     - nosetests -v
 
