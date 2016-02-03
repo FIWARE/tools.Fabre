@@ -393,7 +393,7 @@ def main(argv=None):
         argv = sys.argv
 
     usage = "Usage: \n\t" + argv[0] + " -i <api-spec-path> -o <dst-dir> [--pdf] [--no-clear-temp-dir] [--template]"
-    version = "fabre " + pkg_resources.require("fiware_api_blueprint_renderer")[0].version
+    #version = "fabre " + pkg_resources.require("fiware_api_blueprint_renderer")[0].version
     
     default_theme = os.path.dirname(__file__)+"/../themes/default_theme/api-specification.tpl"
     pdf_template_path= os.path.dirname(__file__)+"/../themes/default_theme/api-specification.tpl"
