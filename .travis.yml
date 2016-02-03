@@ -22,6 +22,7 @@ install:
 
 
 script:
+    - sudo python setup.py install 
     - fabre -i apib-example/fiware-ngsi-v2.apib -o ~/out/test.pdf --pdf
     - nosetests -v
 
