@@ -11,20 +11,18 @@ before_install:
 install:
     - pip install unittest2
     - pip install setuptools --upgrade
-    #- pip install lxml
-    #- pip install pyquery
-    #- pip install jinja2
-    #- pip install markdown
-    #- pip install mdx-linkify
-    #- pip install cssselect
+    - pip install lxml
+    - pip install pyquery
+    - pip install jinja2
+    - pip install markdown
+    - pip install mdx-linkify
+    - pip install cssselect
     - travis/drafter_installation.sh
     - travis/wkhtmltopdf_installation.sh
     - sudo python setup.py install 
 
 
 script:
-    #- sudo python setup.py install
-    - pip list 
     - fabre -i apib-example/fiware-ngsi-v2.apib -o ~/out/test.pdf --pdf
     - nosetests -v
 

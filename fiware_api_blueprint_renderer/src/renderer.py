@@ -416,10 +416,12 @@ def main(argv=None):
             print usage
             sys.exit()
         elif opt in ("-v", "--version"):
-            print version
+            #print version
+            print "fabre " + pkg_resources.require("fiware_api_blueprint_renderer")[0].version
             sys.exit()
         elif opt == '--version-dependencies':
-            print version
+            #print version
+            print "fabre " + pkg_resources.require("fiware_api_blueprint_renderer")[0].version
             print_package_dependencies()
             sys.exit()
         elif opt in ("-i", "--input"):
