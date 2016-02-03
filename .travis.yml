@@ -2,18 +2,27 @@ language: python
 python:
     - "2.7"
 
+sudo: required
+dist: trusty
+
 before_install:
   - sudo apt-get update
 
 install:
     - pip install unittest2
+    - pip install setuptools --upgrade
     - pip install lxml
     - pip install pyquery
+    - pip install jinja2
+    - pip install markdown
+    - pip install mdx-linkify
+    - pip install cssselect
     - travis/drafter_installation.sh
     - travis/wkhtmltopdf_installation.sh
-    - sudo python setup.py install
+    - sudo python setup.py install 
 
-script: 
+
+script:
     - fabre -i apib-example/fiware-ngsi-v2.apib -o ~/out/test.pdf --pdf
     - nosetests -v
 
@@ -22,7 +31,7 @@ branches:
     - master
     - develop
     - /^travis-.*$/
-    - /^release-.*$/
+    - /^release.*$/
 
 notifications:
     email:
