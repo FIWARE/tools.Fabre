@@ -11,6 +11,9 @@ install:
     - pip install lxml
     - pip install pyquery
     - pip install jinja2
+    - pip install markdown
+    - pip install mdx-linkify
+    - pip install cssselect
     - travis/drafter_installation.sh
     - travis/wkhtmltopdf_installation.sh
     - sudo python setup.py install 
