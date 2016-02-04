@@ -42,10 +42,7 @@ class TestTOCJSON(unittest.TestCase):
 
         main(["fabre", "-i", cls.apib_file, "-o", 
              cls.tmp_result_files, "--no-clear-temp-dir"])
-        """
-        Popen(["fabre", "-i", cls.apib_file, "-o", 
-             cls.tmp_result_files, "--no-clear-temp-dir"], stdout=PIPE, stderr=PIPE).communicate()
-        """
+
         parser = etree.HTMLParser()
         cls.tree = etree.parse(""+cls.tmp_result_files+"/api_test.html", parser)
         cls.pq = pq(filename = cls.tmp_result_files+"/api_test.html")

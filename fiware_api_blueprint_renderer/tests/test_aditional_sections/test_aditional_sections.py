@@ -94,7 +94,7 @@ class TestAdditionalSectionsInJSON(unittest.TestCase):
         add_subsections_to_json(subsections,_json)
 
         data_test_path=os.path.dirname(path.abspath(__file__))+"/additional_sections.json"
-        #pprint.pprint(_json)
+  
         with open(data_test_path, "w") as outfile:
             json.dump(_json, outfile, indent=4)
       
@@ -103,11 +103,11 @@ class TestAdditionalSectionsInJSON(unittest.TestCase):
 def add_subsections_to_json(subsections,json_var):
 
     for subsection in subsections:
-        #print subsection["id"]
+        
         json_var[subsection["id"]]=subsection["body"]
         if len(subsection["subsections"]):
             add_subsections_to_json(subsection["subsections"], json_var)
-    #print json_var
+
 
 
 

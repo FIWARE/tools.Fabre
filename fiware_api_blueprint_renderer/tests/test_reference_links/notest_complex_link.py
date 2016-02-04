@@ -28,31 +28,12 @@ def parse_to_markdown(markdown_text):
 def get_links_from_description(description):
     """Find via regex all the links in a description string"""
 
-    #link_regex = re.compile( r"\[(?P<linkText>[^\(\)\[\]]*)\]\((?P<linkRef>{})\)".format(complex_link_regex) )
-    #auto_link_regex = re.compile(r"\<(?P<linkRef>{})\>".format(complex_link_regex))
-    #html_link_regex = re.compile(r"\<a href=\"(?P<linkRef>{})\"\>(?P<linkText>[^\<]*)\</a>".format(complex_link_regex))
+   
     html_link_regex = re.compile(r"\<a href=\"(?P<linkRef>.*)\"\>(?P<linkText>[^\<]*)\</a>")
 
     links = []
 
-    # link_matches = link_regex.findall(description)
-    # if link_matches:
-    #     for link_match in link_matches:
-    #         link = {}
-    #         link['title'] = link_match[0]
-    #         link['url'] = link_match[1]
-
-    #         links.append(link)
-    # else:
-    #     link_matches = auto_link_regex.findall(description)
-    #     if link_matches:
-    #         for link_match in link_matches:
-    #             link = {}
-    #             link['title'] = link_match
-    #             link['url'] = link_match
-
-    #             links.append(link)
-    #     else:
+    
     link_matches = html_link_regex.findall(description)
     if link_matches:
         for link_match in link_matches:

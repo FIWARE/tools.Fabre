@@ -177,7 +177,6 @@ def get_attributes_from_data_structure(structure_name, data_structures):
     try:
         for attribute in data_structures[structure_name]["attributes"]:
             if len(attribute["values"]):
-                #print attribute["name"], " --> ", attribute["values"][0]
                 _json[attribute["name"]] = attribute["values"][0]
             else:
                 if len (attribute["subproperties"]):

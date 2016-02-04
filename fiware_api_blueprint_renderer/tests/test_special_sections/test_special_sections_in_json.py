@@ -70,7 +70,6 @@ class TestSpecialSectionsInJSON(unittest.TestCase):
         
         _json_special_section = self.out_json["api_metadata"]["subsections"][0]["subsections"]
         _special_section = json.dumps(special_section_test)
-        #_special_section = unicode(_special_section,"UTF-8")
         _special_section = json.loads(_special_section)
         self.assertEqual(len(_json_special_section), len(_special_section))
         for section in _json_special_section:

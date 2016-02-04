@@ -9,7 +9,7 @@
 * License section added.
 * Now, Copyright and License are mandatory.
 * Repository transfered to FIWARE organization.
-* Dcoker image available in Docker Hub.
+* Docker image available in Docker Hub.
 
 
 ## Version v0.3.1

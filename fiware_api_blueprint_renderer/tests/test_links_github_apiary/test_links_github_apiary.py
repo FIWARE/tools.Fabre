@@ -116,10 +116,6 @@ class TestLinksGithubApiary(unittest.TestCase):
         main(["fabre", "-i", self.apib_file, "-o", 
              self.tmp_result_files, "--no-clear-temp-dir"])
         
-        """
-        Popen(["fabre", "-i", self.apib_file, "-o", 
-             self.tmp_result_files, "--no-clear-temp-dir"], stdout=PIPE, stderr=PIPE).communicate()
-        """
 
         parser = etree.HTMLParser()
         self.tree = etree.parse(""+self.tmp_result_files+"/"+apib_file+".html", parser)

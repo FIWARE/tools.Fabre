@@ -1,13 +1,13 @@
 # Fabre Dockerfile
-# https://github.com/FiwareULPGC/fiware-api-blueprint-renderer
+# https://github.com/Fiware/tools.Fabre
 #
 # Usage for HTML output:
 #
-#     docker run -it --rm -v /home/login/project/doc/apib:/apib fiwareulpgc/fabre -i /apib/spec.apib -o /apib/html
+#     docker run -it --rm -v /home/login/project/doc/apib:/apib fiware/fabre -i /apib/spec.apib -o /apib/html
 #
 # Usage for PDF output:
 #
-#     docker run -it --rm -v /home/login/project/doc/apib:/apib fiwareulpgc/fabre -i /apib/spec.apib -o /apib/spec.pdf --pdf
+#     docker run -it --rm -v /home/login/project/doc/apib:/apib fiware/fabre -i /apib/spec.apib -o /apib/spec.pdf --pdf
 #
 
 FROM ubuntu:14.04
@@ -21,7 +21,7 @@ RUN apt-get install -y libxml2-dev libxslt1-dev python-dev zlib1g-dev
 RUN git clone --recursive --branch v0.1.9 --depth 1 git://github.com/FiwareULPGC/drafter.git && cd drafter && ./configure && make drafter && make install && cd
 
 # Install Fabre
-RUN wget https://github.com/FiwareULPGC/fiware-api-blueprint-renderer/archive/v$FABRE_VERSION.zip && unzip v$FABRE_VERSION.zip && cd fiware-api-blueprint-renderer-$FABRE_VERSION && python setup.py install && cd
+RUN wget https://github.com/Fiware/tools.Fabre/archive/$FABRE_VERSION.zip && unzip $FABRE_VERSION.zip && cd tools.Fabre-$FABRE_VERSION && python setup.py install && cd
 
 # Install wkhtmltopdf
 RUN apt-get install -y -f fontconfig libfontconfig1 libfreetype6 libjpeg-turbo8 libxrender1 xfonts-base xfonts-75dpi
