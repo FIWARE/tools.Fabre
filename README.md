@@ -1,4 +1,4 @@
-# Fiware api blueprint renderer
+# Fiware API blueprint renderer
 
 Tool for parsing a FIWARE specification file and rendering it to a HTML page.
 
@@ -13,7 +13,7 @@ This section assumes that you already have installed Docker in your machine. If 
 If you have the API Blueprint file wich path is `/Users/myusername/example_project/myspecification.apib` and you want to save the generated site in the folder `/Users/myusername/html/example_project` you should use the following command:
 
 ```
-docker run -it --rm -v /Users/myusername/example_project:/apib -v /Users/myusername/html:/html fiwareulpgc/fabre -i /apib/myspecification.apib -o /html/example-project
+docker run -it --rm -v /Users/myusername/example_project:/apib -v /Users/myusername/html:/html fiware/fabre -i /apib/myspecification.apib -o /html/example-project
 ```
 
 ## Dependencies
@@ -36,7 +36,7 @@ docker run -it --rm -v /Users/myusername/example_project:/apib -v /Users/myusern
 Before using FABRE, we need to install Drafter version 0.1.9, an API Blueprint parser:
 
 ```
-git clone --recursive --branch v0.1.9 --depth 1 git://github.com/apiaryio/drafter.git
+git clone --recursive --branch v0.1.9 --depth 1 git://github.com/FiwareULPGC/drafter.git
 cd drafter
 ./configure
 make drafter
@@ -49,15 +49,15 @@ Installer can be downloaded from [wkhtmltopdf](http://wkhtmltopdf.org/downloads.
 Once  Drafter and wkhtmltopdf are installed, we can download fabre and install it like a PIP package:
 
 ```
-git clone git://github.com/FiwareULPGC/fiware-api-blueprint-renderer.git
-cd fiware-api-blueprint-renderer
+git clone git://github.com/Fiware/tools.Fabre.git
+cd tools.Fabre
 sudo python setup.py install
 ```
 
 Now we can test fabre. As an example, we can run the following commands for generating a site from the given FIWARE specification template:
 
 ```
-fabre -i apib-example/template-fiware-open-spec2.apib  -o ~/out
+fabre -i apib-example/fiware-ngsi-v2.apib  -o ~/out
 ```
 
 In order to generate a pdf file instead a html site the --pdf option should be used. When this option is used the -o parameter can specify the ouput folder unless the provided output ends with ".pdf", in that case the -o parameter references the output file.
@@ -65,14 +65,14 @@ In order to generate a pdf file instead a html site the --pdf option should be u
 Examples:
 
 ```
-fabre -i apib-example/template-fiware-open-spec2.apib  -o ~/out --pdf
+fabre -i apib-example/fiware-ngsi-v2.apib  -o ~/out --pdf
 ```
 
-Renders the apib and saves it to ~/out/template-fiware-open-spec2.pdf
+Renders the apib and saves it to ~/out/fiware-ngsi-v2.pdf
 
 
 ```
-fabre -i apib-example/template-fiware-open-spec2.apib  -o ~/out/ouput.pdf --pdf
+fabre -i apib-example/fiware-ngsi-v2.apib  -o ~/out/ouput.pdf --pdf
 ```
 
 Renders the apib and saves it to ~/out/output.pdf
@@ -81,7 +81,7 @@ Renders the apib and saves it to ~/out/output.pdf
 **Note for developers:** fabre generates some temporary files on /var/tmp while rendering the final web page, and removes them afterwards. We can override this behaviour and make fabre to keep the temporary files using the --no-clear-temp-dir option.
 
 ```
-fabre -i apib-example/template-fiware-open-spec2.apib -o ~/out --no-clear-temp-dir
+fabre -i apib-example/fiware-ngsi-v2.apib -o ~/out --no-clear-temp-dir
 ```
 
 FABRE accepts the options listed below:
@@ -95,8 +95,8 @@ FABRE accepts the options listed below:
 **NOTE:** FABRE expects an input file with UTF-8 enconding, providing another charset may cause errors.
 
 ## Use FABRE with Docker
-Some instrucctions about to how to use FABRE with docker are in the [HOW_TO_USE_FABRE_WITH_DOCKER](HOW_TO_USE_FABRE_WITH_DOCKER.md) file.
+Some instrucctions about to how to build your own image of FABRE with docker are in the [HOW_TO_USE_FABRE_WITH_DOCKER](HOW_TO_USE_FABRE_WITH_DOCKER.md) file.
 
 ## Troubleshooting
-A troubleshooting guide is provided in the [TROUBLESHOOTING](TROUBLESHOOTING.md) file. If you cannot solve your problem using it, feel free to contact us.
+A troubleshooting guide is provided in the [TROUBLESHOOTING](TROUBLESHOOTING.md) file. If you cannot solve your problem using it, feel free to contact us in <https://github.com/Fiware/tools.Fabre/issues>.
 
