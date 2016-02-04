@@ -34,31 +34,6 @@ class TestVersionLinks(unittest.TestCase):
         pass
 
 
-    """
-    
-    """
-    """
-    @for_examples(
-    ('api_test1', [
-        'http://example.com/api/abcedefg',
-        'http://example.com/api/jhdfgh',
-        'http://example.com/api/latest'
-        ]),
-    ('api_test2', [
-        'http://example.com/api/abcedefg',
-        'http://example.com/api/latest'
-        ]),
-    ('api_test3', [
-        'http://example.com/api/jhdfgh',
-        'http://example.com/api/latest'
-        ]),
-    ('api_test4', []
-    ),
-    ('api_test5', []
-    ),
-
-    )
-    """
     @for_examples(
     ('api_test1', [
         'http://example.com/api/abcedefg',
@@ -86,23 +61,7 @@ class TestVersionLinks(unittest.TestCase):
             expected_urls.remove(pq(a_element).attr["href"])
 
         self.assertEqual(len(expected_urls), 0)
-        """
-        links=self.pq('div#top-source-buttons').children()
 
-        for link in links:
-            try:
-                url = expected_urls.pop(0)
-            except IndexError as e:
-                print "APIB has to much links in #top-source-buttons div"
-                assert False
-            except Exception as e:
-                print e
-                assert False
-            self.assertEqual(pq(link).attr["href"], url)
-
-
-        self.assertEqual(len(expected_urls), 0)
-        """
 
         self.del_apib_files(apib_file_name)
 

@@ -80,7 +80,6 @@ class TestOrderURIFromAPIB(unittest.TestCase):
 
     def test_order_request_parameters_from_json(self):
         
-        #pprint.pprint(self.out_json)
 
         for group in self.out_json['resourceGroups']:
             if "Root" == group['name']:
