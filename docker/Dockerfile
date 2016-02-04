@@ -3,11 +3,11 @@
 #
 # Usage for HTML output:
 #
-#     docker run -it --rm -v /home/login/project/doc/apib:/apib fabre -i /apib/spec.apib -o /apib/html
+#     docker run -it --rm -v /home/login/project/doc/apib:/apib fiwareulpgc/fabre -i /apib/spec.apib -o /apib/html
 #
 # Usage for PDF output:
 #
-#     docker run -it --rm -v /home/login/project/doc/apib:/apib fabre -i /apib/spec.apib -o /apib/spec.pdf --pdf
+#     docker run -it --rm -v /home/login/project/doc/apib:/apib fiwareulpgc/fabre -i /apib/spec.apib -o /apib/spec.pdf --pdf
 #
 
 FROM ubuntu:14.04
