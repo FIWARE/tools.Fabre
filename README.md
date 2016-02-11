@@ -1,4 +1,6 @@
 # Fiware API blueprint renderer
+[![Build Status][travis-image]][travis-url]
+[![License][license-image]][license-url]
 
 Tool for parsing a FIWARE specification file and rendering it to a HTML page.
 
@@ -100,3 +102,10 @@ Some instrucctions about to how to build your own image of FABRE with docker are
 ## Troubleshooting
 A troubleshooting guide is provided in the [TROUBLESHOOTING](TROUBLESHOOTING.md) file. If you cannot solve your problem using it, feel free to contact us in <https://github.com/Fiware/tools.Fabre/issues>.
 
+
+
+[travis-image]: https://travis-ci.org/Fiware/tools.Fabre.svg?branch=master
+[travis-url]: https://travis-ci.org/Fiware/tools.Fabre
+
+[license-image]: https://img.shields.io/github/license/mashape/apistatus.svg
+[license-url]: https://github.com/Fiware/tools.Fabre/blob/master/LICENSE
