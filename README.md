@@ -1,9 +1,12 @@
-# Fiware API blueprint renderer
+# FIWARE API blueprint renderer
 [![Build Status][travis-image]][travis-url]
 [![License][license-image]][license-url]
 
 Tool for parsing a FIWARE specification file and rendering it to a HTML page.
 
+## FIWARE API blueprint guidelines
+
+A complete FIWARE API blueprint manual and style guide is provided in a [FIWARE wiki page](https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/Fabre_style_guide).
 
 ## Quick Start Guide (with Docker)
 
