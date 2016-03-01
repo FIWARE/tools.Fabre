@@ -23,7 +23,7 @@ install:
 
 
 script:
-    - fabre -i apib-example/fiware-ngsi-v2.apib -o ~/out/test.pdf --pdf
+    - fabre -i apib_example/fiware_ngsi_v2.apib -o ~/out/test.pdf --pdf
     - nosetests -v
 
 branches:
