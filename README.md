@@ -1,6 +1,10 @@
 # Fiware API blueprint renderer
+
+[![MIT license][license-image]][license-url]
+[![Documentation][doc-image]][doc-url]
+[![Docker][docker-image]][docker-url]
+[![Support][support-image]][support-url]
 [![Build Status][travis-image]][travis-url]
-[![License][license-image]][license-url]
 
 Tool for parsing a FIWARE specification file and rendering it to a HTML page.
 
@@ -107,5 +111,14 @@ A troubleshooting guide is provided in the [TROUBLESHOOTING](TROUBLESHOOTING.md)
 [travis-image]: https://travis-ci.org/Fiware/tools.Fabre.svg?branch=master
 [travis-url]: https://travis-ci.org/Fiware/tools.Fabre
 
-[license-image]: https://img.shields.io/github/license/mashape/apistatus.svg
+[license-image]: https://img.shields.io/badge/license-MIT-blue.svg
 [license-url]: https://github.com/Fiware/tools.Fabre/blob/master/LICENSE
+
+[docker-image]: https://img.shields.io/docker/pulls/fiware/fabre.svg
+[docker-url]: https://hub.docker.com/r/fiware/fabre/
+
+[doc-image]: https://img.shields.io/badge/docs-latest-brightgreen.svg
+[doc-url]: https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/Fabre_style_guide
+
+[support-image]: https://img.shields.io/badge/support-GH-yellowgreen.svg
+[support-url]: https://github.com/Fiware/tools.Fabre/issues
