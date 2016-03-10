@@ -46,4 +46,4 @@ System dependencies
 ```
 You should ensure that Drafter version is exactly 0.1.9 and the wkhtmltopdf is greater or equal than 0.12.2.1 with patched qt.
 
-If this guide does not solve your problem contact us at <fiware@ulpgc.es>
+If this guide does not solve your problem contact us at <http://ask.fiware.org> using the tag 'fabre'.

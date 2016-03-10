@@ -1,6 +1,10 @@
 # Fiware API blueprint renderer
+
+[![MIT license][license-image]][license-url]
+[![Documentation][doc-image]][doc-url]
+[![Docker][docker-image]][docker-url]
+[![Support][support-image]][support-url]
 [![Build Status][travis-image]][travis-url]
-[![License][license-image]][license-url]
 
 Tool for parsing a FIWARE specification file and rendering it to a HTML page.
 
@@ -100,12 +104,21 @@ FABRE accepts the options listed below:
 Some instrucctions about to how to build your own image of FABRE with docker are in the [HOW_TO_USE_FABRE_WITH_DOCKER](HOW_TO_USE_FABRE_WITH_DOCKER.md) file.
 
 ## Troubleshooting
-A troubleshooting guide is provided in the [TROUBLESHOOTING](TROUBLESHOOTING.md) file. If you cannot solve your problem using it, feel free to contact us in <https://github.com/Fiware/tools.Fabre/issues>.
+A troubleshooting guide is provided in the [TROUBLESHOOTING](TROUBLESHOOTING.md) file. If you cannot solve your problem using it, feel free to contact us at <http://ask.fiware.org> using the tag 'fabre'.
 
 
 
 [travis-image]: https://travis-ci.org/Fiware/tools.Fabre.svg?branch=master
 [travis-url]: https://travis-ci.org/Fiware/tools.Fabre
 
-[license-image]: https://img.shields.io/github/license/mashape/apistatus.svg
+[license-image]: https://img.shields.io/badge/license-MIT-blue.svg
 [license-url]: https://github.com/Fiware/tools.Fabre/blob/master/LICENSE
+
+[docker-image]: https://img.shields.io/docker/pulls/fiware/fabre.svg
+[docker-url]: https://hub.docker.com/r/fiware/fabre/
+
+[doc-image]: https://img.shields.io/badge/docs-latest-brightgreen.svg
+[doc-url]: https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/Fabre_style_guide
+
+[support-image]: https://img.shields.io/badge/support-askbot-yellowgreen.svg
+[support-url]: http://ask.fiware.org
