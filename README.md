@@ -104,7 +104,7 @@ FABRE accepts the options listed below:
 Some instrucctions about to how to build your own image of FABRE with docker are in the [HOW_TO_USE_FABRE_WITH_DOCKER](HOW_TO_USE_FABRE_WITH_DOCKER.md) file.
 
 ## Troubleshooting
-A troubleshooting guide is provided in the [TROUBLESHOOTING](TROUBLESHOOTING.md) file. If you cannot solve your problem using it, feel free to contact us in <https://github.com/Fiware/tools.Fabre/issues>.
+A troubleshooting guide is provided in the [TROUBLESHOOTING](TROUBLESHOOTING.md) file. If you cannot solve your problem using it, feel free to contact us at <http://ask.fiware.org> using the tag 'fabre'.
 
 
 
@@ -120,5 +120,5 @@ A troubleshooting guide is provided in the [TROUBLESHOOTING](TROUBLESHOOTING.md)
 [doc-image]: https://img.shields.io/badge/docs-latest-brightgreen.svg
 [doc-url]: https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php/Fabre_style_guide
 
-[support-image]: https://img.shields.io/badge/support-GH-yellowgreen.svg
-[support-url]: https://github.com/Fiware/tools.Fabre/issues
+[support-image]: https://img.shields.io/badge/support-askbot-yellowgreen.svg
+[support-url]: http://ask.fiware.org
