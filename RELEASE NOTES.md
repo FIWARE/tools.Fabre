@@ -11,6 +11,9 @@
 * Repository transfered to FIWARE organization.
 * Docker image available in Docker Hub.
 
+### Fixed bugs
+* Unified name styles for files and folders
+
 
 ## Version v0.3.1
 ### Release date 17/12/2015 

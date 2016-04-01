@@ -19,12 +19,12 @@ mkdir -p /var/tmp/test-fabre-docker/apib/html
 ```
 
 ```
-cp -R apib-example/* /var/tmp/test-fabre-docker/apib
+cp -R apib_example/* /var/tmp/test-fabre-docker/apib
 ```
 
 ### Run FABRE with the docker image
 ```
-docker run -it --rm -v /var/tmp/test-fabre-docker/apib:/apib -v /var/tmp/test-fabre-docker/apib/html:/html fabre:0.3.0 -i /apib/fiware-ngsi-v2.apib -o /html/fiware-ngsi-v2
+docker run -it --rm -v /var/tmp/test-fabre-docker/apib:/apib -v /var/tmp/test-fabre-docker/apib/html:/html fabre:0.3.0 -i /apib/fiware_ngsi_v2.apib -o /html/fiware-ngsi-v2
 ```
 
 Note that the host  ```/var/tmp/test-fabre-docker/apib``` directory is linked to the VM machine ```/apib``` directory.

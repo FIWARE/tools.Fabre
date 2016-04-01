@@ -63,7 +63,7 @@ sudo python setup.py install
 Now we can test fabre. As an example, we can run the following commands for generating a site from the given FIWARE specification template:
 
 ```
-fabre -i apib-example/fiware-ngsi-v2.apib  -o ~/out
+fabre -i apib_example/fiware_ngsi_v2.apib  -o ~/out
 ```
 
 In order to generate a pdf file instead a html site the --pdf option should be used. When this option is used the -o parameter can specify the ouput folder unless the provided output ends with ".pdf", in that case the -o parameter references the output file.
@@ -71,14 +71,14 @@ In order to generate a pdf file instead a html site the --pdf option should be u
 Examples:
 
 ```
-fabre -i apib-example/fiware-ngsi-v2.apib  -o ~/out --pdf
+fabre -i apib_example/fiware_ngsi_v2.apib  -o ~/out --pdf
 ```
 
-Renders the apib and saves it to ~/out/fiware-ngsi-v2.pdf
+Renders the apib and saves it to ~/out/fiware_ngsi_v2.pdf
 
 
 ```
-fabre -i apib-example/fiware-ngsi-v2.apib  -o ~/out/ouput.pdf --pdf
+fabre -i apib_example/fiware_ngsi_v2.apib  -o ~/out/ouput.pdf --pdf
 ```
 
 Renders the apib and saves it to ~/out/output.pdf
@@ -87,7 +87,7 @@ Renders the apib and saves it to ~/out/output.pdf
 **Note for developers:** fabre generates some temporary files on /var/tmp while rendering the final web page, and removes them afterwards. We can override this behaviour and make fabre to keep the temporary files using the --no-clear-temp-dir option.
 
 ```
-fabre -i apib-example/fiware-ngsi-v2.apib -o ~/out --no-clear-temp-dir
+fabre -i apib_example/fiware_ngsi_v2.apib -o ~/out --no-clear-temp-dir
 ```
 
 FABRE accepts the options listed below:
