@@ -167,7 +167,7 @@ def copy_static_files(template_dir_path, dst_dir_path):
     template_dir_path -- path to the template directory
     dst_dir_path -- destination directory
     """
-    subdirectories = ['/css', '/js', '/img', '/font']
+    subdirectories = ['/css', '/js', '/img']
 
     for subdirectory in subdirectories:
         if os.path.exists(dst_dir_path + subdirectory):

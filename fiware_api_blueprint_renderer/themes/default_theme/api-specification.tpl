@@ -21,7 +21,8 @@
     <link href="css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
     <link href="css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/idea.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/monokai.css">
     <script src="js/highlight.pack.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     <script src="js/jquery.min.js"></script>
