@@ -181,6 +181,7 @@ table, td, th {
         overflow: auto;
         width: calc(100%);
         resize: none;
+        background-color: #f5f5f5;
     }
     #toc>ul{
         border: 0px !important;
@@ -228,11 +229,13 @@ table, td, th {
     color: #333 ;
     max-width: 100%;
     width: 100%;
+    text-decoration: none;
 }
 
 #TOC-container li a:hover{
-   background-color: #e2e2e2;
-   text-decoration: none;
+    color: #ffffff !important;
+    background-color: #4e4a4a !important;
+    text-decoration: none;
 }
 
 #toc li{
@@ -339,7 +342,7 @@ dd dl{
     border-left: 5px darkgray solid;
     margin-top: 5px;
     padding-left: 5px;
-    background-color: #FBF7F7;
+    background-color: #f7f7f7;
     margin-bottom: 45px;
 }
 
@@ -354,7 +357,6 @@ dd dl{
     margin-bottom: 25px;
     padding-left: 5px;
     padding-bottom: 15px;
-    background-color: #E0DCF3;
 }
 
 .action dl dd>p{
@@ -364,7 +366,6 @@ dd dl{
 
 .action:nth-child(even){
     border-left: 2px orange solid;
-    background-color: #F7EAD2;
 }
 
 .action-header{
@@ -373,28 +374,28 @@ dd dl{
 }
 
 .action.GET{
-    background-color: #E0DCF3;
-    border-left: 2px blue solid;
+    border-left: 2px green solid;
+    background-color:#dff0d8;
 }
 
 .action.POST{
-    border-left: 2px orange solid;
-    background-color: #F7EAD2;
+    border-left: 2px blue solid;
+    background-color:#d9edf7;
 }
 
 .action.PUT{
     border-left: 2px orange solid;
-    background-color: #DEB887;
+    background-color:#fcf8e3;
 }
 
 .action.PATCH{
-    border-left: 2px green solid;
-    background-color: #ECF5CF;
+    border-left: 2px orange solid;
+    background-color:#fcf8e3;
 }
 
 .action.DELETE{
     border-left: 2px red solid;
-    background-color: #E6BFBF;
+    background-color:#f2dede;
 }
 
 .action h4, .actionExample h5{
@@ -408,7 +409,7 @@ dd dl{
     border-left: 5px darkgray solid;
     margin-top: 5px;
     padding-left: 5px;
-    background-color: #FBF7F7;
+    background-color: #f7f7f7;
     margin-bottom: 45px;
 }
 
@@ -424,7 +425,6 @@ dd dl{
     padding-left: 5px;
     padding-right: 5px;
     padding-bottom: 15px;
-    background-color: #E0DCF3;
     padding:5px;
 }
 
@@ -432,12 +432,6 @@ dd dl{
     margin-top: 0px;
     margin-bottom: 0px;
 }
-
-.actionExample:nth-child(even){
-    border-left: 2px orange solid;
-    background-color: #F7EAD2;
-}
-
 
 .actionExample h4{
     font-size: 1.05em;
@@ -447,28 +441,28 @@ dd dl{
 }   
 
 .actionExample.GET{
-    background-color: #E0DCF3;
-    border-left: 2px blue solid;
+    border-left: 2px green solid;
+    background-color:#dff0d8;
 }
 
 .actionExample.POST{
-    border-left: 2px orange solid;
-    background-color: #F7EAD2;
+    border-left: 2px blue solid;
+    background-color:#d9edf7;
 }
 
 .actionExample.PUT{
     border-left: 2px orange solid;
-    background-color: #DEB887;
+    background-color:#fcf8e3;
 }
 
 .actionExample.PATCH{
-    border-left: 2px green solid;
-    background-color: #D4EA89;
+    border-left: 2px orange solid;
+    background-color:#fcf8e3;
 }
 
 .actionExample.DELETE{
     border-left: 2px red solid;
-    background-color: #E6BFBF;
+    background-color:#f2dede;
 }
 
 .payload-title{
@@ -517,6 +511,7 @@ dd dl{
     background-color:#00d3de !important;
     color:black !important;
     border: 0;
+    text-decoration: none;
 }
 .goActions a::after, .goApiary a::after, .goExample a::after, #top-source-buttons a::after{
     font-family: FontAwesome;
