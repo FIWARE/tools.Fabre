@@ -1,5 +1,12 @@
 # FIWARE API Blueprint renderer RELEASE NOTES
 
+## Version v0.3.1.1
+### Release date 22/09/2016
+
+### Fixed bugs
+* During PDF generation, if links or inline codes are too long, they are broken into multiple lines.
+
+---- 
 ## Version v0.3.1
 ### Release date 17/12/2015 
 
