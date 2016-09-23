@@ -22,6 +22,12 @@ If you have the API Blueprint file wich path is `/Users/myusername/example_proje
 docker run -it --rm -v /Users/myusername/example_project:/apib -v /Users/myusername/html:/html fiware/fabre -i /apib/myspecification.apib -o /html/example-project
 ```
 
+If you need to use a specific fabre version, for example the 0.3.1.1 version, you can use the following command:
+
+```
+docker run -it --rm -v /Users/myusername/example_project:/apib -v /Users/myusername/html:/html fiware/fabre:0.3.1.1 -i /apib/myspecification.apib -o /html/example-project
+```
+
 ## Dependencies
 
 * [Python 2](https://www.python.org/)

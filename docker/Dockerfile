@@ -13,6 +13,7 @@
 FROM ubuntu:14.04
 
 ENV FABRE_VERSION 0.3.2
+ENV GITHUB_REPOSITORY Fiware/tools.Fabre
 
 RUN apt-get update -y && apt-get install -y unzip git python python-pip wget build-essential
 RUN apt-get install -y libxml2-dev libxslt1-dev python-dev zlib1g-dev
@@ -21,7 +22,7 @@ RUN apt-get install -y libxml2-dev libxslt1-dev python-dev zlib1g-dev
 RUN git clone --recursive --branch v0.1.9 --depth 1 git://github.com/FiwareULPGC/drafter.git && cd drafter && ./configure && make drafter && make install && cd
 
 # Install Fabre
-RUN wget https://github.com/Fiware/tools.Fabre/archive/$FABRE_VERSION.zip && unzip $FABRE_VERSION.zip && cd tools.Fabre-$FABRE_VERSION && python setup.py install && cd
+RUN wget https://github.com/$GITHUB_REPOSITORY/archive/$FABRE_VERSION.zip && unzip $FABRE_VERSION.zip && cd tools.Fabre-$FABRE_VERSION && python setup.py install && cd
 
 # Install wkhtmltopdf
 RUN apt-get install -y -f fontconfig libfontconfig1 libfreetype6 libjpeg-turbo8 libxrender1 xfonts-base xfonts-75dpi

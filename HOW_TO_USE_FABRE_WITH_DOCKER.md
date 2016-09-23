@@ -8,7 +8,7 @@ A dockerfile that allows to create a virtual machine with FABRE is provided in t
 From the project directory execute:
 
 ```
-sudo docker build -t fabre:0.3.1 docker/
+sudo docker build -t fabre docker/
 ```
 
 ### Create directories for docker volume and populate them with the apib file. 
@@ -24,7 +24,7 @@ cp -R apib_example/* /var/tmp/test-fabre-docker/apib
 
 ### Run FABRE with the docker image
 ```
-docker run -it --rm -v /var/tmp/test-fabre-docker/apib:/apib -v /var/tmp/test-fabre-docker/apib/html:/html fabre:0.3.0 -i /apib/fiware_ngsi_v2.apib -o /html/fiware-ngsi-v2
+docker run -it --rm -v /var/tmp/test-fabre-docker/apib:/apib -v /var/tmp/test-fabre-docker/apib/html:/html fabre -i /apib/fiware_ngsi_v2.apib -o /html/fiware-ngsi-v2
 ```
 
 Note that the host  ```/var/tmp/test-fabre-docker/apib``` directory is linked to the VM machine ```/apib``` directory.
