@@ -12,7 +12,7 @@
 
 FROM ubuntu:14.04
 
-ENV FABRE_VERSION 0.3.2
+ENV FABRE_VERSION master
 ENV GITHUB_REPOSITORY Fiware/tools.Fabre
 
 RUN apt-get update -y && apt-get install -y unzip git python python-pip wget build-essential
