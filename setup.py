@@ -14,7 +14,7 @@ def get_packages(package):
 
 
 setup(name='fiware_api_blueprint_renderer',
-      version='0.3.2',
+      version='0.3.2.1',
       description='Python module to aid with parsing FIWARE API specification files and rendering them to HTML pages.',
       url='https://github.com/Fiware/tools.Fabre',
       author='FIWARE ULPGC',
